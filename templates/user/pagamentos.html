@@ -1,0 +1,182 @@
+{% extends "shared/base_dashboard.html" %}
+{% block mainContent %} {{ url_for(request.endpoint, **request.view_args) }} {%endblock%}
+{% block class_pagamentos %}active{% endblock %}
+{% block content %}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+<link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.21.4/dist/bootstrap-table.min.css">
+
+<div class="table-data m-0">
+    <div class="order">
+        <div class="head mb-0">
+            <div class="d-flex flex-column justify-content-start align-items-start me-3 w-100">
+                <h3 class="mb-0 mt-0">Pagamentos Confirmados </h3>
+
+            </div>
+            <div class="w-25">
+                <small class="mb-0 mt-0">
+                    Vendas realizadas: <h3 id="total-vendas">{{total_vendas}}</h3>
+                </small>
+            </div>
+
+        </div>
+
+        <table
+                class="table table-bordered table-hover"
+                data-toggle="table"
+                data-search="true"
+                data-click-to-select="false"
+                data-pagination="false">
+            <thead>
+            <tr>
+                <th data-align="center" data-field="_idMesa">Mesa</th>
+                <th data-field="_idCliente" data-sortable="true">Cliente</th>
+                <th data-field="hora_abertura" data-sortable="true">Abertura</th>
+                <th data-align="center" data-field="pagamento" data-sortable="true">pagamento</th>
+                <th data-align="center" data-field="status" data-sortable="true">Status</th>
+                <th data-align="right" data-field="Total" data-sortable="true">Total</th>
+            </tr>
+            </thead>
+
+            <tbody>
+
+
+            {% for comanda in comandas | reverse %}
+
+
+            {% if comanda.status == 'realizado' %}
+
+            <tr>
+                <td class="text-center pt-0 pb-0 ps-3 pe-3 " style="display: table-cell; padding-left:0;">
+
+                    <small class="text-body-secondary mb-1 mt-1">
+                        {{getMesa( comanda._idMesa).numero_mesa}}
+                    </small>
+                </td>
+                <td class="pt-0 pb-0 ps-3 pe-3 ">
+                    <div class="d-flex flex-column justify-content-start align-items-start">
+                        <!--                        <div>{{ getCliente(comanda._idCliente).nome }}</div>-->
+                        <small class="text-body-secondary">
+                            {{ getCliente(comanda._idCliente).CPF }}</small>
+                    </div>
+
+                </td>
+                <td class="pt-0 pb-0 ps-3 pe-3">
+                    <small class="text-body-secondary date">
+                        {{ comanda.hora_abertura }}
+                    </small>
+                </td>
+                <td class="pt-0 pb-0 ps-3 pe-3">
+                    <small class="text-body-secondary">
+                        {{ comanda.tipo_pagamento }}
+                    </small>
+                </td>
+                <td class="ps-2 pe-2">
+                    <div
+                            class="optionAceitar  {% if comanda.status== 'aberta' %}text-success{% elif comanda.status== 'fechado'  %} text-danger {% elif comanda.status== 'realizado'  %}text-success{% endif %} m-0  w-100 d-flex justify-content-center align-items-center">
+                        <div class="me-2" style=" font-size: .8rem;"> {{ comanda.status }}</div>
+                        <div>
+
+
+                            <i style=" font-size: 1rem;"
+                               class="{% if comanda.status== 'aberta' %}bi bi-people-fill{% elif comanda.status== 'fechado'  %}bi bi-x-circle{% endif %}"></i>
+
+
+                        </div>
+                    </div>
+
+                </td>
+                <td data-modalButton="#modalButton{{comanda._id}}" class="valor pt-0 pb-0 ps-3 pe-3">
+                    {% set total = namespace(value=0) %}
+                    {% for pedido in pedidos if pedido._idComanda| string() == comanda._id|
+                    string()
+                    %}
+                    {% set produto = getCardapio(pedido._idCardapio) %}
+
+                    {% set total.value = total.value|float +
+                    (getCardapio(pedido._idCardapio).valor|float * pedido.quantidade|int) %}
+
+
+                    {% endfor %}
+                    <small class="text-body-secondary">{{total.value}}
+                    </small>
+                </td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+            </tbody>
+        </table>
+
+
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossorigin="anonymous"></script>
+
+<script src="https://unpkg.com/bootstrap-table@1.21.4/dist/bootstrap-table.min.js"></script>
+
+<script>
+
+
+$(".date").each(function(i,e){
+var novaDate= dataFormatter($(e).html())
+$(e).html(novaDate)
+})
+
+
+
+
+
+ function dataFormatter(date) {
+
+  try {
+    // Verifica se o valor passado é uma data válida
+    if (isNaN(Date.parse(date))) {
+      return '-';
+    }
+
+    // Converte a string em um objeto de data
+    var data = new Date(date);
+
+    // Formata a data
+  var options = { day: '2-digit', month: '2-digit', year: '2-digit', hour: 'numeric', minute: 'numeric' };
+var dataFormatada = data.toLocaleString('pt-BR', options);
+
+    return dataFormatada;
+  } catch (e) {
+    console.log(e);
+    return '-';
+  }
+}
+
+    $(".valor").each(function(i, val) {
+    console.log( $(val).attr('data-modalButton')  )
+    if(parseFloat(    $(val).text())>0 ){
+    $($(val).attr('data-modalButton')).prop('disabled',false)
+    }
+
+    if(parseFloat(    $(val).text()) === 0 ){
+    $($(val).attr('data-modalButton')).prop('disabled',true)
+    }
+
+})
+$(".valor").text(function(i, val) {
+return parseFloat(val).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }).replace(".", ",");
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+{% endblock %}

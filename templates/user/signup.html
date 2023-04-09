@@ -1,0 +1,21 @@
+{% extends "shared/base.html" %}
+{% block content %}
+<link href="../static/css/user.css" rel="stylesheet">
+<section class="apx1 text-center d-flex flex-column justify-content-center align-items-center">
+    <h1>Crie a sua conta</h1>
+    <p class="mb-3">Olha que legal, não precisa decorar uma senha!
+        Insira o seu e-mail para receber um código de login.</p>
+    <form action="/ativar" method="post">
+        <div class="mb-3">
+            <label for="exampleFormControlInput1" class="form-label">Email</label>
+            <input type="email" name="email" class="form-control" id="exampleFormControlInput1" placeholder="">
+        </div>
+        <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-primary btn-lg">Receber o Código de Ativação</button>
+            <div class="form-text">Já uso ArcadeArena Stream? <a href="/login">Entrar</a></div>
+        </div>
+    </form>
+</section>
+
+
+{% endblock %}

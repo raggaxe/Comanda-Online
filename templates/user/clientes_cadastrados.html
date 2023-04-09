@@ -1,0 +1,166 @@
+{% extends "shared/base_dashboard.html" %}
+{% block mainContent %} {{ url_for(request.endpoint, **request.view_args) }} {%endblock%}
+{% block class_clientes %}active{% endblock %}
+{% block content %}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+<link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.21.4/dist/bootstrap-table.min.css">
+
+<div class="table-data m-0">
+    <div class="order">
+        <div class="head mb-0">
+            <div class="d-flex flex-column justify-content-start align-items-start me-3 w-100">
+                <h3 class="mb-0 mt-0">Clientes cadastrados </h3>
+
+            </div>
+           </div>
+        <table
+                class="table table-bordered table-hover"
+                data-toggle="table"
+                data-search="true"
+                data-click-to-select="false"
+                data-pagination="false">
+            <thead>
+            <tr>
+                <th data-sortable="true">Cliente</th>
+                <th data-sortable="true">CPF</th>
+                <th data-align="center" data-field="pagamento" data-sortable="true">Comandas</th>
+                <th data-align="center" data-field="status" data-sortable="true">Pedidos</th>
+                <th data-align="center" data-field="produtos" data-sortable="true">Produtos</th>
+
+                <th data-align="center" data-field="total" data-sortable="true">Total</th>
+                <th data-align="center" data-field="media" data-sortable="true">Média p/ Prdouto</th>
+
+            </tr>
+            </thead>
+
+            <tbody>
+
+
+            {% for cliente in lista_clientes | reverse %}
+            <tr>
+                <td class="ps-3 pe-3" style="display: table-cell; padding-left:0;">
+
+                    <small class="text-body-secondary mb-1 mt-1">
+                        {{cliente.nome}}
+                    </small>
+                </td>
+                <td class="ps-3 pe-3">
+                    <div class="d-flex flex-column justify-content-start align-items-start">
+
+                        <small class="text-body-secondary">
+                            {{ cliente.CPF }}</small>
+                    </div>
+
+                </td>
+                <td class="ps-3 pe-3">
+
+                    <small class="text-body-secondary ">
+{{comandas_por_cliente[cliente._id].num_comandas}}
+
+                    </small>
+                </td>
+                <td class="ps-3 pe-3">
+                    <small class="text-body-secondary">
+{{pedidos_por_cliente[cliente._id].num_pedidos}}
+                    </small>
+                </td>
+                      <td class="ps-3 pe-3">
+                    <small class="text-body-secondary ">
+{{pedidos_por_cliente[cliente._id].produtos}}
+                    </small>
+                </td>
+                <td class="ps-3 pe-3">
+                    <small class="text-body-secondary valor">
+{{pedidos_por_cliente[cliente._id].total}}
+                    </small>
+                </td>
+    <td class="ps-3 pe-3">
+                    <small class="text-body-secondary valor">
+{{pedidos_por_cliente[cliente._id].total / pedidos_por_cliente[cliente._id].produtos }}
+                    </small>
+                </td>
+
+
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossorigin="anonymous"></script>
+
+<script src="https://unpkg.com/bootstrap-table@1.21.4/dist/bootstrap-table.min.js"></script>
+
+<script>
+
+
+$(".date").each(function(i,e){
+var novaDate= dataFormatter($(e).html())
+$(e).html(novaDate)
+})
+
+
+
+
+
+ function dataFormatter(date) {
+
+  try {
+    // Verifica se o valor passado é uma data válida
+    if (isNaN(Date.parse(date))) {
+      return '-';
+    }
+
+    // Converte a string em um objeto de data
+    var data = new Date(date);
+
+    // Formata a data
+  var options = { day: '2-digit', month: '2-digit', year: '2-digit', hour: 'numeric', minute: 'numeric' };
+var dataFormatada = data.toLocaleString('pt-BR', options);
+
+    return dataFormatada;
+  } catch (e) {
+    console.log(e);
+    return '-';
+  }
+}
+
+    $(".valor").each(function(i, val) {
+    console.log( $(val).attr('data-modalButton')  )
+    if(parseFloat(    $(val).text())>0 ){
+    $($(val).attr('data-modalButton')).prop('disabled',false)
+    }
+
+    if(parseFloat(    $(val).text()) === 0 ){
+    $($(val).attr('data-modalButton')).prop('disabled',true)
+    }
+
+})
+$(".valor").text(function(i, val) {
+return parseFloat(val).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }).replace(".", ",");
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+{% endblock %}

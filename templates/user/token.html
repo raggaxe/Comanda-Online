@@ -1,0 +1,36 @@
+{% extends "shared/base.html" %}
+{% block content %}
+<link href="../static/css/user.css" rel="stylesheet">
+<section class="apx1 container d-flex text-center flex-column justify-content-center align-items-center">
+   <div class="card-info">
+       <h1 class="mb-2">E-mail enviado!</h1>
+    <p class="mb-2 text-light">Verifique o seu e-mail. Enviamos um código de login para <strong class="text-bold">{{email}}</strong>
+
+    </p>
+    <form action="/validar" method="post">
+        <div class="mb-3">
+            <label for="token" class="form-label">Código de 6 dígitos</label>
+            <input autocomplete="off" type="text"  name="token" class="form-control text-dark text-center" id="token" placeholder="" required>
+        </div>
+        <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-outline-light btn-lg  p-2 m-2">Entrar</button>
+
+        </div>
+    </form>
+   </div>
+</section>
+<script>
+  $(document).ready(function(){
+  $('#token').inputmask({
+    mask: '******',
+    definitions: {
+      '*': {
+        validator: '[A-Za-z0-9]',
+        casing: 'upper'
+      }
+    }
+  });
+});
+</script>
+
+{% endblock %}

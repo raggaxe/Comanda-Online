@@ -1,0 +1,121 @@
+{% extends "shared/base.html" %}
+{% block content %}
+
+<div id="big_form"
+     class="apx1 d-flex flex-column justify-content-center align-items-center ">
+
+    <a href="/login" class="position-absolute admin text-light"><i style="font-size:2rem" class='bx bx-restaurant'></i></a>
+
+    <div class="card-info">
+        <h1 class="mb-2"><i class="bi bi-ui-checks me-4"></i>
+            Cadastre-se</h1>
+        <p class="mb-2">Com o nosso aplicativo, você pode desfrutar de uma experiência de comanda mais fácil e rápida.
+            Temos
+            duas opções para você começar a usar nosso aplicativo: entrar como administrador ou entrar como cliente.</p>
+        <form id="cadastro" action="/cliente" method="post" class="needs-validation" >
+            <div class="modal-body">
+
+
+                <div class="form-floating mb-3 text-info">
+                    <input type="text" class="form-control " id="nome" name="nome" autocomplete="off"
+                           placeholder="nome da empresa" required maxlength="35">
+                    <label for="nome">Nome Completo</label>
+                    <div class="invalid-feedback">
+                        Preencha um nome válido.
+                    </div>
+                </div>
+
+
+                <div class="form-floating mb-3 text-info">
+                    <input type="text" class="form-control" id="CPF" name="CPF" placeholder="CPF" autocomplete="off"
+                           required>
+                    <label for="CPF">CPF</label>
+                </div>
+                <div class="form-floating mb-3 text-info">
+                    <select class="form-select" name="estabelecimento" id="floatingSelect"
+                            aria-label="Floating label select example" required onchange="getMesas(this.value)">
+                        <option selected disabled>Escolha o estabelecimento...</option>
+                        {% for user in users%}
+                        <option value="{{user._id}}">{{user.email}}</option>
+                        {%endfor%}
+                    </select>
+                    <label for="floatingSelect">Estabelecimento</label>
+                </div>
+
+
+                <div class="form-floating mb-3 text-info">
+                    <select class="form-select" name="mesa" id="mesas" aria-label="Floating label select example"
+                            required disabled>
+                        <option selected disabled>Escolha a mesa...</option>
+
+                    </select>
+                    <label for="mesas">Mesa</label>
+                </div>
+
+
+                <div class="d-grid gap-2">
+                    <button id="abrir_comanda" type="submit" class="btn btn-outline-light btn-lg  p-2 m-2" disabled>Abrir Comanda
+                        >>
+                    </button>
+                </div>
+            </div>
+
+
+        </form>
+
+    </div>
+
+
+</div>
+
+<script type="text/javascript">
+
+$('#CPF').inputmask({
+  mask: ['999.999.999-99'],
+  keepStatic: true
+});
+
+
+
+
+
+function getMesas(_estabelecimento){
+    $('#mesas').empty();
+    $.ajax({
+        url: '/mesas_disponiveis/' + _estabelecimento,
+        method: 'GET',
+        dataType: 'json',
+        success: function(data) {
+            if(data.data.length > 0){
+                data.data.forEach(function(item){
+                    if(!item.status){
+                        $('#mesas').append('<option value="'+item._id+'">' + item.numero_mesa + '</option>');
+                    }
+                });
+                $('#mesas').prop('disabled', false);
+                $('#abrir_comanda').prop('disabled', false);
+            } else {
+             $('#mesas').prop('disabled', true);
+               $('#abrir_comanda').prop('disabled', true);
+                var mensagem = $('<div>').addClass('alert alert-danger mt-3').text('Não há mesa disponível nesse estabelecimento.').hide();
+                $('#mesas').after(mensagem);
+                mensagem.fadeIn();
+                setTimeout(function() {
+                    mensagem.fadeOut(function() {
+                        mensagem.remove();
+                    });
+                }, 3000); // a mensagem desaparece depois de três segundos
+            }
+        },
+        error: function(xhr, status, error) {
+            console.log('Erro ao fazer a requisição:');
+            console.log(error);
+        }
+    });
+}
+
+
+
+
+</script>
+{% endblock %}

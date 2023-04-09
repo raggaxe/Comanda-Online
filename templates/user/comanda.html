@@ -1,0 +1,397 @@
+{% extends "shared/base_cliente.html" %}
+{% block mainContent %} {{ url_for(request.endpoint, **request.view_args) }} {%endblock%}
+{% block class_dashboard %}active{% endblock %}
+{% block content %}
+
+<div class="table-data">
+    <div class="order">
+        <div class="head">
+            <h3>Meus Pedidos</h3>
+            <!--            <i class='bx bx-search'></i>-->
+            <!--            <i class='bx bx-filter'></i>-->
+            <h6><small class="text-body-secondary">Total a pagar: </small> <span id="total" class="valor_total"></span>
+            </h6>
+        </div>
+
+        <table>
+            <thead>
+            <tr>
+                <th>Pedido</th>
+                <th class="text-center">Valor</th>
+                <th style="display:none" class="text-center">Unid</th>
+                <th></th>
+                <th class="text-center">Tempo Espera</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for pedido in pedidos%}
+            {% if pedido.status != 'Tempo Limite' %}
+            <tr>
+                <td class="d-flex justify-content-start align-items-center">
+                    <img src="{{url_for('user_routes.uploaded_file', filename=getCardapio(pedido._idCardapio)['filename'] )}}">
+                    <span>{{getCardapio(pedido._idCardapio)['nome_produto']}}</span>
+                </td>
+
+
+                <td style="display:none"  class="valor subValor">{{ (getCardapio(pedido._idCardapio)['valor']|float * pedido.quantidade|int)
+                    }}
+                </td>
+                <td class="text-center">{{pedido.quantidade}}</td>
+                <td >
+                    <div id="status{{pedido._id}}" class="status {% if pedido.status == True %} pending {% elif pedido.status == 'Aceito' %} process {% elif pedido.status == 'Entregue' %}completed {% elif pedido.status == 'Tempo Limite' %}canceled {%endif%}  text-center">
+                        {% if pedido.status == True %}Aguardando... {%else%} {{pedido.status}}{%endif%}
+                    </div>
+                </td>
+                 <td class="text-center">
+                    <input type="hidden" class="order-id" data-status="{{pedido.status}}" value="{{pedido._id}}">
+                    <input type="hidden" id="tempo{{pedido._id}}" value="{{pedido.created_at}}">
+                    <input type="hidden" id="tempoUpdate{{pedido._id}}" value="{{pedido.updated_at}}">
+                    <i class="bi bi-clock-history me-2"></i>
+                    <span id="tempo-decorrido{{pedido._id}}">00:00:00</span>
+                </td>
+            </tr>
+            {% endif%}
+            {%endfor%}
+            </tbody>
+        </table>
+    </div>
+    <div style="flex-basis: 200px;" class="todo">
+        <div class="head">
+            <h3>Menu</h3>
+            <i class='bx bx-plus'></i>
+            <i class='bx bx-filter'></i>
+        </div>
+        <ul class="nav nav-tabs nav-fill mb-3">
+            {% for categoria in categorias %}
+            <li class="nav-item">
+                <a class="nav-link {% if loop.first %}active{% endif %}" data-toggle="tab"
+                   href="#{{ categoria.nome }}">{{ categoria.nome }}</a>
+            </li>
+            {% endfor %}
+
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab"
+                   href="#sem_categoria">Outros</a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            {% for categoria in categorias %}
+            <div id="{{ categoria.nome }}" class="tab-pane fade {% if loop.first %}show active{% endif %}">
+
+
+                {% for cardapio in cardapios if cardapio.categoria| string() == categoria._id| string() %}
+                <div class="card mb-3">
+                    <div class="row g-0">
+                        <div class="col-md-4 preview-menu">
+                            <img src="{{url_for('user_routes.uploaded_file', filename=cardapio.filename)}}"
+                                 class="img-fluid rounded-start" HEIGHT="100%" alt="...">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title">{{cardapio.nome_produto}}</h5>
+                                <p class="card-text"><small class="text-body-secondary">Sanduíche de frango grelhado:
+                                    delicioso e saudável.</small></p>
+                                <div class="d-grid gap-2">
+
+                                    <div class="input-group flex-nowrap">
+                                        <input type="number" class="form-control" autocomplete="off" placeholder="1"
+                                               min="1"
+                                               id="quantidade{{cardapio._id}}" step="1"
+                                               max="{%if cardapio.estoque%}{{cardapio.estoque|int }}{%else%}100{%endif%}"
+                                               aria-label="qnt" name="quantidade" aria-describedby="addon-wrapping"
+                                               value="1">
+                                        <span class="input-group-text" id="addon-wrapping">Unid.</span>
+                                    </div>
+                                    <button
+                                            data-bs-cardapio="{{cardapio._id}}"
+                                            data-bs-nome="{{cardapio.nome_produto}}"
+                                            data-bs-filename="{{cardapio.filename}}"
+                                            data-bs-tempo="{{cardapio.tempo_estimado}}"
+                                            data-bs-categoria="{{cardapio.categoria}}"
+                                            data-bs-valor="{{cardapio.valor}}"
+                                            data-bs-estoque="{{cardapio.estoque}}"
+                                            data-bs-status="{{cardapio.status}}"
+                                            class="btn btn-primary" type="button"
+                                            onclick="addToPedido(this, $('#quantidade{{cardapio._id}}').val() )">
+                                        ADICIONAR
+                                    </button>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+
+
+            </div>
+            {% endfor %}
+
+            <div id="sem_categoria" class="tab-pane fade ">
+                <ul class="todo-list">
+                    {% for cardapio in cardapios if not cardapio.categoria %}
+                    <li class="cardapio    {% if cardapio.status %}completed {%else%}not-completed {% endif %} ">
+                        <a type="button" class="d-flex justify-content-start align-items-center w-100"
+                           data-bs-toggle="modal"
+                           data-bs-target="#cardapio-modal"
+                           data-bs-cardapio="{{cardapio._id}}"
+                           data-bs-nome="{{cardapio.nome_produto}}"
+                           data-bs-filename="{{cardapio.filename}}"
+                           data-bs-tempo="{{cardapio.tempo_estimado}}"
+                           data-bs-categoria="{{cardapio.categoria}}"
+                           data-bs-valor="{{cardapio.valor}}"
+                           data-bs-estoque="{{cardapio.estoque}}"
+                           data-bs-status="{{cardapio.status}}"
+
+                        >
+                            <div class="text-dark flex-grow-1 d-flex  justify-content-start align-items-center">
+                                <div class="preview me-3">
+                                    <img src="{{url_for('user_routes.uploaded_file', filename=cardapio.filename)}}"
+                                         align="middle"/>
+                                </div>
+                                <div class="d-flex flex-column ">
+                                    <span class="cardapio-texto">{{cardapio.nome_produto}}</span>
+                                    <div class="cardapio-valor">
+                                        R$ <span class="valor">{{cardapio.valor}}</span>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="text-dark">
+
+                                <i class='bx bx-dots-vertical-rounded'></i>
+                            </div>
+
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="pedido" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Confirmar pedido!</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="card">
+                    <img src="./static/uploads/comum.jpg" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title" id="title_modal">Card title</h5>
+                        <p class="card-text"><small class="text-body-secondary" id="descricao_modal">Sanduíche de frango
+                            grelhado:
+                            delicioso e saudável.</small></p>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-center align-items-center">
+                            <div class="card-text w-100">
+                                <i class="bi bi-clock-history"></i>
+                                <small class="text-body-secondary">Tempo de espera</small>
+                            </div>
+                            <div id="tempo_espera">
+
+                            </div>
+
+                        </li>
+                        <li class="list-group-item d-flex justify-content-center align-items-center">
+
+                            <div class="card-text w-100">
+                                <small class="text-body-secondary"><span id="qnt_modal"></span>x <span
+                                        id="valor_unid"></span> </small>
+                            </div>
+                            <div id="sub_total"></div>
+                        </li>
+                        <!--                        <li class="list-group-item">subtotal: R$90,00</li>-->
+                    </ul>
+
+                </div>
+
+            </div>
+            <form action="/pedido" id="pedido-cliente" method="post" class="d-grid gap-2 p-3">
+                <input type="hidden" name="_idComanda" id="_idComanda" value="{{comanda._id}}">
+                <input type="hidden" name="_idCardapio" id="_idCardapio">
+                <input type="hidden" name="_idUser" id="_idUser" value="{{comanda._idUser}}">
+
+                <input type="hidden" name="quantidade" value="1" id="qnt">
+                <button type="button" onclick="sendPedido()" class="btn btn-success">Incluir pedido</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="finalizar" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="sa" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <button type="button" class="btn-close mb-3" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="container mt-6 mb-7">
+                    <div class="row justify-content-center">
+                        <div class="col-12">
+                            <div class="card">
+                                    {% set cliente = getCliente(comanda._idCliente) %}
+
+                                    {% if comanda.status == 'aberta' %}
+                                          <div id="body-card" class="card-body p-3">
+                                    <h3>
+                                        {{cliente.nome}}
+                                    </h3>
+                                    <p class="fs-sm">
+                                        Esta é a nota fiscal de um pagamento de <strong
+                                            id="total-pagamento">R$312.00</strong> que consumiu no estabelecimento
+                                    </p>
+
+                                    <div class="border-top border-gray-200 pt-4 mt-4">
+                                        <div class="row">
+                                            <div class="col-md-7">
+                                                <div class="text-muted mb-2">Comanda No.</div>
+                                                <small> <strong>{{comanda._id}}</strong> </small>
+                                            </div>
+                                            <div class="col-md-5 text-md-end">
+                                                <div class="text-muted mb-2">Data de Abertura</div>
+                                                <strong><small class="date">{{comanda.hora_abertura}}</small></strong>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="border-top border-gray-200 mt-4 py-4">
+                                        <div class="row">
+                                            <div class="col-md-5">
+                                                <div class="text-muted mb-2">Dados Pessoais</div>
+                                                <strong>
+                                                    {{cliente.nome}}
+                                                </strong>
+                                                <small class="fs-sm">
+                                                    {{cliente.CPF}}
+                                                </small>
+                                            </div>
+                                            <!--                                            <div class="col-md-7 text-md-end">-->
+                                            <!--                                                <div class="text-muted mb-2">Pagamento para:</div>-->
+                                            <!--                                                <small class="fs-sm">-->
+
+                                            <!--                                                    <a href="#!" class="text-purple">{{getEstabelecimento(comanda._idUser).email}}-->
+                                            <!--                                                    </a>-->
+                                            <!--                                                </small>-->
+                                            <!--                                            </div>-->
+                                        </div>
+                                    </div>
+
+                                    <table class="table border-bottom border-gray-200 mt-3">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col" class="fs-sm text-dark text-uppercase-bold-sm px-0">
+                                                Descrição
+                                            </th>
+                                            <th scope="col"
+                                                class="fs-sm text-dark text-uppercase-bold-sm text-end px-0">Qnt
+                                            </th>
+                                            <th scope="col"
+                                                class="fs-sm text-dark text-uppercase-bold-sm text-end px-0">Valor
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+
+
+                                        {% for pedido in pedidos%}
+                                        {% if pedido.status != 'Tempo Limite' %}
+                                        <tr>
+                                            <td class="px-0">{{getCardapio(pedido._idCardapio)['nome_produto']}}</td>
+                                            <td class="text-end px-0">{{pedido.quantidade}}</td>
+                                            <td class="valor text-end px-0">{{
+                                                (getCardapio(pedido._idCardapio)['valor']|float
+                                                * pedido.quantidade|int)
+                                                }}
+                                            </td>
+                                        </tr>
+                                        {% endif%}
+                                        {%endfor%}
+
+
+                                        </tbody>
+                                    </table>
+
+                                    <div class="mt-5">
+                                        <div class="d-flex justify-content-end">
+                                            <p class="text-muted me-3">Subtotal:</p>
+                                            <span id="total-subtotal"></span>
+                                        </div>
+                                        <div class="d-flex justify-content-end">
+                                            <p class="text-muted me-3">Taxa Serviço(10%):</p>
+
+                                            <span>+ <span id="taxa-serviço">$399.99</span></span>
+                                        </div>
+                                        <div class="d-flex justify-content-end mt-3">
+                                            <h5 class="me-3">Total:</h5>
+                                            <h5 id="total-pagamento-final" class="text-success">$399.99 USD</h5>
+                                        </div>
+                                    </div>
+                                    <form class="w-100" id="payment-form">
+                                        <div class="btn-group w-100 mb-3" role="group"
+                                             aria-label="Basic radio toggle button group ">
+                                            <input type="radio" class="btn-check w-50" name="btnradio" id="btnradio1"
+                                                   autocomplete="off" checked value="dinheiro/pix">
+                                            <label class="btn btn-outline-secondary w-50 d-flex flex-column justify-content-center align-items-center"
+                                                   for="btnradio1">
+                                                <div>
+                                                    <i style="font-size:3rem" class="bi bi-cash-stack"></i>
+                                                </div>
+                                                <div>
+                                                    <h6>Dinheiro/Pix</h6>
+                                                </div>
+                                            </label>
+
+                                            <input type="radio" class="btn-check w-50" name="btnradio" id="btnradio2"
+                                                   autocomplete="off" value="cartao">
+                                            <label class="btn btn-outline-secondary w-50 d-flex flex-column justify-content-center align-items-center"
+                                                   for="btnradio2">
+                                                <div>
+                                                    <i style="font-size:3rem" class="bi bi-credit-card"></i>
+                                                </div>
+                                                <div>
+                                                    <h6>Débito/Crédito</h6>
+                                                </div>
+                                            </label>
+                                        </div>
+                                        <div class="d-grid gap-2">
+                                            <input type="hidden" id="pagar-valor" name="valor">
+                                            <input type="hidden" name="_idComanda" value="{{comanda._id}}">
+                                            <button type="button" id="payment" onclick="enviarPagamento()"
+                                                    class="btn btn-primary btn-lg text-bold card-footer-btn justify-content-center text-uppercase-bold-sm hover-lift-light">
+                                                PAGAR AGORA
+                                            </button>
+                                        </div>
+
+
+                                    </form>
+                                </div>
+                                    {% elif comanda.status == 'pendente' %}
+                                <div id="body-card-pendente" class="card-body p-3">
+                                   Pagamento em processo. Aguarde...
+                                </div>
+                                    {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script src="../static/js/comanda.js"></script>
+<!-- MAIN -->
+
+{% endblock %}

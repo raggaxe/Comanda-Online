@@ -1,0 +1,22 @@
+
+.card-new {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: rgba(13,110,253,1);
+    background-clip: border-box;
+    color:whitesmoke;
+    max-width:420px;
+    border: 5px solid whitesmoke ;
+    border-radius: 0.25rem;
+    box-shadow: 0 20px 27px 0 rgb(0 0 0 / 5%);
+    padding:14px;
+}
+
+
+.card-body {
+    flex: 1 1 auto;
+    padding: 1.5rem 1.5rem;
+}

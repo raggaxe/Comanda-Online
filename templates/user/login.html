@@ -1,0 +1,31 @@
+{% extends "shared/base.html" %}
+{% block content %}
+<link href="../static/css/user.css" rel="stylesheet">
+<section class="apx1 container d-flex text-center flex-column justify-content-center align-items-center">
+ <a href="/cliente" class="position-absolute admin text-light"><i style="font-size:2rem" class='bx bx-restaurant'></i></a>
+
+    <div class="card-info text-light">
+        <h1>Área de Adminstração</h1>
+        <p class="mb-2 text-light ">Aqui, você pode adicionar novos produtos, gerenciar estoque, visualizar relatórios e
+            muito mais.
+            Tudo isso pode ser feito em tempo real, diretamente do seu celular.
+
+        </p>
+        <form action="/ativar" method="post">
+
+            <div class="form-floating mb-3 text-dark">
+                <input type="email" name="email"  class="form-control" id="floatingInput" placeholder="name@example.com">
+                <label for="floatingInput">Email</label>
+            </div>
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-outline-light btn-lg">Receber o Código de Ativação</button>
+<!--                <div class="form-text">Não tem usuário? <a href="/signup">Cadastrar</a></div>-->
+            </div>
+        </form>
+    </div>
+
+
+</section>
+
+
+{% endblock %}

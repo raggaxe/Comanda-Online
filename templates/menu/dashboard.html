@@ -1,0 +1,205 @@
+{% extends "shared/base_dashboard.html" %}
+{% block mainContent %} {{ url_for(request.endpoint, **request.view_args) }} {%endblock%}
+{% block class_dashboard %}active{% endblock %}
+{% block content %}
+
+<!-- MAIN -->
+<ul class="box-info">
+    <li>
+        <i class='bx bxs-calendar-check'></i>
+        <span class="text d-flex  justify-content-center align-items-center">
+   {% set count = namespace(value=0) %}
+{% for i in mesas %}
+             {% if i.status %}
+  {% set count.value = count.value + 1 %}
+    {% endif %}
+
+{% endfor %}
+
+
+						<h3 id="total_mesas_abertas" class="m-0 p-0 me-2">{{count.value}}</h3>
+						<p class="m-0 p-0">Mesas Abertas</p>
+					</span>
+    </li>
+    <li>
+        <i class='bx bxs-group'></i>
+        <span class="text d-flex  justify-content-center align-items-center">
+               {% set countcomandas = namespace(value=0) %}
+                {% for i in comandas %}
+                             {% if i.status %}
+                  {% set countcomandas.value = countcomandas.value + 1 %}
+                {% endif %}
+
+            {% endfor %}
+						<h3 class="m-0 p-0 me-2">{{countcomandas.value}}</h3>
+						<p class="m-0 p-0">Comandas</p>
+					</span>
+    </li>
+    <li>
+        {% set countpedidosEntregues = namespace(value=0) %}
+        {% for i in pedidos %}
+        {% if i.status == "Entregue" %}
+        {% set countpedidosEntregues.value = countpedidosEntregues.value + 1 %}
+        {% endif %}
+        {% endfor %}
+        <i class="bx bi bi-basket3-fill"></i>
+        <span class="text d-flex  justify-content-center align-items-center">
+			<h3 class="m-0 p-0 me-2">{{countpedidosEntregues.value}}</h3>
+			<p class="m-0 p-0">Entregues</p>
+	    </span>
+    </li>
+    <li>
+        <i class='bx bxs-dollar-circle'></i>
+        <span class="text d-flex  justify-content-center align-items-center">
+			<h3 class="m-0 p-0 me-2">{{total_vendas}}</h3>
+		</span>
+    </li>
+</ul>
+<div class="table-data">
+    <div class="todo">
+        <div class="head">
+            <h3>Pedidos</h3>
+            <!--            <i class='bx bx-plus'></i>-->
+            <!--            <i class='bx bx-filter'></i>-->
+        </div>
+
+        <div id="listaPedidos">
+            {% for pedido in pedidos %}
+            {% if pedido.status == True %}
+            <div class="d-flex justify-content-between align-items-center pedidoCard">
+                <div class="d-flex flex-column justify-content-start align-items-start profile w-100">
+                    <div>{{getCardapio(pedido._idCardapio)['nome_produto']}}</div>
+                    <small class="text-body-secondary" id="tempo-decorrido{{pedido._id}}">00:00:00</small>
+                    <input type="hidden" id="tempo{{pedido._id}}" value="{{pedido.created_at}}">
+                    <input type="hidden" class="order-id" value="{{pedido._id}}">
+                </div>
+
+                <div class="text-center">{{pedido.quantidade}}</div>
+                <div>
+                    <div class="d-flex flex-column justify-content-center align-items-start">
+                        <form action="/aceitar_pedidos" method="post">
+                            <input type="hidden" name="_idPedido" value="{{pedido._id}}">
+                            <button type="button" onclick="aceitarPedido('{{pedido._id}}')"
+                                    class="optionAceitar text-success  d-flex justify-content-center align-items-center">
+                                <div style=" font-size: .8rem;">Aceitar</div>
+                                <div><i style=" font-size: 1.5rem;" class="bi bi-check my-icon"></i></div>
+                            </button>
+                        </form>
+
+                        <a href="#" class="optionAceitar text-danger d-flex justify-content-center align-items-center">
+                            <div style=" font-size: .8rem;">Recusar</div>
+                            <i style=" font-size: 1.5rem;" class="bi bi-x my-icon"></i>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+            {% endif %}
+            {% endfor%}
+        </div>
+
+    </div>
+    <div class="todo">
+        <div class="head">
+            <h3>Pagamento</h3>
+            <!--            <i class='bx bx-plus'></i>-->
+            <!--            <i class='bx bx-filter'></i>-->
+        </div>
+
+        <div id="listaPagamentos">
+
+            {% for comanda in comandas %}
+            {% if comanda.status == 'pendente' %}
+            <div class="d-flex justify-content-between align-items-center pedidoCard">
+                <div class="d-flex flex-column justify-content-start align-items-start profile w-100">
+                    <div>Mesa: <strong>{{getMesa(comanda._idMesa)['numero_mesa']}}</strong></div>
+                    <div>Tipo: <strong>{{comanda.tipo_pagamento}}</strong></div>
+
+                    <div>
+                        Esperando:
+                        <strong class="text-danger" id="tempo-decorrido-pagamente{{comanda._id}}">00:00:00</strong>
+                    </div>
+                    <input type="hidden" id="tempoUp{{comanda._id}}" value="{{comanda.updated_at}}">
+                    <input type="hidden" class="order-id-pagamento" value="{{comanda._id}}">
+                </div>
+                <div>
+                    <div class="d-flex flex-column justify-content-center align-items-start">
+                        <form id="form-finalizar-pagamento{{comanda._id}}" action="/finalizar_pagamento" method="post">
+                            <input type="hidden" name="_idComanda" value="{{comanda._id}}">
+                            <button type="button" data-comanda="{{comanda._id}}"
+                                    class="optionAceitar aceitarPagamentos text-success  d-flex justify-content-center align-items-center">
+                                <div style=" font-size: .8rem;">Finalizar</div>
+                                <div><i style=" font-size: 1.5rem;" class="bi bi-check my-icon"></i></div>
+                            </button>
+                        </form>
+
+
+                    </div>
+
+                </div>
+            </div>
+            {% endif %}
+            {% endfor%}
+
+        </div>
+
+    </div>
+    <div class="order">
+        <div class="head">
+            {% set countpedidos = namespace(value=0) %}
+            {% for i in pedidos %}
+            {% if i.status == "Aceito" %}
+            {% set countpedidos.value = countpedidos.value + 1 %}
+            {% endif %}
+
+            {% endfor %}
+            <h3>Fila de produção - {{countpedidos.value}} </h3>
+            <i class='bx bx-search'></i>
+            <i class='bx bx-filter'></i>
+        </div>
+        <table>
+            <thead>
+            <tr>
+                <th>Produto</th>
+                <!--                <th>Tempo Espera</th>-->
+                <!--                <th class="text-center">Valor</th>-->
+                <th class="text-center">Unid</th>
+                <th class="text-center"></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for pedido in pedidos %}
+            {% if pedido.status == "Aceito" %}
+            <tr>
+                <td class="d-flex justify-content-start align-items-center">
+                    <!--                    <img src="{{url_for('user_routes.uploaded_file', filename=getCardapio(pedido._idCardapio)['filename'] )}}">-->
+                    <span>{{getCardapio(pedido._idCardapio)['nome_produto']}}</span>
+
+                    <small class="text-body-secondary" id="tempo-cook{{pedido._id}}">00:00:00</small>
+                    <input type="hidden" id="cook{{pedido._id}}" value="{{pedido.updated_at}}">
+                    <input type="hidden" class="order-id-cook" value="{{pedido._id}}">
+                </td>
+                <td class="text-center">{{pedido.quantidade}}</td>
+                <td>
+
+
+                    <a type="button" onclick="entregarPedido('{{pedido._id}}')"
+                       class="optionAceitar text-warning m-0  w-100 d-flex justify-content-center align-items-center">
+                        <div class="me-2" style=" font-size: .8rem;">Entregar</div>
+                        <div><i style=" font-size: 1rem;" class="bi bi-bell-fill"></i></div>
+                    </a>
+
+                </td>
+            </tr>
+            {% endif %}
+            {% endfor%}
+
+            </tbody>
+        </table>
+
+    </div>
+</div>
+<!-- MAIN -->
+<script src="../static/js/dashboard.js"></script>
+
+{% endblock %}

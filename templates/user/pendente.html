@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Pagamento</title>
+    <!-- My CSS -->
+    <link rel="stylesheet" href="../static/css/pendente.css">
+    <!-- jQuery library -->
+
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js"
+            integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-aFq/bzH65dt+w6FI2ooMVUpc+21e0SRygnTpmBvdBgSdnuTN7QbdgL+OapgHtvPp" crossorigin="anonymous">
+     <!-- socketio -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.js"
+            integrity="sha512-xbQU0+iHqhVt7VIXi6vBJKPh3IQBF5B84sSHdjKiSccyX/1ZI7Vnkt2/8y8uruj63/DVmCxfUNohPNruthTEQA=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+<body style="height:100vh" class="bg-success d-flex justify-content-center align-items-center">
+<div class="card-new bg-success">
+    <div class="card-body">
+        {% set cliente = getCliente(comanda._idCliente) %}
+        <h3 style="font-weight:700" >{{cliente.nome}},</h3>
+        <p>
+            Obrigado por realizar o seu pedido de pagamento. Agora, é necessário aguardar alguns instantes para que o
+            nosso atendente possa ir até a sua mesa e realizar a cobrança pessoalmente.
+        </p>
+
+        <div class="d-grid gap-2 mt-3 mb-3">
+            <input type="hidden" id="_idComanda" class="order-id" data-user="{{comanda._idUser}}" data-status="{{comanda.status}}" value="{{comanda._id}}">
+            <input type="hidden" id="tempoUpdate{{comanda._id}}" value="{{comanda.updated_at}}">
+            <i class="bi bi-clock-history me-2"></i>
+            <h1 class="text-center" id="tempo-decorrido{{comanda._id}}">00:00:00</h1>
+        </div>
+        <div class="alert alert-success" role="alert">
+         <small>
+                Já realizou o pagamento? Para agilizar o atendimento, informamos que normalmente o tempo de confirmação do
+            pagamento é de até 10 minutos após o pagamento realizado.
+         </small>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-qKXV1j0HvMUeCBQ+QVp7JcfGl760yU08IQ+GpUo5hlbpg51QRiuqHAJz8+BrxE/N"
+        crossorigin="anonymous"></script>
+</body>
+</html>
+
+<script>
+
+$('.order-id').each(function(i,e){
+    var _idcook = $(e).val();
+    var tempoUpdate = $('#tempoUpdate'+_idcook).val();
+    setTimmer(tempoUpdate, _idcook);
+});
+// Define a função stopInterval() para parar o intervalo
+function stopInterval() {
+    clearInterval(intervalId);
+}
+
+// Declare a variável fora do escopo da função para que seja acessível em todos os lugares
+let intervalId;
+
+function setTimmer(tempo,_id){
+    var startDate = new Date(tempo);
+    // Atualize a cada segundo
+    intervalId = setInterval(function() {
+
+      // Calcule o tempo decorrido em milissegundos
+      let elapsed = new Date() - startDate;
+
+      // Converta o tempo decorrido em segundos, minutos e horas
+      let seconds = Math.floor(elapsed / 1000);
+      let minutes = Math.floor(seconds / 60);
+      let hours = Math.floor(minutes / 60);
+
+      // Formate a saída
+      let output = hours.toString().padStart(2, '0') + ':' + (minutes % 60).toString().padStart(2, '0') + ':' + (seconds % 60).toString().padStart(2, '0');
+
+      // Atualize a exibição do tempo decorrido
+      $('#tempo-decorrido'+_id).html(output);
+
+    }, 1000); // intervalo em milissegundos
+}
+
+
+
+
+var socket = io.connect('http://' + document.domain + ':' + location.port) ;
+ $(document).ready(function() {
+    socket.emit('join-room-pagamentos', {'_idComanda': $('#_idComanda').val(), '_idUser':$('#_idComanda').attr('data-user') });
+  });
+
+  socket.on('teste', function(data) {
+  // Atualizar conteúdo do card
+  console.log('teste room')
+});
+
+
+socket.on('pagamento', function(data) {
+  // Atualizar conteúdo do card
+  $('.card-new .card-body h3').text('Pagamento realizado com sucesso');
+  $('.card-new .card-body p').text('Aguarde alguns instantes para que o atendente vá até a sua mesa e realize a cobrança pessoalmente.');
+  $('.card-new .bg-success').removeClass('bg-success').addClass('bg-primary');
+  $('.card-new .alert-success').hide();
+    // Parar o intervalo da comanda relacionada
+     stopInterval()
+  // Esperar 30 segundos antes de recarregar a página
+  setTimeout(function() {
+    window.location.reload();
+  }, 30000);
+});
+
+
+
+</script>
