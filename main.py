@@ -160,8 +160,8 @@ def handle_pedido_cliente_pagamento(data):
     valor = data['valor']
     forma_pagamento = data['formaPagamento']
     # Envia mensagem para o admin sobre o pagamento
-    emit('pedido-admin-pagamento', {'id_comanda': id_comanda, 'valor': valor, 'tipo_pagamento': forma_pagamento, '_idMesa':comanda['_idMesa']},
-         room=comanda['_idUser'])
+    emit('pedido-admin-pagamento', {'updated_at':str(comanda['updated_at']),'id_comanda': str(id_comanda), 'valor': valor, 'tipo_pagamento': forma_pagamento, '_idMesa':str(comanda['_idMesa'])},
+         room=str(comanda['_idUser']))
 
 
 @socketio.on('pagamento-realizado')

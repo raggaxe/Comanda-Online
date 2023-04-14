@@ -183,10 +183,10 @@
                     {% for categoria in categorias %}
                     <li class="nav-item" role="presentation">
                         <button class="nav-link {% if loop.first %}active{% endif %} text-body-secondary "
-                                id="{{ categoria.nome }}-tab"
-                                data-bs-toggle="tab" data-bs-target="#tab-pane-{{ categoria.nome }}" type="button"
+                                id="{{categoria._id}}-tab"
+                                data-bs-toggle="tab" data-bs-target="#tab-pane-{{categoria._id}}" type="button"
                                 role="tab"
-                                aria-controls="tab-pane-{{ categoria.nome}}" aria-selected="true">{{ categoria.nome }}
+                                aria-controls="tab-pane-{{ categoria._id}}" aria-selected="true">{{ categoria.nome }}
                         </button>
                     </li>
                     {% endfor %}
@@ -201,9 +201,9 @@
         <div class="tab-content">
 
             {% for categoria in categorias %}
-            <div class="tab-pane fade {% if loop.first %}show active{% endif %}" id="tab-pane-{{ categoria.nome }}"
+            <div class="tab-pane fade {% if loop.first %}show active{% endif %}" id="tab-pane-{{ categoria._id }}"
                  role="tabpanel"
-                 aria-labelledby="{{ categoria.nome }}-tab" tabindex="0">
+                 aria-labelledby="{{ categoria._id }}-tab" tabindex="0">
 
                 <table
                         class="table table-bordered table-hover"

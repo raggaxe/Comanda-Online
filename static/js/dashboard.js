@@ -81,6 +81,7 @@ function setPagamento(tempo,_id){
 }
 
 function setTimmer(tempo,_id){
+
     var startDate = new Date(tempo);
     // Atualize a cada segundo
     setInterval(function() {

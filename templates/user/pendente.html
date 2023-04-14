@@ -56,67 +56,75 @@
 
 <script>
 
-$('.order-id').each(function(i,e){
-    var _idcook = $(e).val();
-    var tempoUpdate = $('#tempoUpdate'+_idcook).val();
-    setTimmer(tempoUpdate, _idcook);
-});
-// Define a função stopInterval() para parar o intervalo
-function stopInterval() {
+$(document).ready(function() {
+  // Declaração da variável que armazenará o ID do intervalo
+  let intervalId;
+
+  // Função para parar o intervalo
+  function stopInterval() {
     clearInterval(intervalId);
-}
+  }
 
-// Declare a variável fora do escopo da função para que seja acessível em todos os lugares
-let intervalId;
+  // Função para atualizar o tempo decorrido na tela
+  function updateElapsedTime(_idcook, tempoUpdate) {
+    // Cria um objeto Date a partir do tempo fornecido
+    const startDate = new Date(tempoUpdate);
 
-function setTimmer(tempo,_id){
-    var startDate = new Date(tempo);
-    // Atualize a cada segundo
-    intervalId = setInterval(function() {
+    // Define o intervalo para atualização do tempo decorrido
+    intervalId = setInterval(() => {
+      // Calcula o tempo decorrido em milissegundos
+      const elapsed = new Date() - startDate;
 
-      // Calcule o tempo decorrido em milissegundos
-      let elapsed = new Date() - startDate;
+      // Converte o tempo decorrido em segundos, minutos e horas
+      const seconds = Math.floor(elapsed / 1000);
+      const minutes = Math.floor(seconds / 60);
+      const hours = Math.floor(minutes / 60);
 
-      // Converta o tempo decorrido em segundos, minutos e horas
-      let seconds = Math.floor(elapsed / 1000);
-      let minutes = Math.floor(seconds / 60);
-      let hours = Math.floor(minutes / 60);
+      // Formata a saída do tempo decorrido
+      const output = `${hours.toString().padStart(2, '0')}:${(minutes % 60).toString().padStart(2, '0')}:${(seconds % 60).toString().padStart(2, '0')}`;
 
-      // Formate a saída
-      let output = hours.toString().padStart(2, '0') + ':' + (minutes % 60).toString().padStart(2, '0') + ':' + (seconds % 60).toString().padStart(2, '0');
-
-      // Atualize a exibição do tempo decorrido
-      $('#tempo-decorrido'+_id).html(output);
-
+      // Atualiza a exibição do tempo decorrido na tela
+      $(`#tempo-decorrido${_idcook}`).html(output);
     }, 1000); // intervalo em milissegundos
-}
+  }
 
-
-
-
-var socket = io.connect('http://' + document.domain + ':' + location.port) ;
- $(document).ready(function() {
-    socket.emit('join-room-pagamentos', {'_idComanda': $('#_idComanda').val(), '_idUser':$('#_idComanda').attr('data-user') });
+  // Inicia o timer para cada item da classe '.order-id'
+  $('.order-id').each((i, e) => {
+    const _idcook = $(e).val();
+    const tempoUpdate = $(`#tempoUpdate${_idcook}`).val();
+    updateElapsedTime(_idcook, tempoUpdate);
   });
 
-  socket.on('teste', function(data) {
-  // Atualizar conteúdo do card
-  console.log('teste room')
-});
+  // Conecta ao socket.io
+  const socket = io.connect(`${location.protocol}//${document.domain}:${location.port}`);
 
+  // Envia o evento 'join-room-pagamentos' quando a página é carregada
+  socket.emit('join-room-pagamentos', {
+    _idComanda: $('#_idComanda').val(),
+    _idUser: $('#_idComanda').attr('data-user'),
+  });
 
-socket.on('pagamento', function(data) {
-  // Atualizar conteúdo do card
-  $('.card-new .card-body h3').text('Pagamento realizado com sucesso');
-  $('.card-new .card-body p').text('Aguarde alguns instantes para que o atendente vá até a sua mesa e realize a cobrança pessoalmente.');
-  $('.card-new .bg-success').removeClass('bg-success').addClass('bg-primary');
-  $('.card-new .alert-success').hide();
-    // Parar o intervalo da comanda relacionada
-     stopInterval()
-  // Esperar 30 segundos antes de recarregar a página
-  setTimeout(function() {
-    window.location.reload();
-  }, 30000);
+  // Listener para o evento 'teste'
+  socket.on('teste', (data) => {
+    console.log('teste room');
+  });
+
+  // Listener para o evento 'pagamento'
+  socket.on('pagamento', (data) => {
+    // Atualiza o conteúdo do card
+    $('.card-new .card-body h3').text('Pagamento realizado com sucesso');
+    $('.card-new .card-body p').text('Aguarde alguns instantes para que o atendente vá até a sua mesa e realize a cobrança pessoalmente.');
+    $('.card-new .bg-success').removeClass('bg-success').addClass('bg-primary');
+    $('.card-new .alert-success').hide();
+
+    // Para o timer da comanda relacionada
+    stopInterval();
+
+    // Espera 30 segundos antes de recarregar a página
+    setTimeout(() => {
+      window.location.reload();
+    }, 5000);
+  });
 });
 
 

@@ -51,7 +51,7 @@ def dashboard():
                             _quantidade = int(pedido["quantidade"])
                             _valor = repository.find_one("cardapios", {"_id": ObjectId(pedido["_idCardapio"])})["valor"]
 
-                            subTotal = int(_quantidade) * float(_valor)
+                            subTotal = int(_quantidade) * float(_valor.replace(',', '.'))
                             total_vendas = total_vendas + subTotal
 
                 return render_template('menu/dashboard.html',
@@ -284,7 +284,7 @@ def pedidos():
             if created_at.date() >= today - datetime.timedelta(days=7):
                 valor_total = 0
                 cardapio = repository.find_one('cardapios', {'_id': ObjectId(pedido['_idCardapio'])})
-                valor_total += int(pedido['quantidade']) * float(cardapio['valor'])
+                valor_total += int(pedido['quantidade']) * float(cardapio['valor'].replace(',', '.'))
 
                 date_str = created_at.strftime('%d-%m-%Y')
                 if date_str in vendas_por_dia:
