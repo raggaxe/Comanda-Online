@@ -1,0 +1,31 @@
+MDScreen:
+    name: "register"
+
+    MDBoxLayout:
+        orientation: "vertical"
+        spacing: "20dp"
+        padding: "48dp"
+
+        MDLabel:
+            text: "Register"
+            halign: "center"
+            font_style: "H2"
+
+        MDTextField:
+            id: email_field
+            hint_text: "Email"
+            mode: "rectangle"
+            fill_color: root.theme_cls.primary_light
+            icon_right: "email"
+
+        MDTextField:
+            id: password_field
+            hint_text: "Password"
+            mode: "rectangle"
+            fill_color: root.theme_cls.primary_light
+            icon_right: "key"
+            password: True
+
+        MDRectangleFlatButton:
+            text: "Register"
+            on_release: app.register()

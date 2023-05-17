@@ -1,0 +1,102 @@
+.main-loja{
+    position:relative;
+    overflow:hidden;
+    height:60vh;
+     background:#462B18;
+     color:#fff;
+}
+.main-loja h1{
+     text-shadow: 2px 2px 4px #462B18;
+
+}
+.main-loja img{
+    position:absolute;
+    top:0;
+    bottom:0;
+    left:0;
+    opacity:.4;
+    width:100vw;
+}
+.loja-details{
+   padding: 20px 0;
+   z-index:9;
+   position:relative;
+
+   margin-top:-40px;
+
+}
+.loja-details h1{
+    font-size:3.5rem;
+    margin-bottom:0;
+}
+
+.bg-title{
+    background:rgba(255,255,255,1);
+    width:auto;
+    border-radius: 10px;
+}
+.card-address{
+   font-size:.8rem;
+   font-weight:400;
+}
+.premium{
+   color:#462B18;
+}
+.loja-sub-card{
+    border:1px solid rgba(70, 43, 24,.01);
+    background:#F6F3E9;
+    height:180px;
+ border-radius: 10px;
+}
+a{
+    text-decoration:none;
+}
+
+.ver-todos{
+    margin-top:-20px;
+}
+.card{
+    background:#fff;
+    border-color:#F6F3E9;
+}
+.wrap-content{
+    height:90px;
+
+}
+
+.card-link{
+   font-size:.7rem;
+   font-weight:600;
+}
+
+.card-title-produtos{
+    font-size:1rem;
+       font-weight:600;
+        color:#462B18;
+}
+
+.card-price{
+    border-top:1px solid rgba(70, 43, 24,.4);
+    padding:8px;
+    font-size:1.4rem;
+   font-weight:600;
+    color:#462B18;
+}
+.img-card{
+    position:relative;
+    overflow:hidden;
+    height:150px;
+    width:200px;
+      text-align:center;
+}
+.click{
+    cursor:pointer;
+}
+.img-card img{
+     height:150px;
+     margin:0 auto;
+     text-align:center;
+}
+.listView{
+    overflow:hidden;
+}

@@ -12,6 +12,8 @@ import os
 from bson.objectid import ObjectId
 import datetime
 
+from Services.CadastroLojista import CadastroLogista
+
 mod = Blueprint('admin_routes', __name__)
 repository = BaseRepository(MongoConfig().get_connect())
 
@@ -31,41 +33,54 @@ def dashboard():
             id_user = ObjectId(session['_id'])
             user_found = repository.find_one('users', {'_id': id_user})
             if user_found is not None:
-                lista_cardapios = [item for item in repository.find('cardapios', {'_idUser': session['_id']})]
-                lista_comandas = [item for item in repository.find('comandas', {'_idUser': session['_id']})]
-                lista_pedidos = [item for item in repository.find('pedidos', {'_idUser': session['_id']})]
-                lista_mesas = [item for item in repository.find('mesas', {'_idUser': session['_id']})]
-                lista_clientes = [item for item in repository.find('clientes', {'_idUser': session['_id']})]
-                lista_categorias = [item for item in repository.find('categorias', {'_idUser': session['_id']})]
+                if user_found['CNPJ'] != '':
+                    lista_cardapios = [item for item in repository.find('cardapios', {'_idUser': session['_id']})]
+                    lista_comandas = [item for item in repository.find('comandas', {'_idUser': session['_id']})]
+                    lista_pedidos = [item for item in repository.find('pedidos', {'_idUser': session['_id']})]
+                    lista_mesas = [item for item in repository.find('mesas', {'_idUser': session['_id']})]
+                    lista_clientes = [item for item in repository.find('clientes', {'_idUser': session['_id']})]
+                    lista_categorias = [item for item in repository.find('categorias', {'_idUser': session['_id']})]
 
-                comandas_fechadas = set()
-                for comanda in lista_comandas:
-                    if comanda['status'] == 'realizado':
-                        comandas_fechadas.add(str(comanda['_id']))
+                    comandas_fechadas = set()
+                    for comanda in lista_comandas:
+                        if comanda['status'] == 'realizado':
+                            comandas_fechadas.add(str(comanda['_id']))
 
-                        # print(comandas_fechadas)
-                total_vendas = 0
-                if len(comandas_fechadas) > 0:
-                    for pedido in lista_pedidos:
-                        if str(pedido['_idComanda']) in comandas_fechadas:
-                            _quantidade = int(pedido["quantidade"])
-                            _valor = repository.find_one("cardapios", {"_id": ObjectId(pedido["_idCardapio"])})["valor"]
+                            # print(comandas_fechadas)
+                    total_vendas = 0
+                    if len(comandas_fechadas) > 0:
+                        for pedido in lista_pedidos:
+                            if str(pedido['_idComanda']) in comandas_fechadas:
+                                _quantidade = int(pedido["quantidade"])
+                                _valor = repository.find_one("cardapios", {"_id": ObjectId(pedido["_idCardapio"])})["valor"]
 
-                            subTotal = int(_quantidade) * float(_valor.replace(',', '.'))
-                            total_vendas = total_vendas + subTotal
+                                subTotal = int(_quantidade) * float(_valor.replace(',', '.'))
+                                total_vendas = total_vendas + subTotal
 
-                return render_template('menu/dashboard.html',
-                                       comandas=lista_comandas,
-                                       pedidos=lista_pedidos,
-                                       mesas=lista_mesas,
-                                       cardapios=lista_cardapios,
-                                       clientes=lista_clientes,
-                                       categorias=lista_categorias,
-                                       total_vendas="R$ {:.2f}".format(total_vendas).replace(".", ",")
-                                       )
+                    return render_template('menu/dashboard.html',
+                                           comandas=lista_comandas,
+                                           pedidos=lista_pedidos,
+                                           mesas=lista_mesas,
+                                           cardapios=lista_cardapios,
+                                           clientes=lista_clientes,
+                                           categorias=lista_categorias,
+                                           total_vendas="R$ {:.2f}".format(total_vendas).replace(".", ",")
+                                           )
+                else:
+                    return redirect(url_for('admin_routes.novo_fornecedor'))
             else:
                 return render_template('user/cadastro.html')
     return redirect(url_for('index_routes.index'))
+
+
+@mod.route('/primeiro-acesso', methods=['POST', 'GET'])
+@LoginRequired.login_required
+def novo_fornecedor():
+    return render_template('menu/primeiro_acesso.html')
+
+
+
+
 
 
 # GERENCIAR MESAS
@@ -226,6 +241,7 @@ def excluir_categoria():
 
 
 import datetime
+
 
 @mod.route('/pedidos', methods=['POST', 'GET'])
 @LoginRequired.login_required
@@ -430,7 +446,7 @@ def pagamentos():
                     _quantidade = int(pedido["quantidade"])
                     _valor = repository.find_one("cardapios", {"_id": ObjectId(pedido["_idCardapio"])})["valor"]
 
-                    subTotal = int(_quantidade) * float(_valor)
+                    subTotal = int(_quantidade) * float(_valor.replace(".", ","))
                     total_vendas = total_vendas + subTotal
 
         today = datetime.date.today()

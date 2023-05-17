@@ -1,28 +1,145 @@
 {% extends "shared/base.html" %}
 {% block content %}
+<!-- My CSS -->
+<link rel="stylesheet" href="../static/css/index_main.css">
 
+<section class="vw-100 d-flex justify-content-center align-items-center main-1">
+    <div class="row container position-absolute main-row">
+        <div class="col-md-12 d-flex justify-content-center align-items-center">
+            <div>
+                <h1 class="mb-2">Bem-vindo ao nosso aplicativo EasyTable comanda online! </h1>
+                <p class="mb-2">Com o nosso aplicativo, você pode desfrutar de uma experiência de comanda mais fácil e
+                    rápida.<br>
+                    Temos
+                    duas opções para você começar a usar nosso aplicativo: entrar como administrador ou entrar como
+                    cliente.</p>
+<!--                <div class="d-flex justify-content-start align-items-center">-->
+<!--                    <a href="/cadastrar-user" class="btn btn-outline-light btn-lg  ps-5 pe-5 mt-3 me-3">CADASTRE-SE AQUI!</a>-->
+<!--                    <a href="#perto_mim"-->
+<!--                       class="btn btn-outline-light btn-lg d-flex justify-content-center align-items-center ps-5 pe-5 mt-3">FAÇA-->
+<!--                        UM PEDIDO <i style="font-size:2rem" class='bx bx-chevrons-down'></i></a>-->
 
-<section class="apx1 container text-center d-flex flex-column justify-content-center align-items-center ">
- <a href="/login" class="position-absolute admin text-light"><i style="font-size:2rem" class='bx bx-restaurant'></i></a>
-
-    <div class="card-info">
-        <h1 class="mb-2">Bem-vindo ao nosso aplicativo de comanda online! </h1>
-        <p class="mb-2">Com o nosso aplicativo, você pode desfrutar de uma experiência de comanda mais fácil e rápida.
-            Temos
-            duas opções para você começar a usar nosso aplicativo: entrar como administrador ou entrar como cliente.</p>
-     <div class="d-grid gap-2 w-100">
-
-
-
-            <a href="/cliente" class="btn btn-outline-light btn-lg  p-2 m-2">Abrir Comanda!</a>
-
+<!--                </div>-->
+            </div>
         </div>
 
     </div>
 
-
+    <img src="./static/img/back-main.jpeg" class="me-5" width="100%">
 </section>
+<!--<div class="container mt-4 mb-4">-->
+<!--    <div class="row d-flex justify-content-between align-items-center">-->
+<!--        <div class="col-md-3 ">-->
+<!--            <div class="sub-card text-center d-flex flex-column justify-content-center align-items-center p-4">-->
+<!--                <i style="font-size:3rem;" class='bx bx-restaurant mb-2'></i>-->
+<!--                <h5>-->
+<!--                    Controle de pedidos e mesas-->
+<!--                </h5>-->
+<!--                <small>-->
+<!--                    Com um aplicativo de comanda online, automatize pedidos e mesas, torne o fluxo de trabalho mais-->
+<!--                    eficiente e reduza o tempo de espera.-->
+<!--                </small>-->
+
+<!--            </div>-->
+
+<!--        </div>-->
 
 
+<!--        <div class="col-md-3 ">-->
+<!--            <div class="sub-card text-center d-flex flex-column justify-content-center align-items-center p-4">-->
+<!--                <i style="font-size:3rem;" class='bx bxs-user mb-2'></i>-->
+<!--                <h5>-->
+<!--                    Business Intelligence (BI) de clientes-->
+<!--                </h5>-->
+<!--                <small>-->
+<!--                    Acesse dados importantes sobre os clientes, personalize o atendimento e crie campanhas de-->
+<!--                    marketing mais eficientes.-->
+<!--                </small>-->
+
+<!--            </div>-->
+
+<!--        </div>-->
+
+
+<!--        <div class="col-md-3 ">-->
+<!--            <div class="sub-card text-center d-flex flex-column justify-content-center align-items-center p-4">-->
+<!--                <i style="font-size:3rem;" class='bx bxs-archive mb-2'></i>-->
+<!--                <h5>-->
+<!--                    Gestão de vendas e estoque-->
+<!--                </h5>-->
+<!--                <small>-->
+<!--                    Gerencie o estoque do estabelecimento, monitorando as vendas e evitando a falta de produtos.-->
+<!--                </small>-->
+
+<!--            </div>-->
+
+<!--        </div>-->
+
+<!--        <div class="col-md-3 ">-->
+<!--            <div class="sub-card text-center d-flex flex-column justify-content-center align-items-center p-4">-->
+<!--                <i style="font-size:3rem;" class='mb-2 bx bxs-bar-chart-alt-2'></i>-->
+<!--                <h5>-->
+<!--                    Metadados e análise de dados-->
+<!--                </h5>-->
+<!--                <small>-->
+<!--                    Analise dados de vendas e pedidos, acompanhe o desempenho e identifique tendências para tomar-->
+<!--                    decisões mais informadas. </small>-->
+
+<!--            </div>-->
+
+<!--        </div>-->
+
+
+<!--    </div>-->
+<!--    <div class="mt-4 mb-4">-->
+<!--        <div class="d-flex justify-content-between align-items-center">-->
+<!--            <h2>-->
+<!--                Perto de Mim <i class='bx bx-pin laranja'></i>-->
+<!--            </h2>-->
+
+
+<!--            <div class="click">-->
+<!--                Brasília <i style="" class='bx bx-chevron-down'></i>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div id="perto_mim" class="d-flex justify-content-start align-items-center position-relative">-->
+<!--            {% for item in estabelecimentos%}-->
+<!--            <div onclick="window.location.href='{{ url_for('index_routes.loja', _id=item._id) }}'" class="d-flex flex-column justify-content-between align-items-center item-estabelecimento m-1">-->
+<!--                &lt;!&ndash;                                {{item}}&ndash;&gt;-->
+<!--                <img src="./static/img/back-main.jpeg" width="200">-->
+
+
+<!--                <div class="sub-item text-break p-3">-->
+<!--                    <div class="card-title">-->
+<!--                        {{item.nome_comercial}}-->
+<!--                    </div>-->
+<!--                    <div class="card-address">-->
+<!--                        <div>-->
+<!--                            {{item.endereco}}-->
+<!--                            {{item.bairro}}-->
+<!--                            {{item.estado}}-->
+<!--                        </div>-->
+<!--                        <div>-->
+<!--                            {{item.cidade}}-->
+<!--                        </div>-->
+
+
+<!--                    </div>-->
+<!--                    <div class="card-detalhes">-->
+<!--                        {{item.detalhes_comercial}}-->
+<!--                    </div>-->
+<!--                    <div class="card-link laranja mt-4">-->
+
+<!--                        Ver mais <i class='bx bxs-chevrons-right'></i>-->
+<!--                    </div>-->
+
+<!--                </div>-->
+
+
+<!--            </div>-->
+<!--            {% endfor %}-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
 
 {% endblock %}

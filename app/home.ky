@@ -1,0 +1,70 @@
+<ContentNavigationDrawer>
+
+    MDList:
+
+        OneLineListItem:
+            text: "Screen 1"
+            on_press:
+                root.nav_drawer.set_state("close")
+                root.screen_manager.current = "scr 1"
+
+        OneLineListItem:
+            text: "Screen 2"
+            on_press:
+                root.nav_drawer.set_state("close")
+                root.screen_manager.current = "scr 2"
+
+
+<LoginScreen>:
+    BoxLayout:
+        orientation: "vertical"
+
+        MDToolbar:
+            title: "Login"
+            elevation: 10
+
+        MDBottomAppBar:
+            MDToolbar:
+                title: "Help"
+                icon: "help-circle-outline"
+
+        MDBanner:
+            text: "Banner"
+
+
+MDScreen:
+    name: "scr 1"
+
+    MDLabel:
+        text: "Screen 1"
+        halign: "center"
+
+
+MDScreen:
+    name: "scr 2"
+
+    MDLabel:
+        text: "Screen 2"
+        halign: "center"
+
+
+MDScreen:
+    name: "home"
+
+    MDLabel:
+        text: "Welcome to the home screen!"
+        halign: "center"
+
+
+MDScreen:
+    name: "login"
+
+    LoginScreen:
+
+
+MDScreen:
+    name: "register"
+
+    MDLabel:
+        text: "Register"
+        halign: "center"

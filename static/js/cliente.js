@@ -1,4 +1,5 @@
-var socket = io.connect('http://' + document.domain + ':' + location.port) ;
+var socket = io.connect(document.protocol + '//' + document.domain + ':' + location.port);
+
 
 socket.on('connect', function() {
   console.log('Conectado ao servidor!');

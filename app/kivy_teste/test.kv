@@ -1,0 +1,31 @@
+<Gerenciador>:
+    Menu:
+        name: 'menu'
+    Tarefas:
+        name: 'tarefas'
+<Menu>:
+    BoxLayout:
+        orientation:'vertical'
+        Button:
+            text: 'Tarefas'
+            on_release: app.root.current = 'tarefas'
+        Button
+            text: 'Assistente'
+        Button:
+            text: 'Sair'
+            on_release: app.stop()
+
+
+
+<Tarefas>:
+    BoxLayout:
+        orientation:'vertical'
+        MDTopAppBar:
+            title: 'Action Bar'
+        MDLabel:
+            text: 'Menu'
+            halign:'center'
+
+
+
+

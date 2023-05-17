@@ -1,0 +1,117 @@
+
+#:import MDNavigationLayout kivymd.uix.navigationdrawer.MDNavigationLayout
+#
+#<CreateBox@MDBoxLayout>:
+#    image:''
+#    text:""
+#    items_count:""
+#    subtext:''
+#    orientation:'vertical'
+#    MDCard:
+#        padding: 4
+#        size_hint: None, None
+#        size: "500dp", "100dp"
+#
+#        MDRelativeLayout:
+#            Image:
+#                source: root.image
+#
+#            MDIconButton:
+#                icon: "dots-vertical"
+#                pos_hint: {"top": 1, "right": 1}
+#
+#            MDLabel:
+#                id: label
+#                text: root.text
+#                adaptive_size: True
+#                color: "grey"
+#                pos: "12dp", "12dp"
+#                bold: True
+
+
+<PertoMimView>:
+    name: "PertoMim"
+    screen_manager: app.sm
+    MDBoxLayout:
+        orientation:'vertical'
+        MDBoxLayout:
+            size_hint_y:.15
+            x:dp(25)
+            y: dp(5)
+            orientation:"vertical"
+#            height: nav_layout.height
+            width: root.width
+            BoxLayout:
+                canvas.before:
+                    Color:
+                        rgba:(0.9647, 0.9529, 0.9137,1)
+                    Rectangle:
+                        pos:self.pos
+                        size:self.size
+                orientation: "vertical"
+                MDIconButton:
+                    id: icon_menu
+                    ripple_scale: 0
+                    icon: "arrow-left"
+                    icon_size: "25sp"
+                    icon_color: (0.2745, 0.1686, 0.0941, 1)
+                    on_press:
+                        root.screen_manager.current = "main"
+            BoxLayout:
+                padding:[dp(20),dp(0),dp(20),dp(0)]
+                MDLabel:
+                    size_hint_x: .7
+                    halign: "left"
+                    font_name: 'Montserrat'
+                    text: "Descubra"
+                    color: (0.2745, 0.1686, 0.0941, 1) # cor: #462B18 com 35% de opacidade
+                    font_size: "22sp"
+                    bold: True
+                BoxLayout:
+                    MDLabel:
+                        size_hint_x: .3
+                        y:dp(5)
+                        halign: "right"
+                        font_name: 'Montserrat'
+                        text: "Brasília"
+                        color: (0.2745, 0.1686, 0.0941, 1) # cor: #462B18 com 35% de opacidade
+                        font_size: "15sp"
+                    MDIcon:
+                        icon: "chevron-down"
+#                        badge_icon: "numeric-10"
+                        pos_hint: {"center_x": .5, "center_y": .5}
+
+        MDGridLayout:
+            size_hint_y:.85
+            cols:1
+            padding:[dp(22),dp(0),dp(22),dp(0)]
+            BoxLayout:
+                size_hint_y:.1
+                MDLabel:
+                    halign: "left"
+                    font_name: 'Montserrat'
+                    color: (0.2745, 0.1686, 0.0941, .35) # cor: #462B18 com 35% de opacidade
+                    text:'Mais visitados'
+                MDRectangleFlatIconButton:
+                    font_name: 'Montserrat'
+                    padding:2
+                    line_color:(0.9647, 0.9529, 0.9137,1)
+                    ripple_scale: 0
+                    color: (0.2745, 0.1686, 0.0941, .8) # cor: #462B18 com 35% de opacidade
+                    text:'Ver mais'
+                    font_size:'12sp'
+                    icon: "plus"
+                    on_press: print('teste')
+            Carousel:
+                id:fav_cards
+                size_hint_y:None
+#                CreateBox:
+#                    text: 'Comonente'
+#                    image: "./assets/images/comum.jpg"
+            ScrollView:
+                BoxLayout:
+                    size_hint_y:None
+                    MDLabel:
+                        text:'teste'
+
+

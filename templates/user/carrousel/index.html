@@ -1,0 +1,56 @@
+<!-- My CSS -->
+<link rel="stylesheet" href="../static/css/cards.css">
+
+<div id="perto_mim" class="d-flex justify-content-start align-items-center  position-relative">
+    <div class="m-3">
+        <a class="control" href="#">
+            <div class="d-flex justify-content-center align-items-center ">
+                <i class='bx bx-left-arrow-alt'></i>
+            </div>
+        </a>
+    </div>
+    <div class="d-flex justify-content-start align-items-center  position-relative carrousel">
+        {% for item in estabelecimentos%}
+        <a href="#" onclick="window.location.href='{{ url_for('index_routes.loja', _id=item._id) }}'"
+           class="d-flex flex-column justify-content-between align-items-center position-relative item-estabelecimento m-1">
+
+            <div class="img_box d-flex flex-column justify-content-center align-items-center position-relative">
+                <img src="./static/img/back-main.jpeg">
+
+            </div>
+
+
+            <div class="sub-item text-break p-3 position-absolute ">
+                <div class="d-flex flex-column justify-content-between align-items-start position-relative w-75 combo">
+                    <div>
+                        <h3 class="card-title text-white  text-break">
+                            {{item.nome_comercial}}
+                        </h3>
+                        <p class="card-sub text-white  text-break">
+                            {{item.detalhes_comercial}}
+                        </p>
+                    </div>
+
+                    <button class="btn card-link">
+                        Peça agora <i class='bx bxs-chevrons-right'></i>
+                    </button>
+                </div>
+
+
+            </div>
+
+
+        </a>
+        {% endfor %}
+    </div>
+
+
+    <div class="m-3">
+
+        <a class="control" href="#">
+            <div class="d-flex justify-content-center align-items-center ">
+                <i class='bx bx-right-arrow-alt'></i>
+            </div>
+        </a>
+    </div>
+</div>

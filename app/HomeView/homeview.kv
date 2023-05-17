@@ -1,0 +1,168 @@
+#<HomeView>:
+#    name: "HomeView"
+#    BoxLayout:
+#        orientation: 'vertical'
+#        padding: dp(10)
+#        spacing: dp(10)
+#        ClickableTextFieldRound:
+#        MDScrollView:
+#            GridLayout:
+#                cols: 2
+#                spacing: dp(10)
+#                size_hint_y: None
+#                height: self.minimum_height
+#                Card:
+#                    size_hint_y: None
+#                    elevation:1.2
+#                    height: self.minimum_height
+#                HomeCards:
+#                    image: ''
+#
+#                Card:
+#                    size_hint_y: None
+#                    elevation:1.2
+#                    height: self.minimum_height
+#                Card:
+#                    size_hint_y: None
+#                    elevation:1.2
+#                    height: self.minimum_height
+#                Card:
+#                    size_hint_y: None
+#                    elevation:1.2
+#                    height: self.minimum_height
+#                Card:
+#                    size_hint_y: None
+#                    elevation:1.2
+#                    height: self.minimum_height
+#
+#<HomeCards@MDCard>:
+#    size_hint_y: None
+##                    md_bg_color:96/255,55/255,86/255,1
+#    height: dp(120)
+#    orientation:"vertical"
+#    Image:
+#        source: './assets/icones/ic_perto_mim.png'
+#    MDLabel:
+#        halign:'center'
+#        text: 'PERTO DE MIM'
+#
+#<ClickableTextFieldRound>:
+#    size_hint_y: None
+#    height: text_field.height
+#    width: root.width
+#    MDBoxLayout:
+#        orientation:'vertical'
+#        MDTextField:
+#            id: text_field
+#            width: self.width
+#            padding:10
+#            mode: "rectangle"
+#            background_color: app.theme_cls.bg_normal
+#            hint_text: "Pesquisar"
+#            icon_left: "magnify"
+#
+#
+#
+#
+#
+
+
+
+<HomeView>:
+    name: "HomeView"
+    screen_manager: app.sm
+    MDBoxLayout:
+        orientation:'vertical'
+        MDBoxLayout:
+            size_hint_y:.17
+            padding:dp(25)
+            orientation:"vertical"
+            height: text_field.height
+            width: root.width
+            MDTextField:
+                id: text_field
+                width: self.width
+                padding:10
+                mode: "rectangle"
+                background_color: app.theme_cls.bg_normal
+                hint_text: "Pesquisar"
+                icon_left: "magnify"
+        MDGridLayout:
+            size_hint_y:.83
+            cols:2
+            padding:[dp(15),dp(15),dp(15),dp(35)]
+            spacing:dp(15)
+            ElementCard:
+                image:"./assets/icones/ic_perto_mim.png"
+                text:"Perto de mim"
+#                subtext:"March, Wednesday"
+                items_count:"3 Events"
+                on_press:
+                    root.screen_manager.current = "PertoMim"
+
+            ElementCard:
+                image:"./assets/icones/ic_promo.png"
+                text:"Promoções"
+#                subtext:"Broccoli, Apple"
+                items_count:"4 " + "Lugares"
+
+            ElementCard:
+                image:"./assets/icones/ic_cafes_pubs.png"
+                text:"Pubs e Cafés"
+
+#                subtext:"Lucy Mao going to Office"
+                items_count:"4 " + "Lugares"
+
+            ElementCard:
+                image:"./assets/icones/ic_bar.png"
+                text:"Bares"
+                items_count:"4 " + "Lugares"
+#                subtext:"Rose favorite your Post"
+
+            ElementCard:
+                image:"./assets/icones/ic_fast_food.png"
+                text:"Lanches"
+#                subtext:"Homework, Design"
+                items_count:"4 " + "Lugares"
+
+            ElementCard:
+                image:"./assets/icones/ic_pizza.png"
+                text:"Pizzas"
+#                subtext:""
+                items_count:"4 " + "Lugares"
+
+
+<ElementCard@MDCard>:
+#    md_bg_color:69/255,55/255,86/255,1
+    padding:dp(15)
+    spacing:dp(19)
+    radius:dp(25)
+    ripple_behavior: True
+    image:''
+    text:""
+    items_count:""
+    subtext:''
+
+    orientation:'vertical'
+    Image:
+        source:root.image
+    MDBoxLayout:
+        orientation:'vertical'
+        spacing:dp(10)
+        MDLabel:
+            halign:"center"
+            text:root.text
+            font_name: 'Montserrat'
+            font_size:'17sp'
+
+#        MDLabel:
+#            halign:"center"
+#            font_style:"Caption"
+#            text:root.subtext
+        MDLabel:
+            halign: "center"
+            font_name: 'Montserrat'
+            text: root.items_count
+            color: (0.2745, 0.1686, 0.0941, 0.35) # cor: #462B18 com 35% de opacidade
+            font_size: "13sp"
+

@@ -1,0 +1,47 @@
+{% extends "shared/base.html" %}
+{% block content %}
+<link href="../static/css/user.css" rel="stylesheet">
+<div class="container d-flex text-center flex-column justify-content-center align-items-center vh-100">
+    <div style="" class="step-1 w-75">
+        <div class="bg-light  p-5 d-flex justify-content-center ">
+            <div class="w-50 ps-5  d-flex flex-column justify-content-center align-items-start">
+
+                <form action="/criar_senha/{{token}}" method="post" class="w-100">
+                    <h2>
+                        Criar nova senha!
+                    </h2>
+                  <p>Insira o email de login na plataforma:</p>
+
+                   <div class="form-floating mb-3 w-100">
+                        <input type="password" class="form-control " id="passsword" name="password"
+                               placeholder="passsword"
+                        >
+                        <label for="passsword">Crie uma senha:</label>
+
+                    </div>
+                    <div class="form-floating mb-3 w-100">
+                        <input type="password" class="form-control " id="Rpassword" name="Rpassword"
+                               placeholder="Rpassword"
+                        >
+                        <label for="Rpassword">Repita a senha:</label>
+                        <div style="text-align:left" id="password-feedback" class="invalid-feedback">
+                            As senhas não são iguais.
+                        </div>
+                    </div>
+
+
+                    <button class="btn btn-marrom btn-lg w-100" type="submit">
+                        CRIAR SENHA >
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+</div>
+<script src="../static/js/login.js"></script>
+
+
+{% endblock %}

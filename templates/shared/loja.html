@@ -1,0 +1,196 @@
+{% extends "shared/base.html" %}
+{% block content %}
+<link rel="stylesheet" href="../static/css/loja.css">
+{% for loja in estabelecimento%}
+<section class="container-fluid d-flex flex-column justify-content-center align-items-center text-center main-loja">
+    {% if not loja.foto %}
+    <img src="{{ url_for('static', filename='img/back-main.jpeg') }}" alt="Foto da loja">
+    {% else %}
+    <img src="{{ url_for('index_routes.uploaded_file', filename=loja.foto) }}" alt="Foto da loja">
+    {% endif %}
+
+    <div class="container position-relative mb-2">
+        <h1>{{loja.nome_comercial}}</h1>
+    </div>
+    <div class="d-flex justify-content-center align-items-center position-relative w-100">
+        <div class="text-center d-flex   justify-content-center align-items-center me-4">
+            <i style="font-size:1rem;" class='bx bxs-time-five laranja  me-1'></i>
+            <div class="card-address">
+                15min - 30min
+            </div>
+        </div>
+        <div class="text-center d-flex   justify-content-center align-items-center me-4">
+            <i style="font-size:1rem;" class='bx bxs-star laranja me-1'></i>
+            <div class="card-address">
+                3.9
+            </div>
+        </div>
+        <div class="text-center d-flex  justify-content-center align-items-center ">
+            <i style="font-size:1rem;" class='bx bx-dollar laranja me-1'></i>
+            <div class="card-address">
+                <strong> Moderado</strong>
+            </div>
+        </div>
+    </div>
+    <div class="d-flex justify-content-start align-items-center position-relative">
+        <a {%if session.logged_in %} href="/cliente" {%else%} data-bs-toggle="modal" data-bs-target="#loginModal"
+           {%endif%}
+           class="btn btn-outline-light btn-lg d-flex justify-content-center align-items-center ps-5 pe-5 mt-3">FAÇA
+            UM PEDIDO <i style="font-size:2rem" class='bx bx-chevrons-down'></i></a>
+    </div>
+</section>
+<section class="container">
+    <div class="loja-details bg-title pe-5 ps-5">
+        <div class="row">
+            <div class="col-md-10 pe-5">
+                <div class="pe-5">
+                    <div class="mt-4">
+                        <h5>
+                            Quem somos:
+                        </h5>
+                        <!--                         {{loja.detalhes_comercial}}-->
+                        <div class="card-address">
+                            "Bem-vindo ao Delícias da Serra, o restaurante mais charmoso da cidade! Oferecemos o melhor
+                            da
+                            culinária regional, com pratos cuidadosamente preparados para agradar a todos os gostos.
+                            Venha
+                            saborear nossas deliciosas opções de carnes, massas, saladas e sobremesas, tudo em um
+                            ambiente
+                            acolhedor e com atendimento de primeira. Não perca mais tempo, traga sua família e amigos
+                            para
+                            uma experiência gastronômica única no Delícias da Serra."
+                        </div>
+                    </div>
+                    <div class=" d-flex  justify-content-start align-items-start card-address mt-3">
+                        <div class="w-25 me-4">
+                            <i class='bx bx-building-house laranja me-2'></i>{{ loja.endereco }}, {{ loja.numero }} - {{
+                            loja.bairro }}, {{
+                            loja.cidade
+                            }}/{{ loja.estado }} - {{ loja.CEP }}
+                        </div>
+                        <div class="w-25 me-4">
+                            <i class='bx bx-phone laranja me-2'></i>{{loja.telefone_comercial}}
+                        </div>
+                        <div class="w-25">
+                            <i class='bx bx-category laranja me-2'></i>{{loja.modelo_negocio}}
+                        </div>
+                    </div>
+
+
+                </div>
+
+            </div>
+            <div class="col-md-2 d-flex  justify-content-end ps-5">
+                <div class="d-flex flex-column justify-content-start align-items-start">
+                    <div id="map" class="flex-end" style="height: 220px;width:220px"></div>
+
+                </div>
+            </div>
+        </div>
+        <div class="w-100 text-center mt-4">
+            <h5 class="laranja">nossos produtos</h5>
+            <h2 class="mb-0">Mais Popular</h2>
+        </div>
+        <a href="#" class="card-link ver-todos laranja w-100 d-flex justify-content-end align-items-center">
+            ver todos <i class='bx bxs-chevrons-right ps-3'></i>
+        </a>
+
+        <div class=" d-flex mt-3">
+            <div class="d-flex justify-content-center align-items-center click"><i style="font-size:3rem;" class='bx bxs-chevron-left laranja'></i></div>
+            <div class="listView d-flex w-100 ">
+                {% for item in cardapios%}
+                <a href="/produto/{{item._id}}" class="card-produtos m-2" style="width: 200px">
+                    <div class="img-card">
+                        <img src="{{url_for('user_routes.uploaded_file', filename=item['filename'] )}}"
+                             class="" alt="...">
+                    </div>
+
+                    <div class="card-body text-center">
+
+                        <div class="wrap-content d-flex flex-column justify-content-between align-items-center">
+                            <div class="card-title-produtos">{{item.nome_produto}}</div>
+                            <div class="d-flex justify-content-center align-items-center mb-3 mt-2 premium">
+                                <div class="text-center d-flex   justify-content-center align-items-center me-2">
+                                    <i style="font-size:.8rem;" class='bx bxs-time-five laranja  me-1'></i>
+                                    <div class="card-address">
+                                        {{item.tempo_estimado}}min
+                                    </div>
+                                </div>
+                                <div class="text-center d-flex   justify-content-center align-items-center">
+                                    <i style="font-size:.8rem;" class='bx bxs-star laranja me-1'></i>
+                                    <div class="card-address">
+                                        3.9
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+
+                        <div class="card-price">
+                            R${{item.valor}}
+                        </div>
+
+                        <!--                    <a href="#" class="btn btn-primary">Go somewhere</a>-->
+                    </div>
+                </a>
+                {% endfor%}
+            </div>
+            <div class="d-flex justify-content-center align-items-center click"><i style="font-size:3rem;" class='bx bxs-chevron-right laranja'></i></div>
+        </div>
+
+
+    </div>
+
+
+</section>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBbGe1ZfMMiDbYzz2XJ1ImxjQ-4hIs3Xko"></script>
+
+<script>
+        function initMap() {
+              var geocoder = new google.maps.Geocoder();
+              map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 15,
+                center: { lat: -23.5505, lng: -46.6333 } // São Paulo, Brasil
+              });
+
+              // You can add a marker to the map with a generic location
+              var marker = new google.maps.Marker({
+                position: { lat: -23.5505, lng: -46.6333 },
+                map: map,
+                title: 'São Paulo, Brasil'
+              });
+        }
+initMap()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+
+{% endfor %}
+{% endblock %}

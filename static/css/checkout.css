@@ -1,0 +1,45 @@
+.btn-group{
+    padding:5px;
+    background:#F5F5F5;
+     border-radius:20px;
+}
+.bg-title{
+    background:#fff;
+}
+.btn-support,.btn-support:hover{
+ background:#F5F5F5;
+ font-size:.8rem;
+ font-weight:600;
+  border-radius:20px;
+  color:#000;
+}
+.btn-table{
+    font-size:.8rem;
+    font-weight:600
+}
+.detail-title{
+    font-size:.8rem;
+    font-weight:600
+}
+.detail-valor{
+font-size:.8rem;
+    font-weight:500
+}
+.detail-subtitle{
+font-size:.7rem;
+    font-weight:400
+}
+.btn-check:checked+.btn, .btn.active, .btn.show, .btn:first-child:active, :not(.btn-check)+.btn:active {
+    color: var(--bs-btn-active-color);
+    background-color: #fff;
+    border-color: #fff;
+    border-radius:20px;
+       font-weight:700;
+}
+
+.btn-group>.btn:not(:last-child):not(.dropdown-toggle) {
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+}
+.ez-table-icon{
+font-size:1.6rem;}

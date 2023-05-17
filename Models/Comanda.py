@@ -2,7 +2,8 @@ from datetime import datetime
 class Comanda:
     def __init__(self, form):
         self.collection_name = 'comandas'
-        self._idMesa =form['_idMesa']
+        self._idMesa =''
+        self.tipo_pedido = ''
         self._idCliente =form['_idCliente']
         self._idUser =form['_idUser']
         self.tipo_pagamento =''

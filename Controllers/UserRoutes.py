@@ -1,3 +1,5 @@
+import pprint
+
 from flask import session, request, Blueprint, jsonify, redirect, send_from_directory, render_template, url_for, \
     current_app
 from flask_socketio import emit
@@ -11,9 +13,12 @@ from Repository.BaseRepository import BaseRepository
 from Configs.MongoConfig import MongoConfig
 from bson.objectid import ObjectId
 import datetime
+import locale
 mod = Blueprint('user_routes', __name__)
 repository = BaseRepository(MongoConfig().get_connect())
 
+# Define a localidade para o Brasil
+locale.setlocale(locale.LC_ALL, 'pt_BR.utf-8')
 
 ############### fotos uploads ##################
 @mod.route('/uploads/<filename>')
@@ -43,14 +48,16 @@ def cadastro():
 def handle_client_request():
     if request.method == "GET":
         try:
-            if '_idCliente' not in session:
-                return redirect(url_for('user_routes.cadastro'))
-            cliente = repository.find_one('clientes', {'_id': ObjectId(session['_idCliente'])})
-            if cliente is None:
-                return redirect(url_for('user_routes.cadastro'))
-            comanda = repository.find_one('comandas', {'_idCliente': cliente['_id'], 'status': 'aberta'})
+            # if '_idCliente' not in session:
+            #     return redirect(url_for('user_routes.cadastro'))
+            # cliente = repository.find_one('clientes', {'_id': ObjectId(session['_idCliente'])})
+            # if cliente is None:
+            #     return redirect(url_for('user_routes.cadastro'))
+            comanda = repository.find_one('comandas', {'_idCliente': session['_id'], 'status': 'aberta'})
             if comanda is not None:
+                print('comanda aberta')
                 return redirect(url_for('user_routes.comanda'))
+            print('sem comanda')
             return redirect(url_for('user_routes.cadastro'))
         except Exception as e:
             print('erro', e)
@@ -80,6 +87,17 @@ def handle_client_request():
             print(e)
             return redirect(url_for('user_routes.cliente'), code=404)
 
+
+
+@mod.route('/home', methods=['POST', 'GET'])
+@LoginRequired.login_required
+def dashboardCliente():
+    estabelecimentos = repository.find('users',{})
+    lista_estabelecimentos = []
+    for item in  estabelecimentos:
+        item['_id'] = str(item['_id'])  # Converte o ObjectId em uma string
+        lista_estabelecimentos.append(item)
+    return render_template('user/index.html',estabelecimentos=lista_estabelecimentos)
 
 @mod.route('/mesas_disponiveis/<user>', methods=['POST', 'GET'])
 def mesas_disponiveis(user):
@@ -141,19 +159,95 @@ def pendente():
         print(e)
         return redirect(url_for('user_routes.cliente'))
 
-@mod.route('/pedido', methods=['POST', 'GET'])
+@mod.route('/carrinho/<currentPage>', methods=['GET'])
 @LoginRequired.login_required
-def pedido():
-    if request.method == "POST":
+def carrinho(currentPage):
+    if request.method == "GET":
         try:
-            new_pedido = Pedido(request.form)
-            pedido = repository.create(new_pedido)
-            return jsonify({'_id': str(pedido['_id'])})
+            comanda_found = repository.find('comandas', {'_idCliente': session['_id'], 'status':'aberta' })
+            comanda_list = list(comanda_found)
+            if len(comanda_list) > 0:
+                lista = []
+                for comanda in comanda_list:
+                    print(comanda)
+                    is_active = False
+                    lista_pedidos = []
+                    pedidos_found = repository.find('pedidos', {'_idComanda': str(comanda['_id']), 'status': False})
+                    if currentPage == comanda['_idUser']:
+                        is_active = True
+                    for pd in pedidos_found:
+                        pd['_id'] = str(pd['_id'])
+                        lista_pedidos.append(pd)
+                        if currentPage == pd['_idCardapio']:
+                            is_active = True
+                    lista.append({
+                        '_idComanda': str(comanda['_id']),
+                        'pedidos': list(lista_pedidos),
+                        'pedidos_count': len(lista_pedidos),
+                        'is_active': is_active
+                    })
+                return render_template('shared/carrinho.html', lista=lista)
+            else:
+                return render_template('shared/carrinho.html', lista=[])
 
         except Exception as e:
             print(e)
-            return redirect(url_for('user_routes.comanda'))
+            return jsonify({})
 
+
+
+@mod.route('/atualizar_pedido', methods=['POST'])
+def atualizar_pedido():
+    pedido_id = request.form['pedido_id']
+    nova_quantidade = request.form['nova_quantidade']
+    preco_unid =request.form['valor']
+
+
+    repository.update_one('pedidos',{'_id':ObjectId(pedido_id)},{'quantidade':int(nova_quantidade)})
+    valor = "R$ " + locale.currency(float(preco_unid) * int(nova_quantidade), grouping=True, symbol=True)[:-2]
+    return jsonify({'success': True,'valor': valor })
+
+@mod.route('/checkout/<_idComanda>', methods=['GET'])
+@LoginRequired.login_required
+def checkout(_idComanda):
+    comanda_found = repository.find_one('comandas', {'_id': ObjectId(_idComanda), 'status': 'aberta'})
+    if comanda_found is not None:
+        lista_pedidos = []
+        pedidos_found = repository.find('pedidos', {'_idComanda': str(comanda_found['_id']), 'status': False })
+        for pd in pedidos_found:
+            pd['_id'] = str(pd['_id'])
+            lista_pedidos.append(pd)
+        return render_template('shared/checkout.html', carrinho=comanda_found, pedidos=lista_pedidos)
+    return redirect(url_for('user_routes.index'))
+@mod.route('/pedido/<_idCardapio>', methods=['POST', 'GET'])
+@LoginRequired.login_required
+def pedido(_idCardapio):
+    if request.method == "POST":
+        cardapio_found = repository.find_one('cardapios', {'_id': ObjectId(_idCardapio)})
+        comanda_found = repository.find_one('comandas', {'_idCliente': session['_id'] ,'_idUser': cardapio_found['_idUser'],'status': 'aberta' })
+        if comanda_found is None:
+            form = {
+                '_idCliente': session['_id'],
+                '_idUser': cardapio_found['_idUser'],
+                'status': 'aberta',
+            }
+            new_comanda = Comanda(form)
+            comanda_found = repository.create(new_comanda)
+
+        pedido_found = repository.find_one('pedidos', { '_idComanda': str(comanda_found['_id']), '_idCardapio': str(cardapio_found['_id']), '_idUser': str(cardapio_found['_idUser']) })
+
+        if pedido_found is None:
+            formPedido ={
+                    '_idComanda': str(comanda_found['_id']),
+                    '_idCardapio': str(cardapio_found['_id']),
+                    '_idUser': str(cardapio_found['_idUser']),
+                }
+            new_pedido = Pedido(formPedido)
+            repository.create(new_pedido)
+
+        return jsonify({})
+    else:
+        return "Method Not Allowed"
 @mod.route('/get_mesa/<string:_idMesa>', methods=['GET'])
 def get_mesa(_idMesa):
 

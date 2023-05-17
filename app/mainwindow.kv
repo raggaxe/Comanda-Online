@@ -1,0 +1,181 @@
+<ContentNavigationDrawer>
+    orientation: 'vertical'
+    FloatLayout:
+        size_hint_y: None
+        height: "200dp"
+        BoxLayout:
+            id: box_image
+            x: root.x
+            pos_hint: {"top": 1}
+            FloatLayout:
+                FitImage:
+                    pos_hint: {'center_x': .5, 'center_y': .5}
+                    source: './assets/images/background.jpeg'
+                FitImage:
+                    pos_hint: {'center_x': .5, 'center_y': .6}
+                    source: './assets/images/comum.jpg'
+                    size_hint: None, None
+                    width: dp(140)
+                    height: dp(140)
+                    radius: [99, 99, 99, 99]
+
+    BoxLayout:
+        orientation:'vertical'
+
+        BoxLayout:
+            padding:20
+            size_hint_y: None
+            pos_hint: {'center_x': .5, 'center_y': .5}
+            spacing: 10
+            BoxLayout:
+                canvas.before:
+                    Color:
+                        rgba: 1, 1, 1, 1
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [20, 20, 0, 0]
+                MDLabel:
+                    id: user_label
+                    halign: 'center'
+                    font_name: 'Montserrat'
+                    text: root.getUser() or '' # associa o texto do MDLabel com a propriedade "nome_user"
+
+
+        MDList:
+            MDRectangleFlatIconButton:
+                text:"Inicio"
+                icon:"home"
+                font_name: 'Montserrat'
+                line_color:(0, 0, 0, 0)
+                size_hint_x: 1
+                halign:'left'
+                padding:16
+                font_size:'16sp'
+                ripple_scale: 0
+                on_press:
+                    root.nav_drawer.set_state("close")
+                    root.screen_manager.current = "HomeView"
+
+            MDRectangleFlatIconButton:
+                icon:"order-bool-descending-variant"
+                font_name: 'Montserrat'
+                line_color:(0, 0, 0, 0)
+                size_hint_x: 1
+                halign:'left'
+                padding:16
+                font_size:'16sp'
+                ripple_scale: 0
+                text: "Minha Comanda"
+                on_press:
+                    root.nav_drawer.set_state("close")
+                    root.screen_manager.current = "ComandaView"
+
+
+            MDRectangleFlatIconButton:
+                icon:"calendar-import"
+                font_name: 'Montserrat'
+                line_color:(0, 0, 0, 0)
+                size_hint_x: 1
+                halign:'left'
+                padding:16
+                font_size:'16sp'
+                ripple_scale: 0
+                text: "Meus Pedidos"
+                on_press:
+                    root.nav_drawer.set_state("close")
+                    root.screen_manager.current = "PedidosView"
+
+            MDRectangleFlatIconButton:
+                icon:"heart"
+                font_name: 'Montserrat'
+                line_color:(0, 0, 0, 0)
+                size_hint_x: 1
+                halign:'left'
+                padding:16
+                font_size:'16sp'
+                ripple_scale: 0
+                text: "Favoritos"
+                on_press:
+                    root.nav_drawer.set_state("close")
+                    root.screen_manager.current = "FavoritosView"
+            MDRectangleFlatIconButton:
+                icon:"cog"
+                font_name: 'Montserrat'
+                line_color:(0, 0, 0, 0)
+                size_hint_x: 1
+                halign:'left'
+                padding:16
+                font_size:'16sp'
+                ripple_scale: 0
+                text: "Configurações"
+                on_press:
+                    root.nav_drawer.set_state("close")
+                    root.screen_manager.current = "ConfigView"
+
+
+<MainWindowView>:
+    name: 'main'
+    screen_manager: app.sm
+    font_name: 'Montserrat'
+
+    BoxLayout:
+        canvas.before:
+            Color:
+                rgba:(0.9647, 0.9529, 0.9137,1)
+            Rectangle:
+                pos:self.pos
+                size:self.size
+        orientation: "vertical"
+        MDIconButton:
+            id: icon_menu
+            icon: "menu"
+            icon_size: "25sp"
+            icon_color: (0.2745, 0.1686, 0.0941, 1)
+            ripple_scale: 0
+            on_press:
+                nav_drawer.set_state("open")
+                self.icon = root.managerIcon(self.icon)
+#            left_action_items: [["arrow-left", lambda x: nav_drawer.set_state("open")]]
+
+        MDNavigationLayout:
+
+            MDScreenManager:
+                canvas.before:
+                    Color:
+                        rgba:(0.9647, 0.9529, 0.9137,1)
+                    Rectangle:
+                        pos:self.pos
+                        size:self.size
+                id: screen_manager
+                HomeView:
+                MDScreen:
+                    name: "ComandaView"
+                    MDLabel:
+                        text: "ComandaView"
+                        halign: "center"
+                MDScreen:
+                    name: "PedidosView"
+                    MDLabel:
+                        text: "PedidosView"
+                        halign: "center"
+                MDScreen:
+                    name: "FavoritosView"
+                    MDLabel:
+                        text: "FavoritosView"
+                        halign: "center"
+                MDScreen:
+                    name: "ConfigView"
+                    MDLabel:
+                        text: "ConfigView"
+                        halign: "center"
+
+            MDNavigationDrawer:
+                id: nav_drawer
+                on_status: root.on_drawer_status(self, self.status)
+                type: "modal"
+                radius: (0, 16, 16, 0)
+                ContentNavigationDrawer:
+                    screen_manager: screen_manager
+                    nav_drawer: nav_drawer
+

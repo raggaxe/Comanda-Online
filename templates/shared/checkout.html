@@ -1,0 +1,464 @@
+{% extends "shared/base.html" %}
+{% block content %}
+
+<link rel="stylesheet" href="../static/css/checkout.css">
+<form class="container mt-5 mb-5" method="post" action="/">
+    <div class="row mt-5">
+        <div class="col-8 ">
+            <div class="bg-title p-3 pt-4">
+                <div class="d-flex justify-content-between">
+                    <h4>Detalhes da compra</h4>
+                    <div class="btn-group" role="group" id="tipo_entrega" aria-label="Basic radio toggle button group">
+                        <input type="radio" class="btn-check" name="entrega" id="delivery" autocomplete="off">
+                        <label class="btn btn-table" for="delivery"
+                               data-href="#nav-entregas">Entregar</label>
+
+                        <input type="radio" class="btn-check" name="entrega" id="retirar" value="retirar"
+                               autocomplete="off">
+                        <label class="btn btn-table" for="retirar" data-href="#nav-retirar">Retirar na
+                            loja</label>
+
+                        <input type="radio" class="btn-check" name="entrega" id="mesaOption" value="mesa"
+                               autocomplete="off" checked>
+                        <label class="btn btn-table" for="mesaOption" data-href="#nav-mesa">Mesa</label>
+                    </div>
+
+                </div>
+
+                <div class="tab-content" id="nav-tabContent">
+                    <div class="tab-pane fade" id="nav-entregas" role="tabpanel" aria-labelledby="nav-entregas-tab"
+                         tabindex="0">
+
+                        <div class="detail d-flex justify-content-between align-items-center mt-2">
+                            <div class="ez-table-icon m-3 pb-3">
+                                <i class='bx bxs-pin'></i>
+                            </div>
+                            <div class="flex-fill d-flex justify-content-between align-items-center pb-3 border-bottom">
+                                <div class="d-flex flex-column justify-content-start align-items-start">
+                                    <div class="detail-title">333 N Jackson St</div>
+                                    <div class="detail-subtitle">14</div>
+                                    <div class="detail-subtitle">Glendale, Califórnia, 91206</div>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center h-100">
+                                    <button class="btn btn-support">Editar</button>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                        <div class="detail d-flex justify-content-between align-items-center ">
+                            <div class="ez-table-icon m-3 ">
+                                <i class='bx bxs-door-open'></i>
+                            </div>
+                            <div class="flex-fill d-flex justify-content-between align-items-center ">
+                                <div class="d-flex flex-column justify-content-start align-items-start">
+                                    <div class="detail-title">Detalhes de entrega</div>
+                                    <div class="detail-subtitle green">Adicione instruções de entrega</div>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center h-100">
+                                    <button class="btn btn-support">Editar</button>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                    </div>
+                    <div class="tab-pane fade" id="nav-retirar" role="tabpanel" aria-labelledby="nav-retirar-tab"
+                         tabindex="0">RETIRAR
+                    </div>
+                    <div class="tab-pane fade show active" id="nav-mesa" role="tabpanel" aria-labelledby="nav-mesa-tab"
+                         tabindex="0">
+                        <div class="detail d-flex justify-content-between align-items-center mt-2">
+                            <div class="ez-table-icon m-3 pb-3">
+                                <i class='bx bx-dish'></i>
+                            </div>
+                            <div class="flex-fill d-flex justify-content-between align-items-center pb-3 border-bottom">
+                                <div class="d-flex flex-column justify-content-start align-items-start">
+                                    <div class="detail-title">Escolher mesa:</div>
+                                    <a href="#" data-bs-toggle="modal" id="selectMesa" data-bs-target="#mesasModal"
+                                       class="detail-subtitle text-success">Adicione uma mesa</a>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center h-100">
+                                    <button data-bs-toggle="modal" data-bs-target="#mesasModal" class="btn btn-support">
+                                        Escolher
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="detail d-flex justify-content-between align-items-center ">
+                            <div class="ez-table-icon m-3 ">
+                                <i class='bx bx-calendar-week'></i>
+                            </div>
+                            <div class="flex-fill d-flex justify-content-between align-items-center ">
+                                <div class="d-flex flex-column justify-content-start align-items-start">
+                                    <div class="detail-title">Agendar um horário</div>
+                                    <div class="detail-subtitle text-success">escolha melhor data e horário</div>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center h-100">
+                                    <button class="btn btn-support">Editar</button>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="mesasModal" data-bs-backdrop="static" data-bs-keyboard="false"
+                             tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-sm">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="staticBackdropLabel">Escolha sua mesa</h1>
+                                        <button type="button" class="btn-close" id="mesasModalClose"
+                                                data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="form-floating mb-3">
+                                            <select class="form-select" name="mesa" id="mesas"
+                                                    aria-label="Floating label select example"
+                                                    required disabled>
+                                                <option selected disabled>Escolha a mesa...</option>
+
+                                            </select>
+                                            <label for="mesas">Mesa disponivel:</label>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close
+                                        </button>
+                                        <button type="button" class="btn btn-primary" onclick="definirMesa()">Salvar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="bg-title p-3 mt-1">
+                <div class="d-flex justify-content-between">
+                    <h4>Pagamento</h4>
+                    <div class="btn-group" role="group" id="tipo_pagamento"
+                         aria-label="Basic radio toggle button group">
+                        <input type="radio" class="btn-check" name="pagamento" id="pg1" value="Pix" autocomplete="off">
+                        <label class="btn btn-table" for="pg1"
+                               data-href="#nav-pix">Pix</label>
+
+                        <input type="radio" class="btn-check" name="pagamento" id="pg2" value="Débito"
+                               autocomplete="off">
+                        <label class="btn btn-table" for="pg2" data-href="#nav-debito">Débito</label>
+
+                        <input type="radio" class="btn-check" name="pagamento" id="pg3" value="Crédito"
+                               autocomplete="off" checked>
+                        <label class="btn btn-table" for="pg3" data-href="#nav-credito">Crédito</label>
+                    </div>
+                </div>
+                <div class="tab-content" id="nav-tabContent2">
+                    <div class="tab-pane fade show active" id="nav-pix" role="tabpanel" aria-labelledby="nav-pix-tab"
+                         tabindex="0">
+                        <div class="detail d-flex justify-content-between align-items-center mt-2">
+                            <div class="ez-table-icon m-3 pb-3">
+                                <i class='bx bx-qr-scan'></i>
+                            </div>
+                            <div class="flex-fill d-flex justify-content-between align-items-center pb-3 border-bottom">
+                                <div class="d-flex flex-column justify-content-start align-items-start">
+                                    <div class="detail-title">Pessoa Física</div>
+                                    <div class="detail-subtitle">PIX</div>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center h-100">
+                                    <button class="btn btn-support">+ add info</button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="nav-debito" role="tabpanel" aria-labelledby="nav-debito-tab"
+                         tabindex="0">
+                        <div class="detail d-flex justify-content-between align-items-center mt-2">
+                            <div class="ez-table-icon m-3 pb-3">
+                                <i class='bx bx-credit-card-front'></i>
+                            </div>
+                            <div class="flex-fill d-flex justify-content-between align-items-center pb-3 border-bottom">
+                                <div class="d-flex flex-column justify-content-start align-items-start">
+                                    <div class="detail-title">Pessoa Física</div>
+                                    <div class="detail-subtitle">Debito</div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="nav-credito" role="tabpanel" aria-labelledby="nav-credito-tab"
+                         tabindex="0">
+                        <div class="detail d-flex justify-content-between align-items-center mt-2">
+                            <div class="ez-table-icon m-3 pb-3">
+                                <i class='bx bx-credit-card'></i>
+                            </div>
+                            <div class="flex-fill d-flex justify-content-between align-items-center pb-3 border-bottom">
+                                <div class="d-flex flex-column justify-content-start align-items-start">
+                                    <div class="detail-title">Pessoa Física</div>
+                                    <div class="detail-subtitle">Credito</div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="detail d-flex justify-content-between align-items-center ">
+                    <div class="ez-table-icon ms-3 me-3  mt-1 pb-3">
+                        <i class='bx bx-purchase-tag-alt'></i>
+                    </div>
+                    <div class="flex-fill d-flex justify-content-between align-items-center pb-3 border-bottom">
+                        <div class="d-flex flex-column justify-content-start align-items-start">
+                            <div class="detail-title">Adicionar promo code</div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center h-100">
+                            <button class="btn btn-support">Adicionar</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="bg-title p-3 mt-1">
+                <div class="d-flex justify-content-between">
+                    <h4>Descrição dos items</h4>
+                    <button class="btn btn-support">+ add items</button>
+                </div>
+                <ul class="list-group list-group-flush mt-2">
+                    <li class="list-group-item"><span id="total_items">X</span> items</li>
+                    {% for pedido in pedidos %}
+                    {% set subtotal = getCardapio(pedido['_idCardapio']).valor|float * pedido['quantidade']|int %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span class="badge bg-secondary me-3 qnt">{{pedido['quantidade']}}</span>
+                        <div class="flex-fill">
+                            {{getCardapio ( pedido['_idCardapio']).nome_produto }}
+                        </div>
+                        <div>
+                            {{ MoneyFormatter(subtotal) }}
+                        </div>
+                    </li>
+                    {% endfor %}
+
+
+
+                </ul>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="d-grid gap-2 mb-2">
+                <button type="submit" class="btn btn-success btn-lg">Realizar Pedido</button>
+            </div>
+            <div class="bg-title p-3 mt-1">
+                <h4>Total do pedido</h4>
+                <div class="detail d-flex justify-content-between align-items-center ">
+                    <div class="flex-fill d-flex justify-content-between align-items-center ">
+                        <div class="d-flex flex-column justify-content-start align-items-start">
+                            <div class="detail-valor">Subtotal</div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center h-100">
+                            <div class="detail-valor" id="subtotal"></div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="detail d-flex justify-content-between align-items-center ">
+                    <div class="flex-fill d-flex justify-content-between align-items-center ">
+                        <div class="d-flex flex-column justify-content-start align-items-start">
+                            <div class="detail-valor">Taxa de entrega</div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center h-100">
+                            <div class="detail-valor" id="tx_entrega">{{ MoneyFormatter(0) }}</div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="detail d-flex justify-content-between align-items-center ">
+                    <div class="flex-fill d-flex justify-content-between align-items-center ">
+                        <div class="d-flex flex-column justify-content-start align-items-start">
+                            <div class="detail-valor" >Taxas de serviço</div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center h-100">
+                            <div class="detail-valor" id="tx_servico">{{ MoneyFormatter(1.99) }}</div>
+                        </div>
+                    </div>
+
+                </div>
+                <hr>
+                <div class="detail d-flex flex-column justify-content-between align-items-center ">
+                    <div class="d-flex justify-content-between align-items-center w-100">
+                        <div class="flex-fill  d-flex flex-column justify-content-start align-items-start">
+                            <div class="detail-valor">Adicione gorjeta</div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center h-100">
+                            <div class="detail-valor" id="gorjeta">R$ 0,00</div>
+                        </div>
+                    </div>
+                    <div class="detail-subtitle opacity-50">
+                        Ao adicionar gorjeta, 100% do valor será destinado a todos os funcionários da empresa, sendo
+                        dividido igualmente entre eles.
+                    </div>
+
+                </div>
+
+                <div class="btn-group w-100 mt-2" role="group" aria-label="Basic radio toggle button group">
+                    <input type="radio" class="btn-check" name="tip" id="tip2" value="3" autocomplete="off" onchange="addGorjeta(this.value)">
+                    <label class="btn btn-table" for="tip2">R$3,00</label>
+                    <input type="radio" class="btn-check" name="tip" id="tip3" value="4" autocomplete="off" onchange="addGorjeta(this.value)">
+                    <label class="btn btn-table" for="tip3">R$4,00</label>
+                    <input type="radio" class="btn-check" name="tip" id="tip4" value="5" autocomplete="off" onchange="addGorjeta(this.value)">
+                    <label class="btn btn-table" for="tip4">R$5,00</label>
+                    <input type="radio" class="btn-check" name="tip" id="outro" value="0" autocomplete="off" checked onchange="addGorjeta(this.value)">
+                    <label class="btn btn-table" for="outro">R$0,00</label>
+                </div>
+                <hr>
+
+                <div class="d-flex justify-content-between">
+                    <h5>Total</h5>
+                    <h5 id="TotalCart">R$100,00</h5>
+                    <input hidden name="total_pagamento" id="total_pagamento" value="">
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</form>
+
+<script>
+    const btns = document.querySelectorAll('#tipo_entrega .btn-table');
+    const btns2 = document.querySelectorAll('#tipo_pagamento .btn-table');
+
+btns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const tabTargetId = btn.getAttribute('data-href');
+    const tabTarget = document.querySelector(tabTargetId);
+
+    const activeTabs = document.querySelectorAll('#nav-tabContent .tab-pane.show');
+    activeTabs.forEach(tab => tab.classList.remove('show', 'active'));
+
+    tabTarget.classList.add('show', 'active');
+  });
+});
+
+
+
+btns2.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const tabTargetId = btn.getAttribute('data-href');
+    const tabTarget = document.querySelector(tabTargetId);
+
+    const activeTabs = document.querySelectorAll('#nav-tabContent2 .tab-pane.show');
+    activeTabs.forEach(tab => tab.classList.remove('show', 'active'));
+
+    tabTarget.classList.add('show', 'active');
+  });
+});
+
+function definirMesa(){
+   var mesaSelecionada = $('option:selected', '#mesas').attr('data-mesa');
+  console.log(mesaSelecionada);
+  $('#selectMesa').html('Mesa '+mesaSelecionada);
+  $('#mesasModalClose').click();
+
+}
+
+
+function addGorjeta(_gorjeta){
+    $('#gorjeta').html( MoneyFormatter(parseInt(_gorjeta) ) )
+    TotalCart();
+}
+
+
+function TotalCart(){
+    var _subtotal = $('#subtotal').html();
+    var _tx_entrega = $('#tx_entrega').html();
+    var _tx_servico = $('#tx_servico').html();
+    var _gorjeta = $('#gorjeta').html();
+
+     $('#TotalCart').html( MoneyFormatter ( MoneyParser(_subtotal ) + MoneyParser(_tx_entrega ) + MoneyParser(_tx_servico ) +  MoneyParser(_gorjeta )))
+     $('#total_pagamento').html(( MoneyParser(_subtotal ) + MoneyParser(_tx_entrega ) + MoneyParser(_tx_servico ) +  MoneyParser(_gorjeta )))
+}
+
+function MoneyParser(valor) {
+  return parseFloat(valor.replace(/[^0-9,-]/g, '').replace(',', '.'));
+}
+function MoneyFormatter(valor) {
+  return valor.toLocaleString('pt-BR', {
+    style: 'currency',
+    currency: 'BRL'
+  });
+}
+
+$(document).ready(function() {
+  // Encontra todos os elementos com a classe 'qnt'
+  var quantidades = $('.qnt');
+  var soma = 0;
+  // Percorre cada elemento e soma sua quantidade
+  quantidades.each(function() {
+    soma += parseInt($(this).text());
+  });
+  // Atualiza o elemento com o ID 'total_items' com o valor da soma
+  $('#total_items').text(soma);
+
+   var total = 0;
+  {% for pedido in pedidos %}
+    total += {{getCardapio(pedido['_idCardapio']).valor|float * pedido['quantidade']|int}};
+  {% endfor %}
+  document.getElementById('subtotal').textContent = MoneyFormatter(total);
+
+    TotalCart();
+
+});
+
+
+
+getMesas('{{carrinho._idUser}}');
+
+function getMesas(_estabelecimento){
+    $('#mesas').empty();
+    $.ajax({
+        url: '/mesas_disponiveis/' + _estabelecimento,
+        method: 'GET',
+        dataType: 'json',
+        success: function(data) {
+            if(data.data.length > 0){
+                data.data.forEach(function(item){
+                    if(!item.status){
+                        $('#mesas').append('<option data-mesa="'+item.numero_mesa+'" value="'+item._id+'">' + item.numero_mesa + '</option>');
+                    }
+                });
+                $('#mesas').prop('disabled', false);
+                $('#abrir_comanda').prop('disabled', false);
+            } else {
+             $('#mesas').prop('disabled', true);
+               $('#abrir_comanda').prop('disabled', true);
+                var mensagem = $('<div>').addClass('alert alert-danger mt-3').text('Não há mesa disponível nesse estabelecimento.').hide();
+                $('#mesas').after(mensagem);
+                mensagem.fadeIn();
+                setTimeout(function() {
+                    mensagem.fadeOut(function() {
+                        mensagem.remove();
+                    });
+                }, 3000); // a mensagem desaparece depois de três segundos
+            }
+        },
+        error: function(xhr, status, error) {
+            console.log('Erro ao fazer a requisição:');
+            console.log(error);
+        }
+    });
+}
+
+
+
+
+
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,31 @@
+MDScreen:
+    name: "login"
+
+    MDBoxLayout:
+        orientation: "vertical"
+        spacing: "20dp"
+        padding: "48dp"
+
+        MDLabel:
+            text: "Login"
+            halign: "center"
+            font_style: "H2"
+
+        MDTextField:
+            id: email_field
+            hint_text: "Email"
+            mode: "rectangle"
+            fill_color: 1, 0.8, 0.4, 1
+            icon_right: "email"
+
+        MDTextField:
+            id: password_field
+            hint_text: "Password"
+            mode: "rectangle"
+            fill_color: 1, 0.8, 0.4, 1
+            icon_right: "key"
+            password: True
+
+        MDRectangleFlatButton:
+            text: "Login"
+            on_release: app.login()

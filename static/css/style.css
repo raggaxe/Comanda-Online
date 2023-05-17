@@ -1,48 +1,279 @@
 body{
     font-family: 'Poppins', sans-serif;
     font-weight:500;
-    height:100vh;
+    min-height:100vh;
     display:flex;
     flex-direction:column;
-    justify-content:center;
+    justify-content:start;
     align-items:center;
-}
-.card-info{
-     position: relative;
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-    word-wrap: break-word;
-    background-clip: border-box;
-    color:whitesmoke;
-    max-width:550px;
-    border: 5px solid whitesmoke ;
-    border-radius: 0.25rem;
-    box-shadow: 0 20px 27px 0 rgb(0 0 0 / 12%);
-    padding:22px;
-    background:var(--bs-info-rgb);
-
+      background:#F5F5F5;
 
 }
-
-.card-info h1{
-    font-weight:700;
-    font-size:3rem;
+.init{
+    padding-top:60px;
+}
+.modal-content{
+  background:#F5F5F5;
+}
+.navbar{
+    background:transparent;
 
 }
-.btn{
+.btn-marrom, .btn-marrom:hover{
+ background:#462B18;
+ color:#fff
+}
+.navbar-brand, .navbar-brand:hover{
+ color:#462B18
+}
+.nav-link {
+    color:#462B18
+}
+.nav-link:hover {
+    color:#E18239
+}
+.navbar-nav .nav-link.active, .navbar-nav .show>.nav-link {
+   color:#E18239
+}
+.bg-marrom{ background:#462B18;}
+
+.laranja{
+ color:#E18239
+}
+
+.card-subtext{
+   font-size:.7rem;
+   font-weight:500;
+   text-style:italic;
+}
+.carrinho-alert{
+ font-size:.7rem;
+   font-weight:500;
+}
+.sub-card{
+    border:1px solid rgba(70, 43, 24,.01);
+    background:rgba(70, 43, 24,.03);
+    height:300px;
+
+}
+.btn-outline-light{
 border: 2px solid #f8f9fa;
 border-radius:4px;
  box-shadow: 0 10px 15px 0 rgb(0 0 0 / 10%);
  }
-.btn:hover {
+.btn-outline-light:hover {
     color: var(--blue);
     background-color: rgba(255,255,255,.3);
     border-color: rgb(--bs-btn-hover-bg);
 
 }
+.main-1{
+    position:relative;
+    overflow:hidden;
+    height:100vh;
+    display:flex:
+    justify-content:center;
+    align-items:center;
+     background:#462B18;
+     color:#fff;
+}
+.main-1 h1{
+    font-size:3.5rem;
+    text-shadow: 2px 2px 4px #462B18;
+}
+.main-1 p{
+    text-shadow: 2px 2px 4px #462B18;
+}
+
+.main-1 img{
+    position:absolute;
+    top:0;
+    left:0;
+    opacity:.7;
+    width:100vw;
+}
+.main-row{
+    z-index:9;
+}
 
 .admin{
     top:25px;
     right:25px;
+}
+
+.btn:hover {
+    color: white;
+}
+.cadastro, .alerta-area,.alerta-area-register{
+  font-size:.7rem;
+   font-weight:500;
+}
+
+#cart .nav-tabs {
+    --bs-nav-tabs-border-width: var(--bs-border-width);
+    --bs-nav-tabs-border-color: var(--bs-border-color);
+    --bs-nav-tabs-border-radius: var(--bs-border-radius);
+    --bs-nav-tabs-link-hover-border-color: var(--bs-secondary-bg) var(--bs-secondary-bg) var(--bs-border-color);
+    --bs-nav-tabs-link-active-color: var(--bs-emphasis-color);
+    --bs-nav-tabs-link-active-bg: var(--bs-body-bg);
+    --bs-nav-tabs-link-active-border-color: var(--bs-border-color) var(--bs-border-color) var(--bs-body-bg);
+    border-bottom: none;
+}
+
+
+
+.tab-content{
+    flex-grow: 1;
+    }
+.btn-switch, btn-switch:hover{
+    background:#fff;
+    color:#000
+}
+.checkout-area{
+    bottom:0px;
+    width:100%;
+    left:0;
+    padding:20px;
+
+}
+
+#dropdown .dropdown-item{
+    width:75%;
+}
+
+.invalid-feedback{
+
+}
+
+.forget{
+    text-align:left;
+    margin-bottom:20px;
+    font-size:.8rem;
+
+}
+.forget a{
+color:#E18239
+}
+
+.messagem_pop{
+    bottom:15px;
+    right: 15px ;
+
+}
+
+
+
+
+
+.entregasSwitch.btn-group{
+    padding:3px;
+    background:rgba(0,0,0,.03);
+     border-radius:20px;
+}
+
+
+.btn-table{
+    font-size:.8rem;
+    font-weight:600;
+     padding:3px 18px;
+}
+
+.entregasSwitch .btn-check:checked+.btn, .btn.active, .btn.show, .btn:first-child:active, :not(.btn-check)+.btn:active {
+    color: var(--bs-btn-active-color);
+    background-color: #f5f5f5;
+    border-color: #f5f5f5;
+    border-radius:20px;
+       font-weight:700;
+}
+
+.avatar{
+    background:#f5f5f5;
+    width:35px;
+    height:35px;
+}
+
+.text-avatar{font-size:.8rem;
+    font-weight:600;
+     margin-bottom:-7px;
+    }
+.perfil{
+    font-size:.6rem;
+    margin-top:-5px;
+}
+.entregasSwitch.btn-group>.btn:not(:last-child):not(.dropdown-toggle) {
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+}
+
+.menu .list-group-item {
+font-size:.8rem;
+    padding: var(--bs-list-group-item-padding-y) 4px;
+   }
+
+
+.form-check-label{
+    font-size:.8rem;
+    background:#f5f5f5;
+    border:none;
+    font-weight:600;
+}
+
+.accordion-button {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 8px 0;
+    font-size:1rem;
+    background:#f5f5f5;
+    border:none;
+    font-weight:600;
+    color: var(--bs-accordion-btn-color);
+    text-align: left;
+    border: 0;
+    border-radius: 0;
+    overflow-anchor: none;
+    transition: var(--bs-accordion-transition);
+}
+.accordion-button:not(.collapsed) {
+    color: var(--bs-accordion-btn-color);
+    background-color: #f5f5f5;
+    box-shadow: 0;
+}
+.accordion-button:focus {
+    z-index: 3;
+    border-color: var(--bs-accordion-btn-focus-border-color);
+    outline: 0;
+    box-shadow: none
+}
+.accordion-item {
+    color: var(--bs-accordion-color);
+     background:#f5f5f5;
+    border:none;
+    }
+
+ /* Define a cor da borda e do fundo do botão do radio sem selecionar */
+  .form-check-input[type="radio"] {
+ background-color: #f5f5f5;
+    border-color: black;
+  }
+
+  /* Define a cor da bola interna do botão do radio quando selecionado */
+  .form-check-input[type="radio"]:checked::before {
+    background-color: #f5f5f5;
+  }
+
+  /* Define a cor do botão do radio quando selecionado */
+  .form-check-input[type="radio"]:checked {
+    background-color: black;
+    border-color: black;
+  }
+
+
+.accordion-body .btn-secondary{
+     font-size:.8rem;
+    background:#f5f5f5;
+    border:none;
+    font-weight:600;
+    color:#000
 }

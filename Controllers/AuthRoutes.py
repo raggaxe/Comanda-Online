@@ -1,6 +1,8 @@
 from flask import Flask, session, Markup, Response, flash, url_for
 from flask import Blueprint, render_template, request, redirect, send_file, make_response, jsonify
 from passlib.hash import sha256_crypt
+
+from Models.Cliente import Cliente
 from Services import EnviarEmail, GerarOTP, LoginRequired, MaskEmail, Session, Google
 from Services.EnviarEmail import enviar_email
 from Repository.BaseRepository import BaseRepository
@@ -15,7 +17,14 @@ mod = Blueprint('auth_routes', __name__)
 repository = BaseRepository(MongoConfig().get_connect())
 
 
-
+@mod.route('/check_email', methods=['POST'])
+def check_email():
+    if request.method == "POST":
+        email_found = repository.find_one('users', {'email': request.form['email']})
+        if email_found is not None:
+            return jsonify({'error': 'usuário já cadastrado com esse email'})
+        else:
+            return jsonify({'status':'OK'})
 
 
 
@@ -25,29 +34,99 @@ def signUpUser():
         return render_template('user/signup.html')
 
 
+@mod.route('/login-cliente', methods=['POST','GET'])
+def login_clientes():
+    if request.method == "POST":
+
+        user_found = repository.find_one('clientes', {'email': request.form['email']})
+        if user_found is not None:
+            if sha256_crypt.verify(request.form['senha'], user_found['senha']):
+                if not "token" in user_found:
+                    user_found['token'] = generateOTP()
+                Session.set_session(user_found)
+                return make_response(jsonify({'resp': user_found['status']}), 200)
+            else:
+                return make_response(jsonify({'erro': 'Usuário/Senha não está correto, tente novamente.'}), 200)
+        if user_found is None:
+            return make_response(jsonify({'erro': 'Usuário/Senha não está correto, tente novamente.'}), 200)
+
+
+@mod.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == "POST":
+        user_found = repository.find_one('clientes', {'email': request.form['email']})
+        print(user_found)
+        if user_found is None:
+            if request.form['email'] != "":
+                user = Cliente(request.form)
+                if user.check_re_password(request.form):
+                    new_user = repository.create(user)
+                    print('criou')
+                    # token = user.token
+                    # tagEmail = render_template('bodyEmail.html',
+                    #                            body=f'BEM-VINDO! VOCE FEZ UMA SOLICITAÇÃO DE TOKEN! TOKEN:{token}')
+                    #
+                    # enviar_email(request.form['email'], 'Pedido de TOKEN', tagEmail)
+
+                    Session.set_session(new_user)
+                    return make_response(jsonify({'resp': new_user['status']}), 200)
+
+                else:
+                    return make_response(jsonify({'erro': 'Usuário/Senha não está correto, tente novamente.'}), 200)
+        else:
+            return make_response(jsonify({'erro': 'Usuário já cadastrado.'}), 200)
+@mod.route('/registrar-user', methods=['GET', 'POST'])
+def registrar_user():
+    if request.method == "POST":
+        user_found = repository.find_one('users', {'email': request.form['email']})
+        if user_found is None:
+            if request.form['email'] != "":
+                user = Usuario(request.form)
+                if user.check_re_password(request.form):
+                    new_user = repository.create(user)
+                    token = user.token
+                    tagEmail = render_template('bodyEmail.html',
+                                               body=f'BEM-VINDO! VOCE FEZ UMA SOLICITAÇÃO DE TOKEN! TOKEN:{token}')
+
+                    enviar_email(request.form['email'], 'Pedido de TOKEN', tagEmail)
+                    Session.set_session(new_user)
+                    print(f"BEM-VINDO! VOCE FEZ UMA SOLICITAÇÃO DE TOKEN! TOKEN:{token}")
+                    return jsonify({'resp': new_user['status']})
+                else:
+                    return jsonify({'erro': 'Usuário/Senha não está correto, tente novamente.'})
+        else:
+            return jsonify({'erro': 'Usuário já cadastrado.'})
+
+
+
+@mod.route('/cadastrar-user', methods=['POST','GET'])
+def cadastro_user():
+    if request.method == "GET":
+        if 'token' in session:
+            return redirect(url_for('auth_routes.login'))
+
+        else:
+            return render_template('user/cadastro_user.html')
+
 @mod.route('/login', methods=['POST','GET'])
 def login():
     if request.method == "GET":
-        if 'token' in session:
-            return redirect(url_for('admin_routes.dashboard'))
+        return render_template('user/login.html')
+    if request.method == "POST":
+        user_found = repository.find_one('users', {'email': request.form['email']})
 
-        else:
-            return render_template('user/login.html')
+        if user_found is not None:
+            if sha256_crypt.verify(request.form['password'], user_found['senha']):
+                print(user_found)
+                Session.set_session(user_found)
+                return redirect(url_for('admin_routes.dashboard'))
+            else:
+                flash('Senha invalida')
+                return redirect(url_for('auth_routes.login'))
 
-
-
-    # if request.method == "POST":
-    #     user_found = repository.find_one('users', {'username': request.form['username']})
-    #     if user_found is not None:
-    #         if sha256_crypt.verify(request.form['pwd'], user_found['password']):
-    #             Session.set_session(user_found)
-    #             return make_response(jsonify({'resp': user_found['status']}), 200)
-    #         else:
-    #             return make_response(jsonify({'erro': 'Usuário/Senha não está correto, tente novamente.'}), 200)
-    #
-    #     if user_found is None:
-    #         return make_response(jsonify({'erro': 'Usuário/Senha não está correto, tente novamente.'}), 200)
-
+        if user_found is None:
+            flash('Usuario não cadastrado')
+            return redirect(url_for('auth_routes.login'))
 
 @mod.route('/logout')
 @LoginRequired.login_required
@@ -55,6 +134,34 @@ def logout():
     session.clear()
     return redirect(url_for('index_routes.index'))
 
+
+@mod.route('/esqueci-senha',methods=['POST','GET'])
+def esqueci_senha():
+
+    if request.method == "GET":
+        session.clear()
+
+        return render_template('user/esqueci_senha.html')
+    if request.method == "POST":
+        userFound = repository.find_one('users',{'email':request.form['email']})
+        tagEmail = render_template('senhaEmail.html',
+                                   token=f'{userFound["token"]}')
+
+        enviar_email(request.form['email'], 'Criar nova Senha', tagEmail)
+
+        flash('Nova senha enviado para seu email')
+        return render_template('user/esqueci_senha.html')
+
+
+@mod.route('/criar_senha/<token>', methods=['POST', 'GET'])
+def nova_senha(token):
+    if request.method == "GET":
+        return render_template('user/nova_senha.html', token=token)
+    if request.method == "POST":
+        userFound = repository.find_one('users', {'token': token })
+        if userFound is not None:
+            repository.update_one('users', {'token': userFound['token']},{'senha':  sha256_crypt.hash(str(request.form['password'])) })
+            return redirect(url_for('auth_routes.login'))
 
 ######## GERAR TOKEN #######
 
@@ -90,10 +197,15 @@ def validarToken():
     if request.method == "POST":
         user_found = repository.find_one('users', {'email': session['email']})
         if user_found is not None:
-            print(user_found)
             if request.form['token'] == user_found['token']:
                 Session.set_session(user_found)
-                return redirect(url_for('admin_routes.dashboard'))
+                if 'is_new_user' not in user_found:
+                    return redirect(url_for('admin_routes.novo_fornecedor'))
+                else:
+                # do something with the image, nome and detalhes
+                    return redirect(url_for('admin_routes.dashboard'))
+
+
             else:
                 return redirect(url_for('auth_routes.login'))
         else:

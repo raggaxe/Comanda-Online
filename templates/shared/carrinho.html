@@ -1,0 +1,118 @@
+<div class="offcanvas-header pb-0">
+    <h5 class="offcanvas-title" id="cartLabel">Carrinho</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+</div>
+<div class="offcanvas-body ">
+      {% if lista %}
+    <hr>
+    <div class="d-flex justify-content-center align-items-center card-subtext position-relative">
+        <div class="w-50">
+
+            Possui múltiplus carrinhos? gerencie aqui cada pedido.
+        </div>
+        <div class="w-50 d-flex justify-content-end">
+            <div id="dropdown" class="dropdown ">
+                <button class="btn btn-switch dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                    <i class='bx bx-cart-alt'></i>
+                </button>
+                <ul class="dropdown-menu">
+                    {% for carrinho in lista %}
+                    <li style="cursor:pointer" class="w-100">
+
+                        <a class="dropdown-item w-100 d-flex justify-content-between align-items-center carrinho-alert"
+                           data-bs-target="#carrinho-{{ carrinho['_idComanda'] }}"
+                        >Compras {{loop.index}}
+                            <span class="badge bg-secondary rounded-pill">{{carrinho['pedidos_count']}}</span>
+                        </a>
+
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div class="tab-content " id="nav-tabContent">
+        {% for carrinho in lista %}
+        <div class="tab-pane v-100 fade{% if carrinho.is_active %} show active{% endif %}"
+             id="carrinho-{{ carrinho['_idComanda'] }}"
+             role="tabpanel"
+             aria-labelledby="tab-{{ carrinho['_idComanda'] }}">
+
+            <div class="alert alert-secondary carrinho-alert" role="alert">
+                <div>{{getEstabelecimento( carrinho['pedidos'][0]['_idUser'])['nome_comercial'] }}</div>
+
+            </div>
+            <ul class="list-group list-group-flush">
+                {% for pedido in carrinho['pedidos'] %}
+                <li class="list-group-item d-flex justify-content-start align-items-center">
+                    <div style="width:65px">
+                        <select id="quantidade-select-{{pedido['_id']}}" class="form-select form-select-sm"
+                                onchange="atualizarPedido('{{pedido['_id']}}', this.value, '{{carrinho['_idComanda']}}')"
+                                aria-label=".form-select-sm example">
+
+                            {% for quantity in range(1, 1000) %}
+                            {% if quantity == pedido['quantidade'] %}
+                            <option selected value="{{ quantity }}">{{ quantity }}</option>
+                            {% else %}
+                            <option value="{{ quantity }}">{{ quantity }}</option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+
+                    </div>
+                    <div class="card-subtext ms-3 flex-fill">
+                        {{getCardapio ( pedido['_idCardapio']).nome_produto }}
+                    </div>
+                    <input type="hidden" id="valor_pedido{{pedido['_id']}}"
+                           value="{{getCardapio(pedido['_idCardapio']).valor|float}}">
+                    <div class="card-subtext ms-3 subtotal{{carrinho['_idComanda']}}"
+                         id="pedido_item_valor{{pedido['_id']}}">
+                        {{ MoneyFormatter(getCardapio(pedido['_idCardapio']).valor|float * pedido['quantidade']|int) }}
+                    </div>
+
+                </li>
+                {% endfor %}
+            </ul>
+            <div class="d-grid gap-2 position-absolute checkout-area">
+                <div>
+                    <hr>
+                    <div class="d-flex justify-content-end align-items-center card-subtext mt-2 mb-2">
+                        Total a pagar: <span class="ms-4" id="totalCart{{carrinho['_idComanda']}}">
+                      <script>
+                           $( document ).ready(function() {
+                           countCart('{{carrinho['_idComanda']}}')
+                        });
+                      </script>
+
+                   </span>
+                    </div>
+                </div>
+                <button class="btn btn-marrom" type="button"
+                        onclick="window.location.href='/checkout/{{carrinho['_idComanda']}}' ">Finalizar Pedido
+                </button>
+                <button class="btn btn-primary" type="button">Cancelar</button>
+            </div>
+        </div>
+
+        {% endfor %}
+    </div>
+    {%else%}
+
+     {%endif%}
+</div>
+
+
+<script>
+$('.dropdown-item').on('click', function(e) {
+  e.preventDefault();
+  var target = $(this).data('bs-target');
+  $('.tab-pane').removeClass('show active');
+  $(target).addClass('show active');
+});
+
+
+
+
+</script>

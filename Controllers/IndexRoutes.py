@@ -1,4 +1,5 @@
-from flask import Flask, session, Markup, Response, flash
+from bson import ObjectId
+from flask import Flask, session, Markup, Response, flash, url_for
 from flask import Blueprint, render_template, request, redirect, send_file, make_response, jsonify
 from flask_dance.contrib.facebook import facebook
 from Models.User import Usuario
@@ -8,24 +9,47 @@ from Repository.BaseRepository import BaseRepository
 
 mod = Blueprint('index_routes', __name__)
 repository = BaseRepository(MongoConfig().get_connect())
+import locale
+
+# Define a localização padrão para o Brasil
+locale.setlocale(locale.LC_ALL, 'pt_BR.utf-8')
 
 @mod.route('/', methods=['GET', 'POST'])
 def index():
-    # if not 'logged_in' in session and facebook.authorized:
-    #     resp = facebook.get("/me?fields=id,name,email,first_name,middle_name,last_name")
-    #     user_info = resp.json()
-    #     user_found = repository.find_one('users', {'email': user_info['email']})
-    #
-    #     if user_found:
-    #         Session.set_session(user_found)
-    #     else:
-    #         user = User(user_info, user_from='facebook')
-    #         new_user = repository.create(user)
-    #         Session.set_session(user_found)
-    #
-    # RECAPTCHA_PUBLIC_KEY = '6Ldbc2IaAAAAAIXz8v1j1sc750ChDtJHJyM0jDlL'
-
+    # estabelecimentos = repository.find('users',{})
+    # lista_estabelecimentos = []
+    # for item in  estabelecimentos:
+    #     item['_id'] = str(item['_id'])  # Converte o ObjectId em uma string
+    #     lista_estabelecimentos.append(item)
+    if 'logged_in' in session:
+        return redirect(url_for('user_routes.dashboardCliente'))
     return render_template('shared/index.html')
+
+
+@mod.route('/loja/<_id>')
+def loja(_id):
+    loja_found = repository.find('users',{'_id': ObjectId(_id)})
+    estabelecimento = []
+    cardapios = []
+    cardapio_found = repository.find('cardapios',{'_idUser': _id})
+    for card in cardapio_found:
+        card['_id'] = str(card['_id'])  # Converte o ObjectId em uma string
+        cardapios.append(card)
+
+    for item in loja_found:
+        item['_id'] = str(item['_id'])  # Converte o ObjectId em uma string
+        estabelecimento.append(item)
+    return render_template('shared/loja.html', estabelecimento=estabelecimento,cardapios=cardapios)
+
+@mod.route('/produto/<_id>')
+def produto(_id):
+    cardapio = []
+    cardapio_found = repository.find_one('cardapios',{'_id':ObjectId(_id)})
+    cardapio_found['_id'] = str(cardapio_found['_id'])  # Converte o ObjectId em uma string
+    cardapio_found['valor'] =  locale.currency(float(cardapio_found['valor']), grouping=True, symbol=None)
+    return render_template('shared/produto.html', produto=cardapio_found)
+
+
 
 
 

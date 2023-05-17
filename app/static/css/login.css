@@ -1,0 +1,28 @@
+<TextInput>:
+    background_normal: ''
+    foreground_color: 0, 0, 0, 1
+    padding:[10]
+    border_radius: [143]
+    pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+
+
+<Button>:
+    background_color: 0.24, 0.57, 0.90, 0.5
+    border_radius: 101
+    border_width: 1
+    border_color: 1, 1, 1, 1
+    font_size: 18
+
+
+<MDIconButton>:
+    background_color: 0.24, 0.57, 0.90, 0.5
+    border_radius: 101
+    border_width: 1
+    border_color: 1, 1, 1, 1
+    font_size: 18
+
+<MDBottomNavigationItem>:
+    theme_text_color: "Custom"
+    text_color: 0.2, 0.2, 0.2, 1
+    icon_color: 0.2, 0.2, 0.2, 1
+    _active_color: 1, 0.5, 0.2, 1

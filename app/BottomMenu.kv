@@ -1,0 +1,70 @@
+<BottomMenu>:
+    md_bg_color: 1, 0, 0, 1  # define a cor de fundo como vermelho
+    width: 360
+    size_hint: 1, 1
+    Label:
+        text: "Account"
+    MDBottomNavigationItem:
+        name: "account"
+        text: "Account"
+        icon: "account"
+
+        MDIconButton:
+            icon: "account-circle"
+            theme_text_color: "Custom"
+            text_color: 1, 1, 1, 1
+            font_size: "50sp"
+            pos_hint: {"center_x": 0.5, "center_y": 0.5}
+            on_release: print("Account pressed")
+
+    MDBottomNavigationItem:
+        name: "bell"
+        text: "Bell"
+        icon: "bell"
+
+        MDIconButton:
+            icon: "bell"
+            theme_text_color: "Custom"
+            text_color: 1, 1, 1, 1
+            font_size: "50sp"
+            pos_hint: {"center_x": 0.5, "center_y": 0.5}
+            on_release: print("Bell pressed")
+
+    MDBottomNavigationItem:
+        name: "message"
+        text: "Message"
+        icon: "message"
+
+        MDIconButton:
+            icon: "message-text"
+            theme_text_color: "Custom"
+            text_color: 1, 1, 1, 1
+            font_size: "50sp"
+            pos_hint: {"center_x": 0.5, "center_y": 0.5}
+            on_release: print("Message pressed")
+
+    MDBottomNavigationItem:
+        name: "settings"
+        text: "Settings"
+        icon: "settings"
+
+        MDIconButton:
+            icon: "cog-outline"
+            theme_text_color: "Custom"
+            text_color: 1, 1, 1, 1
+            font_size: "50sp"
+            pos_hint: {"center_x": 0.5, "center_y": 0.5}
+            on_release: print("Settings pressed")
+
+    MDBottomNavigationItem:
+        name: "help"
+        text: "Help"
+        icon: "help"
+
+        MDIconButton:
+            icon: "help-circle-outline"
+            theme_text_color: "Custom"
+            text_color: 1, 1, 1, 1
+            font_size: "50sp"
+            pos_hint: {"center_x": 0.5, "center_y": 0.5}
+            on_release: print("Help pressed")

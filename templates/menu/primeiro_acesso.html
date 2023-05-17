@@ -1,0 +1,466 @@
+{% extends "shared/base.html" %}
+{% block content %}
+<link href="../static/css/user.css" rel="stylesheet">
+
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBbGe1ZfMMiDbYzz2XJ1ImxjQ-4hIs3Xko"></script>
+
+<form class="container-fluid d-flex flex-column vh-100 justify-content-center align-items-center" action="/cadastro-lojista" method="post" >
+    <div class="step-1 w-75">
+    <div class="bg-light  p-5 d-flex justify-content-center ">
+        <div class="w-50 text-center d-flex justify-content-center align-items-center">
+            <img src="./static/img/sign.jpg" class="me-5" width="90%">
+        </div>
+        <div class="border"></div>
+        <div class="w-50 ps-3 pe-3 d-flex flex-column justify-content-between align-items-end">
+            <div>
+                <h1>
+                    Complete seu cadastro!
+                </h1>
+                <p>
+                    Cadastrar a empresa com informações corretas e claras é crucial para criar uma identidade confiável
+                    e
+                    aumentar a credibilidade com seus clientes. Informações precisas, como descrição do negócio, setor
+                    da
+                    indústria, tamanho da empresa e imagens podem ajudar a atrair clientes e aumentar a visibilidade da
+                    sua
+                    empresa. Lembre-se de que seus clientes em potencial vão confiar nas informações que você fornecer.
+                </p>
+            </div>
+
+            <button class="btn btn-laranja" type="button" onclick="$('.step-1').hide(); $('.step-2').show();">
+                COMERÇA AGORA >
+            </button>
+        </div>
+    </div>
+</div>
+    <div style="display:none"  class="step-2 w-75">
+        <div class="bg-light p-5 ">
+            <h1 class="text-center mb-3">
+                Informações da loja
+            </h1>
+            <div class="d-flex justify-content-center">
+                <div class="w-50 ps-3 pe-3 d-flex flex-column justify-content-between align-items-end">
+                    <div class="w-100 text-left">
+
+
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control cnpj " id="cnpj" name="CNPJ" placeholder="CNPJ"
+                            >
+                            <label for="cnpj">CNPJ</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="tipo_empresa" name="tipo_empresa"
+                                   placeholder="tipo_empresa"  readonly value=""
+                            >
+                            <label for="tipo_empresa">Tipo de Empresa</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="razao_social" name="razao_social"
+                                   placeholder="Razão Social"  readonly value=""
+                            >
+                            <label for="razao_social">Razão Social</label>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <select class="form-select" id="modelo_negocio" name="modelo_negocio"
+                                    aria-label="Floating label select example" onchange="$(this).addClass('is-valid');ValidadorStep1();">
+                                <option selected disabled>Selecione um tipo...</option>
+                                <option value="1">Alimentação</option>
+                                <option value="2">Clínica</option>
+                                <option value="3">Varejo</option>
+                            </select>
+                            <label for="modelo_negocio">Modelo de Negócio</label>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="border"></div>
+                <div class="w-50 ps-3 pe-3 d-flex flex-column justify-content-between align-items-end">
+                    <div class="w-100 text-left">
+
+
+                        <div class="exibir mb-3">
+
+
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="nome_comercial" autocomplete="des"
+                                       name="nome_comercial"
+                                       placeholder="Nome Comercial">
+                                <label for="nome_comercial">Nome Comercial</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control telefone" id="telefone_comercial"
+                                       name="telefone_comercial"
+                                       placeholder="Nome Comercial">
+                                <label for="telefone_comercial">Telefone da Loja</label>
+
+                            </div>
+
+                            <div class="form-floating ">
+                            <textarea class="form-control" placeholder="Leave a comment here" name="detalhes_comercial"
+                                      id="detalhes_comercial"
+                                      style="height: 100px"></textarea>
+                                <label for="detalhes_comercial">Descrição da empresa</label>
+                            </div>
+                            <div class="form-text">Items para exibição no app.</div>
+
+                        </div>
+
+                    </div>
+
+                    <button type="button" id="btn-step-2" class="btn btn-laranja" disabled
+                            onclick="$('.step-2').hide(); $('.step-3').show();">
+                        CONTINUAR >
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div style="display:none" class="step-3 w-75">
+        <div class="bg-light p-5 d-flex justify-content-center">
+            <div class="w-50 ps-2 pe-5 d-flex flex-column justify-content-between align-items-end">
+                <div class="w-100 text-left">
+                    <h1>
+                        Endereço da loja
+                    </h1>
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control cep" id="CEP" name="CEP" autocomplete="cep"
+                               placeholder="CEP">
+                        <label for="CEP">CEP</label>
+                        <div class="form-text" id="descubra_cep"><a
+                                href="https://buscacepinter.correios.com.br/app/endereco/index.php">Descubra seu CEP</a>
+                        </div>
+                    </div>
+
+
+                    <div class="row g-2 mb-3">
+                        <div class="col-md-8">
+                            <div class="form-floating">
+                                <input type="email" class="form-control" id="cidade" placeholder="cidade" name="cidade"
+                                       value="" readonly>
+                                <label for="cidade">Cidade</label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-floating">
+                                <input type="email" class="form-control" id="estado" name="estado" placeholder="estado"
+                                       value="" readonly>
+                                <label for="estado">Estado</label>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="bairro" name="bairro" placeholder="bairro">
+                        <label for="bairro">Bairro</label>
+
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" oninput="updateGeolocation()" id="endereco"
+                               name="endereco"
+                               placeholder="endereco">
+                        <label for="endereco">Endereço</label>
+                    </div>
+
+
+                    <div class="row g-2 mb-3">
+                        <div class="col-md-4">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="numero" name="numero" placeholder="numero"
+                                       value="">
+                                <label for="numero">Número</label>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="complemento" name="complemento"
+                                       placeholder="complemento"
+                                       value="">
+                                <label for="complemento">Complemento</label>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+            <div class="border"></div>
+            <div class="w-50 text-center d-flex flex-column justify-content-between align-items-end">
+                <div id="map" style="height: 400px;width:400px"></div>
+
+
+                <button id="btn-step-3" type="button" disabled class="btn btn-laranja mt-3"
+                        onclick="$('.step-3').hide(); $('.step-4').show();">
+                    CONTINUAR >
+                </button>
+            </div>
+        </div>
+    </div>
+    <div style="display:none" class="step-4 w-75">
+        <div class="bg-light p-5 d-flex justify-content-center">
+            <div class="w-50 text-center d-flex justify-content-center align-items-center">
+                <img src="./static/img/sign.jpg" class="me-5" width="90%">
+            </div>
+            <div class="border"></div>
+            <div class="w-50 ps-3 pe-3 d-flex flex-column justify-content-between align-items-end">
+                <div class="w-100 text-left">
+                    <h1>
+                        Responsável da loja
+                    </h1>
+                    <p>Informe o nome de alguém que faça parte do contrato social da empresa</p>
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="nome_completo" name="nome_responsavel"
+                               placeholder="nome_responsavel" autocomplete="nao">
+                        <label for="nome_completo">Nome Responsável</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="cpf_responsavel" name="cpf_responsavel"
+                               placeholder="cpf_responsavel">
+                        <label for="cpf_responsavel">CPF do responsável legal</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="email_responsavel" name="email_responsavel"
+                               placeholder="email_responsavel" value="{{session.email}}" readonly>
+                        <label for="email_responsavel">E-mail</label>
+                        <div class="form-text" id="email-add">Para cadastro e login no app.</div>
+                    </div>
+
+
+                </div>
+
+                <button type="button" class="btn btn-laranja" id="btn-step-4" disabled
+                        onclick="$('.step-4').hide(); $('.step-5').show();">
+                    CONTINUAR >
+                </button>
+            </div>
+        </div>
+    </div>
+    <div style="display:none" class="step-5 w-75">
+        <div class="bg-light p-5 d-flex justify-content-center">
+
+
+            <div class="w-100 ps-3 pe-3 d-flex flex-column justify-content-between align-items-end">
+                <div class="w-100 text-center">
+                    <h1>
+                        Planos Empresariais
+                    </h1>
+                    <p>Selecione o plano ideal para sua empresa</p>
+                </div>
+                <div class="row row-cols-1 row-cols-md-3 g-4">
+                    <div class="col">
+                        <label for="plan-basic" class="card h-100 click card-plan ">
+                            <div class="card-header plano-1 text-white text-right">
+                                <span class="card-title ">Basic Plan</span>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item">5 GB de armazenamento</li>
+                                    <li class="list-group-item">2 contas de e-mail</li>
+                                    <li class="list-group-item">Suporte por e-mail</li>
+                                </ul>
+                            </div>
+
+                            <div class="card-footer d-flex justify-content-between align-items-center p-3">
+                                <h4 class="m-0 p-0 w-100">
+                                    <label for="plan-basic" class="w-100">R$ 100/mês</label>
+                                </h4>
+                                <input type="radio" name="plano" id="plan-basic" value="100">
+                            </div>
+                        </label>
+                    </div>
+                    <div class="col">
+                        <label for="plan-silver" class="card h-100 click card-plan selected-card">
+                            <div class="card-header plano-2 text-white text-right">
+                                <span class="card-title ">Plano Empresarial</span>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item">10 GB de armazenamento</li>
+                                    <li class="list-group-item">5 contas de e-mail</li>
+                                    <li class="list-group-item">Suporte por e-mail e telefone</li>
+                                    <li class="list-group-item">Backup diário</li>
+                                </ul>
+                            </div>
+                            <div class="card-footer d-flex justify-content-between align-items-center p-3">
+                                <h4 class="m-0 p-0 w-100">
+                                    <label for="plan-silver" class="w-100">R$ 150/mês</label>
+                                </h4>
+                                <input type="radio" name="plano" value="150" id="plan-silver" checked>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="col">
+                        <label for="plan-gold" class="card h-100 click card-plan">
+                            <div class="card-header plano-3 text-white text-right">
+                                <span class="card-title ">Plano Diamante</span>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item">50 GB de armazenamento</li>
+                                    <li class="list-group-item">10 contas de e-mail</li>
+                                    <li class="list-group-item">Suporte por e-mail, telefone e chat</li>
+                                    <li class="list-group-item">Backup diário e restauração rápida</li>
+                                    <li class="list-group-item">Monitoramento de uptime</li>
+                                </ul>
+                            </div>
+                            <div class="card-footer d-flex justify-content-between align-items-center p-3">
+                                <h4 class="m-0 p-0 w-100">
+                                    <label for="plan-gold" class="w-100">R$ 250/mês</label>
+                                </h4>
+                                <input type="radio" name="plano" value="250" id="plan-gold">
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="button" class="btn btn-laranja mt-3" onclick="$('.step-5').hide(); $('.step-6').show();">
+                    CONTINUAR >
+                </button>
+            </div>
+        </div>
+    </div>
+    <div style="display:none" class="step-6 w-75">
+        <div class="bg-light p-5">
+            <h1 class="text-center mb-3">
+                Dados Bancários
+            </h1>
+
+            <div class="d-flex justify-content-center">
+                <div class="w-50 text-center d-flex flex-column justify-content-center align-items-center me-5">
+                    <div class="card w-100 mb-3">
+                        <label for="tipo_banco_PJ" class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="card-title mb-0">Pessoa Jurídica</h5>
+                                <input type="radio" id="tipo_banco_PJ" name="tipo_banco" value="PJ" checked>
+                            </div>
+
+
+                            <div class="row g-2 mb-3">
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="razao_social_banco"
+                                               placeholder="nome_banco"
+                                               value="" readonly>
+                                        <label for="razao_social_banco">Razão Social</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="cnpj_banco"
+                                               placeholder="cnpj_banco"
+                                               value=""
+                                               readonly>
+                                        <label for="cnpj_banco">CNPJ</label>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </label>
+                    </div>
+                    <div class="card w-100">
+                        <label for="tipo_banco_PF" class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="card-title mb-0">Pessoa Física</h5>
+                                <input type="radio" id="tipo_banco_PF" name="tipo_banco" value="PF">
+                            </div>
+
+                            <div class="row g-2 mb-3">
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="nome_banco"
+                                               placeholder="nome_banco"
+                                               value="" readonly>
+                                        <label for="nome_banco">Nome</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="cpf_banco" placeholder="cpf_banco"
+                                               value="" readonly>
+                                        <label for="cpf_banco">CPF</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </label>
+                    </div>
+                </div>
+                <div class="border"></div>
+                <div class="w-50 ps-5 pe-3 d-flex flex-column justify-content-between align-items-end">
+
+                    <div class="w-100 text-left">
+
+                        <div class="form-floating mb-3">
+                            <select id="banco" name="banco" class="form-select">
+                                <option disabled selected>Selecione um banco...</option>
+
+                            </select>
+
+                            <label for="banco">Banco</label>
+
+                        </div>
+
+                        <div class="row g-2 mb-3">
+                            <div class="col-md-4">
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" id="agencia" name="agencia"
+                                           placeholder="agencia">
+                                    <label for="agencia">Agência</label>
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="form-floating">
+                                    <select id="tipo_conta" name="tipo_conta" class="form-select">
+                                        <option disabled selected>Tipo de conta...</option>
+                                        <option value="corrente">Conta corrente</option>
+                                        <option value="poupanca">Conta poupança</option>
+                                        <option value="investimento">Conta de investimento</option>
+                                    </select>
+                                    <label for="tipo_conta">Tipo de conta:</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row g-2 mb-3">
+                            <div class="col-md-8">
+                                <div class="form-floating">
+                                    <input disabled type="text" class="form-control" id="conta" placeholder="conta"
+                                           name="conta"
+                                           value=""
+                                    >
+                                    <label for="conta">Conta</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-floating">
+                                    <input disabled type="text" class="form-control" id="digito" placeholder="digito"
+                                           name="digito"
+                                           value="">
+                                    <label for="digito">Dígito</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" disabled id="btn-terminar" class="btn btn-success btn-lg">
+                                TERMINAR >
+                            </button>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<script src="../static/js/primeiro_acesso.js"></script>
+
+{% endblock %}

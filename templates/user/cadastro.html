@@ -2,16 +2,15 @@
 {% block content %}
 
 <div id="big_form"
-     class="apx1 d-flex flex-column justify-content-center align-items-center ">
+     class="container vh-100 d-flex flex-column justify-content-center align-items-center ">
 
     <a href="/login" class="position-absolute admin text-light"><i style="font-size:2rem" class='bx bx-restaurant'></i></a>
 
     <div class="card-info">
-        <h1 class="mb-2"><i class="bi bi-ui-checks me-4"></i>
-            Cadastre-se</h1>
-        <p class="mb-2">Com o nosso aplicativo, você pode desfrutar de uma experiência de comanda mais fácil e rápida.
-            Temos
-            duas opções para você começar a usar nosso aplicativo: entrar como administrador ou entrar como cliente.</p>
+       <div>
+            <h1 class="mb-2"><i class="bi bi-ui-checks me-4"></i>
+            Começar um pedido</h1>
+        <p class="mb-2">Com o nosso aplicativo, você pode desfrutar de uma experiência de comanda mais fácil e rápida.</p>
         <form id="cadastro" action="/cliente" method="post" class="needs-validation" >
             <div class="modal-body">
 
@@ -62,6 +61,7 @@
 
 
         </form>
+       </div>
 
     </div>
 

@@ -1,0 +1,33 @@
+<CardWidget>:
+    size_hint: 1, None
+    height: dp(200)
+    orientation: 'vertical'
+    padding: dp(10)
+
+    BoxLayout:
+        orientation: 'horizontal'
+        spacing: dp(10)
+
+        AsyncImage:
+            source: root.image_source
+            size_hint_x: None
+            width: dp(150)
+
+        BoxLayout:
+            orientation: 'vertical'
+            spacing: dp(5)
+
+            Label:
+                text: root.nome
+                font_size: sp(20)
+                bold: True
+
+            Label:
+                text: root.description
+                font_size: sp(16)
+
+    Button:
+        text: 'View Details'
+        size_hint_y: None
+        height: dp(40)
+        on_release: root.view_details()

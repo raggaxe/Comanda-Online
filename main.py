@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, session, stream_with_context,
 from flask_socketio import *
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
-
+import locale
 from Configs.MongoConfig import MongoConfig
 from Controllers import AdminRoutes, AuthRoutes, IndexRoutes, UserRoutes, SettingsRoutes, DefaultRoutes
 from flask_dance.contrib.facebook import make_facebook_blueprint
@@ -32,6 +32,11 @@ app.secret_key = os.getenv("APP_SECRET_KEY")
 app.config['SECRET_KEY'] = os.getenv("APP_SECRET_KEY")
 app.config['SESSION_COOKIE_NAME'] = 'google-login-session'
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=500)
+
+
+# Define a localidade para o Brasil
+locale.setlocale(locale.LC_ALL, 'pt_BR.utf-8')
+
 
 if os.getenv("APP_SETTINGS") == 'development':
     os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
@@ -206,8 +211,11 @@ def my_utility_processor():
         return cardapio
 
     def getMesa(_idMesa):
-        Mesa = repository.find_one('mesas', {'_id': ObjectId(_idMesa)})
-        return Mesa
+        if _idMesa != '':
+            Mesa = repository.find_one('mesas', {'_id': ObjectId(_idMesa)})
+            return Mesa
+        else:
+            return _idMesa
 
     def getCliente(_idCliente):
         cliente = repository.find_one('clientes', {'_id': ObjectId(_idCliente)})
@@ -220,6 +228,8 @@ def my_utility_processor():
     def getEstabelecimento(_idUser):
         user = repository.find_one('users', {'_id': ObjectId(_idUser)})
         return user
+    def MoneyFormatter(valor):
+        return "R$ " +  locale.currency(valor, grouping=True, symbol=True)[:-2]
 
         # def format_datetime2(value, format='medium'):
         #     if format == 'full':
@@ -234,6 +244,7 @@ def my_utility_processor():
                 getCliente=getCliente,
                 getMesa=getMesa,
                 getCategoria=getCategoria,
+                MoneyFormatter=MoneyFormatter,
                 getEstabelecimento=getEstabelecimento
                 )
 
