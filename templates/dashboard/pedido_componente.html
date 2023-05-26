@@ -1,0 +1,175 @@
+<div class="pedidoCard mb-2">
+    <div class="d-flex justify-content-between align-items-center ">
+        <!--    {{getPedidosInfo(_id)}}-->
+        <!--     {{getComanda(_id)}}-->
+        <!--    -->
+
+        <!--         {{getComanda(_id)}}-->
+
+        {% set carrinho = getComanda(_id) %}
+        <div class="d-flex flex-column justify-content-center align-items-center type">
+            {% if carrinho.tipo_atendimento == 'mesa' %}
+            <i style="font-size:1.2rem" class='bx bxs-group'></i>
+            <div class="text-">{{carrinho.tipo_atendimento}}</div>
+            {% if carrinho._idMesa != '' %}
+            <div class="text- detail-subtitle text-success">Nr. {{getMesa(carrinho._idMesa).numero_mesa}}</div>
+            {% endif %}
+            {% elif carrinho.tipo_atendimento == 'delivery' %}
+            <i style="font-size:1.2rem" class='bx bxs-package'></i>
+            <div class="text-">{{carrinho.tipo_atendimento}}</div>
+            <!--            <div class="text-">{{carrinho._idMesa}}</div>-->
+            {% elif carrinho.tipo_atendimento == 'retirar' %}
+            <i style="font-size:1.2rem" class='bx bxs-store-alt'></i>
+            <div class="text-">{{carrinho.tipo_atendimento}}</div>
+            {% endif%}
+
+        </div>
+        <div class="w-100 d-flex  justify-content-between align-items-center ">
+
+            <div class="text-left  text- w-75 opacity-50">
+
+                {% set cliente = getCliente(carrinho._idCliente) %}
+
+                {% if cliente.nome %}
+                <div>
+                    {{cliente.nome}}
+                </div>
+
+                {% elif cliente.email %}
+                <div>
+                    {{cliente.email}}
+                </div>
+                {% else %}
+                <div>Anônimo</div>
+                {% endif %}
+                <div>
+                    <small>Valor Total: <span
+                            class="text-success">{{MoneyFormatter(carrinho.valor|float )}}</span></small>
+                </div>
+
+            </div>
+
+            <!--        <small class="text-body-secondary" id="tempo-decorrido'+pedido._idPedido+'">00:00:00</small>-->
+            <!--        <input type="hidden" id="tempo'+pedido._idPedido+'" value="'+pedido.created_at+'">-->
+            <!--        <input type="hidden" class="order-id" value="'+pedido._idPedido+'">-->
+
+            <a style="font-size:1.5rem" class="badge text-bg-light w-25" data-bs-toggle="collapse"
+               href="#collapseExample{{_id}}" role="button"
+               aria-expanded="false" aria-controls="collapseExample">
+                <i style="font-size:1.5rem" class='bx bx-list-check'></i>
+            </a>
+        </div>
+        <div class="">
+            <div class="d-flex flex-column justify-content-center align-items-start">
+                  {% if not _editMode %}
+                <form action="/aceitar_pedidos" method="post">
+                    <input type="hidden" name="_idComanda" value="{{carrinho._id}}">
+                    <button type="button" onclick="aceitarPedido('{{carrinho._id}}')"
+                            class="optionAceitar text-success  d-flex justify-content-center align-items-center">
+                        <div style=" font-size: .8rem;"></div>
+                        <div><i style=" font-size: 1.5rem;" class="bi bi-check my-icon"></i></div>
+                    </button>
+                </form>
+
+                <a onclick="rejeitarPedido('{{carrinho._id}}')"class="optionAceitar text-danger d-flex justify-content-center align-items-center">
+                    <div style=" font-size: .8rem;"></div>
+                    <i style=" font-size: 1.5rem;" class="bi bi-x my-icon"></i>
+                </a>
+                {%else%}
+                  <a type="button" onclick="entregarPedido('{{carrinho._id}}')"
+                       class="optionAceitar text-warning m-0  w-100 d-flex justify-content-center align-items-center p-4">
+
+                        <div class=""><i style=" font-size: 1rem;" class="bi bi-bell-fill"></i></div>
+                    </a>
+            {%  endif %}
+            </div>
+        </div>
+    </div>
+
+
+    <div class="collapse mt-3" id="collapseExample{{_id}}">
+        <hr>
+        <div class="status_mesa opacity-50">
+            ID: {{carrinho._id}}
+
+        </div>
+        <div class="">
+            <div class="d-flex justify-content-between align-items-center status_mesa opacity-50 mb-2">
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="me-3 d-flex flex-column justify-content-start align-items-start">
+                            <div>
+                                <i class='bx bxs-calendar-week me-2'></i>{{get_datetime(carrinho.hora_abertura)[0]}}
+                            </div>
+
+                            <div>
+                                <i class='bx bxs-time me-2'></i>{{get_datetime(carrinho.hora_abertura)[1]}}
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                  <div class="d-flex justify-content-between align-items-center">
+                      <div>
+
+                            <div>
+                                <small>Gorjeta: <span
+                                        class="text-success">{{MoneyFormatter(carrinho.gorjeta|float )}}</span></small>
+                            </div>
+                            <div>
+                                <small>Taxa Entrega: <span
+                                        class="text-success">{{MoneyFormatter(carrinho.tx_entrega|float )}}</span></small>
+                            </div>
+                        </div>
+                </div>
+
+
+
+
+            </div>
+
+
+            <ul class="list-group list-group-flush">
+                {% set itemCardapio = getPedidosInfo(_id) %}
+                {% for item in itemCardapio %}
+                {% set produto = getCardapio(item._idCardapio) %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div class="me-3 w-25">
+                        <div class="preview-menu">
+                            <img src="{{url_for('user_routes.uploaded_file', filename=produto.filename)}}"
+                                 class="img-fluid rounded-start" HEIGHT="100%" alt="...">
+                        </div>
+                    </div>
+                    <div class="flex-fill">
+                        <div class="text- opacity-50">
+                            <div><strong> {{ produto.nome_produto }}</strong></div>
+
+                            <div class="light-text"><span>{%if produto.valor%}{{ MoneyFormatter(produto.valor|float ) }} | {{ getCategoria(produto.categoria).nome}} {%else%}R$ 0,00 {%endif%} </span>
+
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    <span class="badge bg-secondary rounded-pill"> {{ item.quantidade }}</span>
+                </li>
+
+                {%endfor%}
+            </ul>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+

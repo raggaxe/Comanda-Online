@@ -1,0 +1,443 @@
+<div class="offcanvas-header">
+    <div class="d-flex justify-content-between align-items-center w-100 mb-3">
+
+        <div>
+
+            <button onclick="deleteItem('{{item._id}}')" style="border-radius:25px;font-size:.8rem" type="button"
+                    class="btn btn-secondary me-2">
+                Excluir
+            </button>
+
+            <button style="border-radius:25px;font-size:.8rem" type="button" class="btn btn-secondary me-2">
+                Duplicar
+            </button>
+            <button type="button" class="btn btn-dark" onclick="EnviarFormulario('{{item._id}}')">
+                Salvar
+            </button>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+
+    </div>
+
+
+</div>
+<form id="editItem" class="offcanvas-body">
+    <input name="_id" value="{{item._id}}" type="hidden">
+    <div class="d-flex justify-content-between align-items-center border-input">
+        <input maxlength="28" style="font-size:1.3rem!important " type="text" class="form-control no-border w-100"
+               id="nome_produto" value="{{item.nome_produto}}"
+               name="nome_produto" placeholder="Adicione um nome para o item"
+               autocomplete="off"
+               required>
+
+    </div>
+
+    <div class="mt-5 mb-4 ">
+        <div class="subtitle mb-2">Fotos</div>
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex flex-column justify-content-center align-items-start me-3">
+
+                    <a class="container_photo" onclick="$('#file2').click()">
+                        <div class="opacity-25 text- text-center" id="preview-title">
+                            <div><i style="font-size:5rem; opacity:.3" class='bx bx-photo-album'></i></div>
+                            <div> Insira uma Foto</div>
+                        </div>
+                        <img src="/uploads/{{item.filename}}" class="rounded" alt="..."
+                             id="previewImage2"
+                             height="300">
+                    </a>
+
+
+                </div>
+            </div>
+            <div class="col-12 mt-2">
+                <input style="display:none" class="form-control form-control-sm"
+                       type=file
+                       name=file onchange="previewImage3(event)"
+                       id="file2">
+
+
+                <div class="subtitle">As fotos ajudam os clientes a decidirem o que pedir e podem aumentar o volume
+                    de
+                    vendas.
+                </div>
+                <div class="text- mt-2">Requisitos do arquivo: JPG, PNG, GIF ou WEBP, até 10 MB. <br>Tamanho mínimo em
+                    pixels: 320 para largura e altura.
+                </div>
+
+                <div class="d-flex justify-content-start align-items-center mt-4 ">
+
+                    <button type="button" style="font-size:.8rem; border-radius:20px;" class="btn btn-dark me-3"
+                            onclick="$('#file').click()">
+                        Escolher foto
+                    </button>
+                    <button type="button" style="font-size:.8rem;border-radius:20px;" class="btn btn-secondary"
+                            onclick="$('#file').click()">
+                        Excluir
+                    </button>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-4 section-reduce">
+        <div class="subtitle mb-2">Descrição(obrigatório)</div>
+        <div class="form-floating mb-3">
+                                        <textarea required class="form-control" placeholder="Leave a comment here"
+                                                  maxlength="250" name="descricao"
+                                                  id="descricao" style="min-height: 110px;font-size:.8rem;color:#000">{{item.descricao}}</textarea>
+            <label for="descricao">Descrição do produto</label>
+        </div>
+    </div>
+
+    <div class="mb-4 section-reduce">
+        <div class="subtitle mb-2">Categorias</div>
+        <select class="form-select" id="categoria" name="categoria" required>
+            {% for categoria in categorias %}
+            <option value="{{categoria._id}}" {% if item.categoria== categoria._id %}selected{% endif %}>
+                {{categoria.nome}}
+            </option>
+            {% endfor %}
+        </select>
+
+        <small class="text-">Atribua este item às categorias existentes</small>
+
+        <div class="text-">Não achou uma categoria?</div>
+        <a style="font-size:.8rem; text-decoration:underline" href="#"
+           data-bs-toggle="modal"
+           data-bs-target="#categoria_modal">
+            Cadastre aqui!
+        </a>
+    </div>
+
+    <div class="mb-4 section-reduce">
+        <div class="subtitle mb-2">Preço e forma de venda</div>
+    </div>
+
+
+    <div>
+        <div class="mb-4 section-reduce">
+            <div class="subtitle mb-2">Preço por {{item.tipo_preco}}</div>
+            <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                {% if item.tipo_preco == 'Peso' %}
+                <input type="radio" class="btn-check" name="tipo_preco" onclick="$('#item-tab').click()"
+                       autocomplete="off" value="Item">
+                <label class="btn btn-outline-dark">Item</label>
+                <input type="radio" class="btn-check" name="tipo_preco" onclick="$('#peso-tab').click()"
+                       autocomplete="off" disabled value="Peso" checked>
+                <label class="btn btn-outline-dark">Peso</label>
+
+                {% else %}
+                <input type="radio" class="btn-check" name="tipo_preco" onclick="$('#item-tab').click()"
+                       autocomplete="off" value="Item" checked>
+                <label class="btn btn-outline-dark">Item</label>
+                <input type="radio" class="btn-check" name="tipo_preco" onclick="$('#peso-tab').click()"
+                       autocomplete="off" disabled value="Peso">
+                <label class="btn btn-outline-dark">Peso</label>
+                {% endif %}
+
+
+            </div>
+        </div>
+        <ul class="nav nav-tabs" id="myTab" role="tablist" style="display:none">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="item-tab" data-bs-toggle="tab" data-bs-target="#item-tab-pane"
+                        type="button"
+                        role="tab" aria-controls="item-tab-pane" aria-selected="true">item
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="peso-tab" data-bs-toggle="tab" data-bs-target="#peso-tab-pane"
+                        type="button"
+                        role="tab" aria-controls="peso-tab-pane" aria-selected="false">peso
+                </button>
+            </li>
+
+        </ul>
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade  {% if item.tipo_preco == 'Item' %} show active {% endif %} " id="item-tab-pane"
+                 role="tabpanel" aria-labelledby="item-tab"
+                 tabindex="0">
+                <div class="mb-4 section-reduce">
+                    <div class="subtitle mb-2">Preço padrão</div>
+                    <div class="input-group mb-1">
+                        <span class="input-group-text">R$</span>
+                        <div class="form-floating ">
+
+                            <input type="text" class="form-control valor" id="valorEdit"
+                                   name="valor" value="{{item.valor}}"
+                                   placeholder="Username"
+                                   required>
+
+
+                            <label for="valorEdit">Valor de venda</label>
+                        </div>
+                    </div>
+                    <small style="font-size:.8rem" class="text-secondary">Atribua esse preço em Vendas para entregas,
+                        retirar na loja e escolher uma
+                        mesa.</small>
+                </div>
+            </div>
+            <div class="tab-pane fade  {% if item.tipo_preco == 'Peso' %} show active {% endif %}" id="peso-tab-pane"
+                 role="tabpanel" aria-labelledby="peso-tab" tabindex="0">
+                PSEO
+            </div>
+
+        </div>
+    </div>
+
+    <div class="mb-4 section-reduce">
+        <div class="subtitle mb-2">Item com estoque?</div>
+        <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+
+            {% if item.tipo_estoque == 'Sim' %}
+            <input type="radio" class="btn-check" name="tipo_estoque" id="s1" value="Sim"
+                   onclick="$('#Stock').attr('readonly',false);$('#metrica').attr('disabled',false);$('#Stock').val(0)"
+                   autocomplete="off" checked>
+            <label class="btn btn-outline-dark" for="s1">Sim</label>
+
+            <input type="radio" class="btn-check" name="tipo_estoque" id="n1" value="Não" autocomplete="off"
+                   onclick="$('#Stock').attr('readonly',true);$('#Stock').val('');$('#metrica').attr('disabled',true)">
+            <label class="btn btn-outline-dark" for="n1">Não</label>
+            {%else%}
+            <input type="radio" class="btn-check" name="tipo_estoque" id="s2" value="Sim"
+                   onclick="$('#Stock').attr('readonly',false);$('#metrica').attr('disabled',false);$('#Stock').val(0)"
+                   autocomplete="off">
+            <label class="btn btn-outline-dark" for="s2">Sim</label>
+
+            <input type="radio" class="btn-check" name="tipo_estoque" value="Não" id="n2" autocomplete="off" checked
+                   onclick="$('#Stock').attr('readonly',true);$('#Stock').val('');$('#metrica').attr('disabled',true);">
+            <label class="btn btn-outline-dark" for="n2">Não</label>
+            {%endif%}
+
+
+        </div>
+        <div class="input-group mb-1">
+            <div class="form-floating mt-2">
+                {% if item.tipo_estoque == 'Sim' %}
+                <input type="number" class="form-control " min="0" step="1"
+                       id="Stock"
+                       name="estoque_item"
+                       placeholder="Estoque"
+                       value="{{item.estoque_item}}">
+                {%else%}
+
+                <input type="number" class="form-control " min="0" step="1"
+                       id="Stock"
+                       name="estoque_item"
+                       placeholder="Estoque"
+                       value="{{item.estoque_item}}" readonly>
+                {%endif%}
+
+
+                <label for="Stock">Estoque</label>
+            </div>
+            {% if item.tipo_estoque == 'Sim' %}
+            <span style="border:0;padding:0!important;padding: 22px 2.25rem 20px 0.75rem;"
+                  class="input-group-text text-">
+                <select
+                        class="form-select" id="metrica" name="estoque_metrica">
+                    {% for metrica in metricas %}
+                        <option value="{{metrica.tipo}}" {% if item.estoque_metrica == metrica.tipo %}selected{% endif %}>
+                            {{metrica.nome}}
+                        </option>
+                    {% endfor %}
+
+        </select>
+            </span>
+            {%else%}
+            <span style="border:0;padding:0!important;padding: 22px 2.25rem 20px 0.75rem;"
+                  class="input-group-text text-">
+                <select
+                        class="form-select" id="metrica" name="estoque_metrica" disabled>
+                    {% for metrica in metricas %}
+                        <option value="{{metrica.tipo}}">
+                            {{metrica.nome}}
+                        </option>
+                    {% endfor %}
+
+        </select>
+            </span>
+
+            {%endif%}
+
+
+        </div>
+    </div>
+
+    <div class="mb-4 section-reduce">
+        <div class="subtitle mb-2">Temperatura</div>
+        <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+            {% if item.temperatura == 'quente' %}
+            <input type="radio" class="btn-check" name="temperatura" id="q1" value="quente"
+                   autocomplete="off" checked>
+            <label class="btn btn-outline-dark" for="q1">Quente</label>
+
+            <input type="radio" class="btn-check" name="temperatura" id="a1" autocomplete="off" value="ambiente">
+            <label class="btn btn-outline-dark" for="a1">Temperatura ambiente</label>
+
+            <input type="radio" class="btn-check" name="temperatura" id="f1" autocomplete="off" value="frio">
+            <label class="btn btn-outline-dark" for="f1">Frio</label>
+            {% elif item.temperatura == 'ambiente' %}
+
+            <input type="radio" class="btn-check" name="temperatura" id="q2" value="quente"
+                   autocomplete="off">
+            <label class="btn btn-outline-dark" for="q2">Quente</label>
+
+            <input type="radio" class="btn-check" name="temperatura" id="a2" autocomplete="off" value="ambiente"
+                   checked>
+            <label class="btn btn-outline-dark" for="a2">Temperatura ambiente</label>
+
+            <input type="radio" class="btn-check" name="temperatura" id="f2" autocomplete="off" value="frio">
+            <label class="btn btn-outline-dark" for="f2">Frio</label>
+
+
+            {% elif item.temperatura == 'frio' %}
+            <input type="radio" class="btn-check" name="temperatura" id="q3" value="quente"
+                   autocomplete="off">
+            <label class="btn btn-outline-dark" for="q3">Quente</label>
+
+            <input type="radio" class="btn-check" name="temperatura" autocomplete="off" value="ambiente" id="a3">
+            <label class="btn btn-outline-dark" for="a3">Temperatura ambiente</label>
+
+            <input type="radio" class="btn-check" name="temperatura" id="f3" autocomplete="off" value="frio" checked>
+            <label class="btn btn-outline-dark" for="f3">Frio</label>
+
+            {% else %}
+
+            <input type="radio" class="btn-check" name="temperatura" id="q" value="quente"
+                   autocomplete="off">
+            <label class="btn btn-outline-dark" for="q">Quente</label>
+
+            <input type="radio" class="btn-check" id="a" name="temperatura" autocomplete="off" value="ambiente">
+            <label class="btn btn-outline-dark" for="a">Temperatura ambiente</label>
+
+            <input type="radio" class="btn-check" name="temperatura" id="f" autocomplete="off" value="frio">
+            <label class="btn btn-outline-dark" for="f">Frio</label>
+
+            {%endif%}
+        </div>
+
+    </div>
+
+
+    <div class="mb-4 section-reduce">
+        <div class="subtitle mb-2">Atributos nutricionais</div>
+        <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+            {% if item.nutricional == 'vegetariana' %}
+            <input type="checkbox" class="btn-check" name="nutricional" id="Vegetariana1" value="vegetariana" checked
+                   autocomplete="off">
+            <label class="btn btn-outline-dark" for="Vegetariana1">Vegetariana</label>
+
+            <input type="checkbox" class="btn-check" name="nutricional" id="vegana1" autocomplete="off" value="vegana">
+            <label class="btn btn-outline-dark" for="vegana1">Vegana</label>
+
+            <input type="checkbox" class="btn-check" name="nutricional" id="Gluten1" autocomplete="off"
+                   value="sem gluten">
+            <label class="btn btn-outline-dark" for="Gluten1">Sem Glúten</label>
+            {% elif item.nutricional == 'vegana' %}
+            <input type="checkbox" class="btn-check" name="nutricional" id="Vegetariana2" value="vegetariana"
+                   autocomplete="off">
+            <label class="btn btn-outline-dark" for="Vegetariana2">Vegetariana</label>
+
+            <input type="checkbox" class="btn-check" name="nutricional" id="vegana2" autocomplete="off" value="vegana"
+                   checked>
+            <label class="btn btn-outline-dark" for="vegana2">Vegana</label>
+
+            <input type="checkbox" class="btn-check" name="nutricional" id="Gluten2" autocomplete="off"
+                   value="sem gluten">
+            <label class="btn btn-outline-dark" for="Gluten2">Sem Glúten</label>
+            {% elif item.nutricional == 'sem gluten' %}
+
+
+            <input type="checkbox" class="btn-check" name="nutricional" id="Vegetariana3" value="vegetariana"
+                   autocomplete="off">
+            <label class="btn btn-outline-dark" for="Vegetariana3">Vegetariana</label>
+
+            <input type="checkbox" class="btn-check" name="nutricional" id="vegana3" autocomplete="off" value="vegana">
+            <label class="btn btn-outline-dark" for="vegana3">Vegana</label>
+
+            <input type="checkbox" class="btn-check" name="nutricional" id="Gluten3" autocomplete="off" checked
+                   value="sem gluten">
+            <label class="btn btn-outline-dark" for="Gluten3">Sem Glúten</label>
+            {%else%}
+            <input type="checkbox" class="btn-check" name="nutricional" id="Vegetariana" value="vegetariana"
+                   autocomplete="off">
+            <label class="btn btn-outline-dark" for="Vegetariana">Vegetariana</label>
+
+            <input type="checkbox" class="btn-check" name="nutricional" id="vegana" autocomplete="off" value="vegana">
+            <label class="btn btn-outline-dark" for="vegana">Vegana</label>
+
+            <input type="checkbox" class="btn-check" name="nutricional" id="Gluten" autocomplete="off"
+                   value="sem gluten">
+            <label class="btn btn-outline-dark" for="Gluten">Sem Glúten</label>
+            {%endif%}
+
+        </div>
+
+    </div>
+
+
+    <hr>
+
+
+    <div class="mb-4 section-reduce">
+        <div class="subtitle mb-2">Valores energéticos</div>
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label text-">Calorias</label>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" name="calorias" placeholder="" aria-label="calorias"
+                           value="{{item.calorias}}"
+                           aria-describedby="calorias">
+                    <span class="input-group-text text-" id="cal">cal</span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label text-">Quilojoules</label>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" name="quilojoules" placeholder=""
+                           value="{{item.quilojoules}}"
+                           aria-label="quilojoules"
+                           aria-describedby="quilojoules">
+                    <span class="input-group-text text-" id="quilojoules">kJ</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</form>
+
+
+<script>
+    $(document).ready(function() {
+  // Seletor CSS para o campo de entrada
+  var valorEdit = $("#valorEdit");
+
+  // Aplica a máscara de dinheiro usando o plugin inputmask
+  valorEdit.inputmask("currency", {
+    prefix: "R$ ",
+    radixPoint: ",",
+    groupSeparator: ".",
+    allowMinus: false,
+    autoGroup: true,
+    digits: 2,
+    digitsOptional: false,
+    rightAlign: false,
+    unmaskAsNumber: true  // Permite obter o valor sem a formatação
+  });
+
+  // Evento keyup para capturar o valor sem a formatação
+  valorEdit.on("keyup", function(event) {
+    var valorSemFormatacao = valorEdit.inputmask("unmaskedvalue");
+    console.log(valorSemFormatacao);
+    // Faça o que quiser com o valor sem formatação
+  });
+});
+
+
+</script>

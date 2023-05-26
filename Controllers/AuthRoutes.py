@@ -114,10 +114,8 @@ def login():
         return render_template('user/login.html')
     if request.method == "POST":
         user_found = repository.find_one('users', {'email': request.form['email']})
-
         if user_found is not None:
             if sha256_crypt.verify(request.form['password'], user_found['senha']):
-                print(user_found)
                 Session.set_session(user_found)
                 return redirect(url_for('admin_routes.dashboard'))
             else:

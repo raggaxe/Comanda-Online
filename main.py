@@ -1,5 +1,5 @@
 from bson import ObjectId
-from flask import Flask, render_template, request, session, stream_with_context, Response
+from flask import Flask, render_template, request, session, stream_with_context, Response, redirect, url_for, jsonify
 from flask_socketio import *
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
@@ -16,6 +16,7 @@ env.filters['format_currency'] = format_currency
 env.globals['getLocale'] = None
 
 from Repository.BaseRepository import BaseRepository
+
 repository = BaseRepository(MongoConfig().get_connect())
 load_dotenv()
 app = Flask(__name__)
@@ -33,10 +34,8 @@ app.config['SECRET_KEY'] = os.getenv("APP_SECRET_KEY")
 app.config['SESSION_COOKIE_NAME'] = 'google-login-session'
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=500)
 
-
 # Define a localidade para o Brasil
 locale.setlocale(locale.LC_ALL, 'pt_BR.utf-8')
-
 
 if os.getenv("APP_SETTINGS") == 'development':
     os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
@@ -73,6 +72,8 @@ app.errorhandler(404)(DefaultRoutes.errorhandler)
 app.errorhandler(500)(DefaultRoutes.errorhandler)
 
 repository = BaseRepository(MongoConfig().get_connect())
+
+
 @app.route('/discordJosh', methods=['GET', 'POST'])
 def josh():
     return render_template('controladores/joshGudwin.html')
@@ -84,19 +85,22 @@ def josh():
 #
 
 
-
 @socketio.on("connect-admin")
 def on_connect():
     sid = request.sid
-    # print("Admin Conecetado Browser sid: ",sid)
+    print("Admin Conecetado Browser sid: ", sid)
+
+
 @socketio.on("join-room-admin")
 def on_join_room(data):
     join_room(str(session["_id"]))
+
 
 @socketio.on("connect")
 def on_connect():
     sid = request.sid
     # print("New socket connected ", sid)
+
 
 @socketio.on("join-room")
 def on_join_room(data):
@@ -106,12 +110,13 @@ def on_join_room(data):
     join_room(_idComanda)
     join_room(_idUser)
 
+
 @socketio.on("join-room-pagamentos")
 def on_join_room(data):
     _idComanda = data["_idComanda"]
     _idUser = data["_idUser"]
     # register sid to the room
-    room_id = str(_idUser)+str(_idComanda)
+    room_id = str(_idUser) + str(_idComanda)
     join_room(room_id)
 
 
@@ -119,19 +124,20 @@ def on_join_room(data):
 def on_pedido_cliente_solicitado(data, room):
     # faça o processamento desejado com os dados recebidos
 
-    pedido = repository.find_one('pedidos', {'_id': ObjectId(data['_idPedido']) })
-    cardapio = repository.find_one('cardapios', {'_id': ObjectId(data['_idCardapio']) })
+    pedido = repository.find_one('pedidos', {'_id': ObjectId(data['_idPedido'])})
+    cardapio = repository.find_one('cardapios', {'_id': ObjectId(data['_idCardapio'])})
 
     _idUser = data['_idUser']
 
     emit("pedido-cliente-solicitado", {
         "nome_produto": cardapio["nome_produto"],
-        "created_at":str(pedido['created_at']),
+        "created_at": str(pedido['created_at']),
         "_idCardapio": data["_idCardapio"],
         "quantidade": data["quantidade"],
-        "_idPedido":str(pedido['_id']),
+        "_idPedido": str(pedido['_id']),
 
     }, room=_idUser)
+
 
 @socketio.on('pedido-aceito')
 def handle_pedido_aceito(data):
@@ -141,7 +147,7 @@ def handle_pedido_aceito(data):
          {
              'tempo': str(pedido['updated_at']),
              'status': pedido['status'],
-             '_idPedido':str(pedido['_id'])
+             '_idPedido': str(pedido['_id'])
          }, room=pedido['_idComanda']
          )
 
@@ -154,9 +160,10 @@ def handle_pedido_entregue(data):
          {
              'tempo': str(pedido['updated_at']),
              'status': pedido['status'],
-             '_idPedido':str(pedido['_id'])
+             '_idPedido': str(pedido['_id'])
          }, room=pedido['_idComanda']
          )
+
 
 @socketio.on('pedido-cliente-pagamento')
 def handle_pedido_cliente_pagamento(data):
@@ -165,14 +172,16 @@ def handle_pedido_cliente_pagamento(data):
     valor = data['valor']
     forma_pagamento = data['formaPagamento']
     # Envia mensagem para o admin sobre o pagamento
-    emit('pedido-admin-pagamento', {'updated_at':str(comanda['updated_at']),'id_comanda': str(id_comanda), 'valor': valor, 'tipo_pagamento': forma_pagamento, '_idMesa':str(comanda['_idMesa'])},
+    emit('pedido-admin-pagamento',
+         {'updated_at': str(comanda['updated_at']), 'id_comanda': str(id_comanda), 'valor': valor,
+          'tipo_pagamento': forma_pagamento, '_idMesa': str(comanda['_idMesa'])},
          room=str(comanda['_idUser']))
 
 
 @socketio.on('pagamento-realizado')
 def handle_pagamento_realizado(data):
     comanda = repository.find_one('comandas', {'_id': ObjectId(data['_idComanda'])})
-    room_id = str( comanda['_idUser'] ) + str( comanda['_id'] )
+    room_id = str(comanda['_idUser']) + str(comanda['_id'])
     emit("pagamento", {
         'room_id': room_id,
         'status': comanda['status']
@@ -182,25 +191,58 @@ def handle_pagamento_realizado(data):
 @socketio.on('mesa-ocupada')
 def handle_mesa_ocupada(data):
     _idMesa = data['_idMesa']
-    repository.update_one('mesas',{'_id':ObjectId(_idMesa)},{'status':True})
+    repository.update_one('mesas', {'_id': ObjectId(_idMesa)}, {'status': True})
     lista_mesas = [item for item in repository.find('mesas', {'_idUser': data['_idUser'], 'status': True})]
     print(f"Mesa {data['numero_mesa']} está ocupada agora.")
     num_mesas = len(lista_mesas)
-    emit('update-mesas-ocupadas', {'num_mesas': num_mesas ,'_idMesa':_idMesa }, room=data['_idUser'] )
-
+    emit('update-mesas-ocupadas', {'num_mesas': num_mesas, '_idMesa': _idMesa}, room=data['_idUser'])
 
 
 @app.context_processor
 def my_utility_processor():
-
     def get_time_now():
-        from datetime import datetime
         # datetime object containing current date and time
         now = datetime.now()
         dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
 
         return dt_string
 
+    def format_datetime(timestamp):
+        timestamp_str = timestamp.strftime("%Y-%m-%d %H:%M:%S.%f")
+        date_time_obj = datetime.strptime(timestamp_str, "%Y-%m-%d %H:%M:%S.%f")
+
+        # Restante do código...
+
+        # Obter os componentes individuais da data/hora
+        year = date_time_obj.year
+        month = date_time_obj.month
+        day = date_time_obj.day
+        hours = date_time_obj.hour
+        minutes = date_time_obj.minute
+
+        # Criar uma representação legível da data/hora
+        readable_datetime = "{:02d}/{:02d}/{:04d} {:02d}:{:02d}".format(day, month, year, hours, minutes)
+
+        return readable_datetime
+    def get_datetime(timestamp):
+        timestamp_str = timestamp.strftime("%Y-%m-%d %H:%M:%S.%f")
+        date_time_obj = datetime.strptime(timestamp_str, "%Y-%m-%d %H:%M:%S.%f")
+
+        # Restante do código...
+
+        # Obter os componentes individuais da data/hora
+        year = date_time_obj.year
+        month = date_time_obj.month
+        day = date_time_obj.day
+        hours = date_time_obj.hour
+        minutes = date_time_obj.minute
+        segs = date_time_obj.second
+
+        # Criar uma representação legível da data/hora
+        data_datetime = "{:02d}/{:02d}/{:04d}".format(day, month, year)
+        time_datetime = "{:02d}:{:02d}:{:02d}".format(hours, minutes,segs)
+
+        return data_datetime,time_datetime
     def timerDisplay(secs):
         hours, remainder = divmod(int(secs), 3600)
         minutes, seconds = divmod(remainder, 60)
@@ -225,12 +267,29 @@ def my_utility_processor():
         categoria = repository.find_one('categorias', {'_id': ObjectId(_idCategoria)})
         return categoria
 
+    def getComanda(_idComanda):
+        comanda_found = repository.find_one('comandas', {'_id': ObjectId(_idComanda)})
+        return comanda_found
+
     def getEstabelecimento(_idUser):
         user = repository.find_one('users', {'_id': ObjectId(_idUser)})
         return user
-    def MoneyFormatter(valor):
-        return "R$ " +  locale.currency(valor, grouping=True, symbol=True)[:-2]
 
+    def MoneyFormatter(valor):
+        return "R$ " + locale.currency(valor, grouping=True, symbol=True)[:-2]
+
+    def getPedidosInfo(_id):
+        lista_pedidos = []
+        comanda_found = repository.find_one('comandas', {'_id': ObjectId(_id)})
+
+        if comanda_found is not None:
+            comanda_found['_id'] = str(comanda_found['_id'])
+            pedidos_found = repository.find('pedidos', {'_idComanda': str(comanda_found['_id']), 'status': False})
+            for pd in pedidos_found:
+                pd['_id'] = str(pd['_id'])
+                lista_pedidos.append(pd)
+
+        return lista_pedidos
         # def format_datetime2(value, format='medium'):
         #     if format == 'full':
         #         format = "EEEE, d. MMMM y 'at' HH:mm"
@@ -242,10 +301,14 @@ def my_utility_processor():
                 timerDisplay=timerDisplay,
                 getCardapio=getCardapio,
                 getCliente=getCliente,
+                get_datetime=get_datetime,
+                format_datetime=format_datetime,
                 getMesa=getMesa,
+                getComanda=getComanda,
                 getCategoria=getCategoria,
                 MoneyFormatter=MoneyFormatter,
-                getEstabelecimento=getEstabelecimento
+                getEstabelecimento=getEstabelecimento,
+                getPedidosInfo=getPedidosInfo
                 )
 
     # def format_datetime2(value, format='medium'):

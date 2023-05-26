@@ -58,45 +58,23 @@
 <div class="table-data">
     <div class="todo">
         <div class="head">
-            <h3>Pedidos</h3>
+
+            <h3>Pedidos<span class="badge bg-secondary mx-2">{{ count_pedidos_checkout }}</span></h3>
+
             <!--            <i class='bx bx-plus'></i>-->
             <!--            <i class='bx bx-filter'></i>-->
         </div>
 
         <div id="listaPedidos">
-            {% for pedido in pedidos %}
-            {% if pedido.status == True %}
-            <div class="d-flex justify-content-between align-items-center pedidoCard">
-                <div class="d-flex flex-column justify-content-start align-items-start profile w-100">
-                    <div>{{getCardapio(pedido._idCardapio)['nome_produto']}}</div>
-                    <small class="text-body-secondary" id="tempo-decorrido{{pedido._id}}">00:00:00</small>
-                    <input type="hidden" id="tempo{{pedido._id}}" value="{{pedido.created_at}}">
-                    <input type="hidden" class="order-id" value="{{pedido._id}}">
-                </div>
-
-                <div class="text-center">{{pedido.quantidade}}</div>
-                <div>
-                    <div class="d-flex flex-column justify-content-center align-items-start">
-                        <form action="/aceitar_pedidos" method="post">
-                            <input type="hidden" name="_idPedido" value="{{pedido._id}}">
-                            <button type="button" onclick="aceitarPedido('{{pedido._id}}')"
-                                    class="optionAceitar text-success  d-flex justify-content-center align-items-center">
-                                <div style=" font-size: .8rem;">Aceitar</div>
-                                <div><i style=" font-size: 1.5rem;" class="bi bi-check my-icon"></i></div>
-                            </button>
-                        </form>
-
-                        <a href="#" class="optionAceitar text-danger d-flex justify-content-center align-items-center">
-                            <div style=" font-size: .8rem;">Recusar</div>
-                            <i style=" font-size: 1.5rem;" class="bi bi-x my-icon"></i>
-                        </a>
-                    </div>
-
-                </div>
-            </div>
+            {% for pedido in comandas %}
+            {% if pedido.status == 'checkout' %}
+            {% with _id=pedido._id %}
+            {% include '/dashboard/pedido_componente.html' %}
+            {% endwith %}
             {% endif %}
-            {% endfor%}
+            {% endfor %}
         </div>
+
 
     </div>
     <div class="todo">
@@ -147,55 +125,29 @@
     <div class="order">
         <div class="head">
             {% set countpedidos = namespace(value=0) %}
-            {% for i in pedidos %}
+            {% for i in comandas %}
             {% if i.status == "Aceito" %}
             {% set countpedidos.value = countpedidos.value + 1 %}
             {% endif %}
 
             {% endfor %}
-            <h3>Fila de produção - {{countpedidos.value}} </h3>
+<h3>Fila de produção<span class="badge bg-secondary mx-2">{{countpedidos.value}}</span></h3>
+
+
+
             <i class='bx bx-search'></i>
             <i class='bx bx-filter'></i>
         </div>
-        <table>
-            <thead>
-            <tr>
-                <th>Produto</th>
-                <!--                <th>Tempo Espera</th>-->
-                <!--                <th class="text-center">Valor</th>-->
-                <th class="text-center">Unid</th>
-                <th class="text-center"></th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for pedido in pedidos %}
-            {% if pedido.status == "Aceito" %}
-            <tr>
-                <td class="d-flex justify-content-start align-items-center">
-                    <!--                    <img src="{{url_for('user_routes.uploaded_file', filename=getCardapio(pedido._idCardapio)['filename'] )}}">-->
-                    <span>{{getCardapio(pedido._idCardapio)['nome_produto']}}</span>
 
-                    <small class="text-body-secondary" id="tempo-cook{{pedido._id}}">00:00:00</small>
-                    <input type="hidden" id="cook{{pedido._id}}" value="{{pedido.updated_at}}">
-                    <input type="hidden" class="order-id-cook" value="{{pedido._id}}">
-                </td>
-                <td class="text-center">{{pedido.quantidade}}</td>
-                <td>
+        {% for pedido in comandas %}
+        {% if pedido.status == "Aceito" %}
+        {% with _id=pedido._id , _editMode=true %}
+        {% include '/dashboard/pedido_componente.html' %}
+        {%endwith%}
 
+        {% endif %}
+        {% endfor%}
 
-                    <a type="button" onclick="entregarPedido('{{pedido._id}}')"
-                       class="optionAceitar text-warning m-0  w-100 d-flex justify-content-center align-items-center">
-                        <div class="me-2" style=" font-size: .8rem;">Entregar</div>
-                        <div><i style=" font-size: 1rem;" class="bi bi-bell-fill"></i></div>
-                    </a>
-
-                </td>
-            </tr>
-            {% endif %}
-            {% endfor%}
-
-            </tbody>
-        </table>
 
     </div>
 </div>

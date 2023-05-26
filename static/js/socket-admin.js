@@ -1,4 +1,4 @@
-var socket = io.connect(document.protocol + '//' + document.domain + ':' + location.port);
+var socket = io.connect('http:' + '//' + document.domain + ':' + location.port);
 
 socket.on('connect-admin', function() {
   console.log('Conectado ao servidor!');
@@ -34,38 +34,25 @@ socket.on('update-mesas-ocupadas', function(data) {
 
 
 
-socket.on('pedido-cliente-solicitado', function(pedido) {
+socket.on('pedido-cliente-solicitado', function(res) {
+console.log(res)
+        $.ajax({
+        url: '/pedido_componente/' + res._idComanda,
+        type: 'GET',
+        success: function(response) {
+            $('#listaPedidos').append(response);
+             setTimmer(response.created_at,response._idPedido)
 
- var pedidoComponente = '<div class="d-flex justify-content-between align-items-center pedidoCard">'+
-            '<div class="d-flex flex-column justify-content-start align-items-start profile w-100">'+
-                '<div>'+pedido.nome_produto+'</div>'+
-                '<small class="text-body-secondary" id="tempo-decorrido'+pedido._idPedido+'">00:00:00</small>'+
-                '<input type="hidden" id="tempo'+pedido._idPedido+'" value="'+pedido.created_at+'">'+
-                '<input type="hidden" class="order-id" value="'+pedido._idPedido+'">'+
-            '</div>'+
-            '<div class="text-center">'+pedido.quantidade+'</div>'+
-            '<div>'+
-             '<div class="d-flex flex-column justify-content-center align-items-start">'+
-              '<form action="/aceitar_pedidos" method="post">'+
-               '<input type="hidden" name="_idPedido" value="'+pedido._idPedido+'">'+
-                `<button type="button" onclick="aceitarPedido('`+pedido._idPedido+`')"` +
-                 ' class="optionAceitar text-success  d-flex justify-content-center align-items-center">'+
-                  ' <div style=" font-size: .8rem;">Aceitar</div>'+
-                            '<div><i style=" font-size: 1.5rem;" class="bi bi-check my-icon"></i></div>'+
-                        '</button>'+
-                    '</form>'+
-                    '<a href="#" class="optionAceitar text-danger d-flex justify-content-center align-items-center">'+
-                        '<div style=" font-size: .8rem;">Recusar</div>'+
-                        '<i style=" font-size: 1.5rem;" class="bi bi-x my-icon"></i>'+
-                    '</a>'+
-               '</div>'+
-            '</div>'+
-        '</div>';
+        },
+        error: function(error) {
+          console.log(error);
+        }
+      });
+  });
+
 
 // Use o método append() do jQuery para adicionar o novo elemento filho à #listaPedidos
-    $('#listaPedidos').append(pedidoComponente);
-     setTimmer(pedido.created_at,pedido._idPedido)
-    });
+
 
  $(document).ready(function() {
     socket.emit('join-room-admin', {});

@@ -39,7 +39,7 @@ class PertoMimView(MDScreen):
 
         self.ids.fav_cards.clear_widgets()
         for data in result:
-            print(data)
+
             box = MDBoxLayout()
             box.orientation = "vertical"
             box.size_hint_x = None

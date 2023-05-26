@@ -41,7 +41,7 @@ def favoritos():
         for empresa in empresas:
             empresa['_id'] = str(empresa['_id'])
             empresas_list.append(empresa)
-        print(empresas_list)
+
         return jsonify(empresas_list)
     else:
         # Se as credenciais estiverem incorretas, retorna uma mensagem de erro

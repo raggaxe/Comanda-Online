@@ -1,0 +1,135 @@
+<link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.21.4/dist/bootstrap-table.min.css">
+<div class="head mb-3">
+    <div class="d-flex justify-content-between align-items-center w-100 mb-3">
+        <h3> Items </h3>
+        <button type="button" class="btn btn-dark " onclick="$('.lista_items').hide();$('.add_items').show()">
+            <i class='bx bx-plus me-3 '></i>
+            Adicionar item
+        </button>
+    </div>
+</div>
+
+<div class="input-group mb-3 section-reduce">
+  <span class="input-group-text"><i class='bx bx-search-alt-2' ></i></span>
+  <input type="search" class="form-control" placeholder="Pesquisar..." id="procurar_item" aria-label="procurar_item" aria-describedby="procurar_item">
+</div>
+
+<table
+        class="table table-borderless table-hover"
+
+        id="item_data"
+        data-toggle="table"
+        data-search="true"
+        data-show-columns="false"
+        data-click-to-select="false"
+        data-search-highlight="true"
+        data-remember-order="true"
+        data-url="/get-items"
+        data-search-selector="#procurar_item"
+        data-pagination="true"
+data-sort-name="nome_produto"
+       data-sort-order="asc"
+>
+
+
+    <thead>
+    <tr style="border:0">
+        <th data-align="center" data-field="filename" data-formatter="image">Foto</th>
+        <th data-sortable="true" data-field="nome_produto" data-formatter="destque" >Nome Produto</th>
+<!--        <th data-align="center" data-field="minutos" data-sortable="true">Tempo</th>-->
+        <th data-align="center" data-field="estoque_item" data-sortable="true" >Estoque</th>
+        <th data-align="center" data-field="estoque_metrica" data-sortable="true" >Métrica</th>
+        <th data-align="center" data-field="valor" data-sortable="true">Valor</th>
+        <th data-align="center" data-field="categoria" data-sortable="true" >categoria</th>
+        <th data-align="center" data-field="updated_at" data-sortable="true">Última Atualização</th>
+<!--        <th data-align="center" data-field="_id" data-formatter="edit">Editar</th>-->
+
+    </tr>
+    </thead>
+
+<!--    <tbody>-->
+
+
+<!--    {% for cardapio in cardapios %}-->
+<!--    <tr>-->
+<!--        <td class="" style="display: table-cell;">-->
+
+<!--            <div class="preview">-->
+<!--                <img src="{{url_for('user_routes.uploaded_file', filename=cardapio.filename)}}"-->
+<!--                     align="middle"/>-->
+<!--            </div>-->
+<!--        </td>-->
+<!--        <td class="ps-3 pe-3">-->
+<!--            <div class="d-flex flex-column justify-content-start align-items-start">-->
+
+<!--                <small class="text-body-secondary">-->
+<!--                    {{cardapio.nome_produto}}-->
+<!--                </small>-->
+<!--            </div>-->
+
+<!--        </td>-->
+<!--         <td class="ps-3 pe-3">-->
+<!--            {% if cardapio.estoque %}-->
+<!--            <div>-->
+<!--                <i class="bi bi-box"></i>-->
+<!--            </div>-->
+<!--            <div class="cardapio-valor">-->
+<!--                                                        <span>-->
+<!--                                                            {{ cardapio.estoque }}-->
+<!--                                                       </span>-->
+<!--                unid.-->
+<!--            </div>-->
+<!--            {% else %}-->
+<!--            <i class="bi bi-infinity"></i>-->
+<!--            {% endif %}-->
+<!--        </td>-->
+
+
+<!--        <td class="ps-3 pe-3">-->
+<!--            <small class="text-body-secondary ">-->
+<!--                R$ <span class="valor">{{cardapio.valor}}</span>-->
+<!--            </small>-->
+<!--        </td>-->
+<!--           <td class="ps-3 pe-3">-->
+
+<!--            <small class="text-body-secondary ">-->
+<!--                {{getCategoria(cardapio.categoria).nome}}-->
+
+<!--            </small>-->
+<!--        </td>-->
+<!--         <td class="ps-3 pe-3">-->
+<!--            <small class="text-body-secondary ">-->
+<!--                {%if cardapio.updated_at%}-->
+<!--                {{get_datetime(cardapio.updated_at)[0]}}-->
+<!--                {%else%}-->
+<!--                - -->
+<!--                {%endif%}-->
+<!--            </small>-->
+<!--        </td>-->
+<!--        <td class="ps-3 pe-3">-->
+<!--            <a type="button"-->
+<!--               class=" {% if cardapio.status %}text-dark {%else%}text-danger {% endif %}"-->
+<!--               data-bs-toggle="modal"-->
+<!--               data-bs-target="#cardapio-modal"-->
+<!--               data-bs-cardapio="{{cardapio._id}}"-->
+<!--               data-bs-nome="{{cardapio.nome_produto}}"-->
+<!--               data-bs-filename="{{cardapio.filename}}"-->
+<!--               data-bs-tempo="{{cardapio.tempo_estimado}}"-->
+<!--               data-bs-categoria="{{cardapio.categoria}}"-->
+<!--               data-bs-valor="{{cardapio.valor}}"-->
+<!--               data-bs-estoque="{{cardapio.estoque}}"-->
+<!--               data-bs-status="{{cardapio.status}}"><i class='bx bx-dots-vertical-rounded' ></i></a>-->
+<!--        </td>-->
+
+
+<!--    </tr>-->
+<!--    {% endfor %}-->
+<!--    </tbody>-->
+</table>
+<button style="display:none" class="btn btn-primary" type="button" id="offcanvasEdit" data-bs-toggle="offcanvas" data-bs-target="#editItemModal" aria-controls="editItemModal">
+  Toggle static offcanvas
+</button>
+
+<div class="offcanvas offcanvas-end" data-bs-backdrop="static" tabindex="-1" id="editItemModal" aria-labelledby="staticBackdropLabel">
+
+</div>

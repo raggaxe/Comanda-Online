@@ -37,21 +37,39 @@ console.log('etregar')
         }
     });
 }
-function aceitarPedido(_idPedido) {
+function aceitarPedido(_idComanda) {
     $.ajax({
         type: "POST",
         url: "/aceitar_pedidos",
-        data: { _idPedido: _idPedido },
+        data: { _idComanda: _idComanda.toString() },
         success: function(response) {
            if (response.success) {
             // emitir evento de socket
-            socket.emit('pedido-aceito',{_idPedido: _idPedido});
+            socket.emit('pedido-aceito',{_idComanda: _idComanda});
             // atualizar a página
             location.reload();
           }
         },
         error: function(xhr, status, error) {
             console.error("Erro ao aceitar pedido: " + error);
+        }
+    });
+}
+function rejeitarPedido(_idComanda) {
+    $.ajax({
+        type: "POST",
+        url: "/rejeitar_pedidos",
+        data: { _idComanda: _idComanda.toString() },
+        success: function(response) {
+           if (response.success) {
+            // emitir evento de socket
+            socket.emit('pedido-rejeitado',{_idComanda: _idComanda});
+            // atualizar a página
+            location.reload();
+          }
+        },
+        error: function(xhr, status, error) {
+            console.error("Erro ao rejeitar pedido: " + error);
         }
     });
 }
@@ -151,6 +169,12 @@ $('.aceitarPagamentos').click(function(event) {
     }
   });
 });
+
+
+
+
+
+
 
 
 

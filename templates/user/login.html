@@ -1,14 +1,23 @@
 {% extends "shared/base.html" %}
 {% block content %}
 <link href="../static/css/user.css" rel="stylesheet">
+
+<style>
+.nav-i, .nav-text{
+    color:#000;
+}
+.bg-light{
+    width:450px
+}
+label{
+    font-size:.8rem
+}
+</style>
 <div class="container d-flex text-center flex-column justify-content-center align-items-center vh-100">
-    <div style="" class="step-1 w-75">
+    <div style="" class="step-1">
         <div class="bg-light  p-5 d-flex justify-content-center ">
-            <div class="w-50 text-center d-flex justify-content-center align-items-center">
-                <img src="./static/img/sign.jpg" class="me-5" width="90%">
-            </div>
-            <div class="border"></div>
-            <div class="w-50 ps-5  d-flex flex-column justify-content-start align-items-start">
+
+            <div class="w-100  d-flex flex-column justify-content-start align-items-start">
 
                 <form action="/login" method="post" class="w-100">
                     <h2>
@@ -33,7 +42,7 @@
                     </div>
 
 
-                    <button class="btn btn-marrom btn-lg w-100" type="submit">
+                    <button class="btn btn-dark w-100" type="submit">
                         ENTRAR >
                     </button>
                 </form>

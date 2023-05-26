@@ -35,9 +35,9 @@ https://cdn.jsdelivr.net/npm/inputmask@5.0.8/dist/jquery.inputmask.min.js
 "></script>
 
 <body>
-<nav {%if session.logged_in %} style="background:#fff" {% endif
+<nav {%if session.logged_in %} style="background:#f5f5f5" {% endif
      %}class="navbar navbar-expand-lg bg-text-dark fixed-top">
-    <div class="container">
+    <div class="container d-flex justify-content-between align-items-center">
         {%if session.logged_in %}
         <a class="navbar-brand d-flex  justify-content-center align-items-center me-5" data-bs-toggle="offcanvas"
            href="#logadoOff" role="button"
@@ -49,8 +49,8 @@ https://cdn.jsdelivr.net/npm/inputmask@5.0.8/dist/jquery.inputmask.min.js
         </a>
         {% else %}
         <a class="navbar-brand text-white d-flex  justify-content-center align-items-center me-5" href="/">
-            <i style="font-size:1.6rem;" class='bx bx-restaurant me-3'></i>
-            <span style="font-size:1.3rem;">
+            <i style="font-size:1.6rem;" class='bx bx-restaurant me-3 nav-i'></i>
+            <span class="nav-text" style="font-size:1.3rem;">
                Easy<span style="color:#E18239">Table</span>
            </span>
         </a>
@@ -59,32 +59,9 @@ https://cdn.jsdelivr.net/npm/inputmask@5.0.8/dist/jquery.inputmask.min.js
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                {%if session.logged_in %}
-                <li class="nav-item">
-                    <div class="btn-group entregasSwitch" role="group" id="tipo_entrega"
-                         aria-label="Basic radio toggle button group">
-                        <input type="radio" class="btn-check" name="entrega" id="delivery" autocomplete="off">
-                        <label class="btn btn-table" for="delivery"
-                               data-href="#nav-entregas">Entregar</label>
+        <div class="collapse navbar-collapse w-100 d-flex justify-content-end align-items-center" id="navbarSupportedContent">
 
-                        <input type="radio" class="btn-check" name="entrega" id="retirar" value="retirar"
-                               autocomplete="off">
-                        <label class="btn btn-table" for="retirar" data-href="#nav-retirar">Retirar na
-                            loja</label>
-
-                        <input type="radio" class="btn-check" name="entrega" id="mesaOption" value="mesa"
-                               autocomplete="off" checked>
-                        <label class="btn btn-table" for="mesaOption" data-href="#nav-mesa">Mesa</label>
-                    </div>
-                </li>
-                {% endif %}
-                <!--                <li class="nav-item">-->
-                <!--                    <a class="nav-link" href="/login">Empresas</a>-->
-                <!--                </li>-->
-            </ul>
-            <div class="d-flex">
+            <div class="d-flex justify-content-center align-items-center ">
                 {%if session.logged_in %}
                 <!-- Button trigger modal -->
                 <a id="clickCart" class="position-relative mt-2" data-bs-toggle="offcanvas" href="#cart" role="button"
@@ -95,10 +72,10 @@ https://cdn.jsdelivr.net/npm/inputmask@5.0.8/dist/jquery.inputmask.min.js
                 {%else%}
                 <!-- Button trigger modal -->
                 <a data-bs-toggle="offcanvas" href="#loginOff" role="button"
-                   aria-controls="loginOff" class="position-relative mt-2">
+                   aria-controls="loginOff" class="position-relative mt-2 text-white">
 
 
-                    <i style="font-size:2rem;color:#fff" class='bx bx-user-circle'></i>
+                    <i style="font-size:2rem;" class='bx bx-user-circle nav-i'></i>
                 </a>
                 {%endif%}
 
@@ -112,9 +89,14 @@ https://cdn.jsdelivr.net/npm/inputmask@5.0.8/dist/jquery.inputmask.min.js
 
 <!-- Modal -->
 
-<div style="width:250px" class="offcanvas offcanvas-start p-3 " tabindex="-1" id="loginOff" aria-labelledby="cartLabel">
+<div style="width:250px" class="offcanvas offcanvas-start p-3 " data-bs-backdrop="static" tabindex="-1" id="loginOff" aria-labelledby="cartLabel">
+   <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="staticBackdropLabel"></h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+
     <div class="d-grid gap-2">
-        <a href="#" class="btn btn-marrom"
+        <a href="#" class="btn btn-dark"
            data-bs-toggle="modal"
            data-bs-target="#cadastro"
         >
@@ -146,37 +128,67 @@ https://cdn.jsdelivr.net/npm/inputmask@5.0.8/dist/jquery.inputmask.min.js
 <div style="width:250px" class="offcanvas offcanvas-start p-3 " tabindex="-1" id="logadoOff"
      aria-labelledby="cartLabel">
 
+    <div class="d-flex flex-column justify-content-between align-items-start h-100">
+        <div>
+            <div class="d-flex justify-content-center align-items-center">
+                <div class="avatar d-flex justify-content-center align-items-center me-3">
+                    <i class='bx bx-user'></i>
+                </div>
+                <div class="flex-fill">
+                    <div class="text-avatar">Raael Almeida</div>
+                    <a href="#" class="text-success perfil">Ver Perfil</a>
+                </div>
+            </div>
+            <ul class="list-group list-group-flush menu mt-3">
+                <li class="list-group-item">
+                    <i class='bx bxs-basket me-3'></i>
+                    Pedidos
+                </li>
+                <li class="list-group-item">
+                    <i class='bx bxs-heart me-3'></i>
+                    Favoritos
+                </li>
+                <li class="list-group-item">
+                    <i class='bx bxs-wallet me-3'></i>
+                    Carteira
+                </li>
+                <li class="list-group-item">
+                    <i class='bx bxs-buoy me-3'></i>
+                    Ajuda
+                </li>
+                <li class="list-group-item">
+                    <i class='bx bxs-purchase-tag-alt me-3'></i>
+                    Promoções
+                </li>
+            </ul>
+            <div class="d-flex justity-content-start align-items-start flex-column mt-3">
+            <div class="card-subtext">
+                <a href="/cadastrar-user" class="text-dark">
+                    Crie uma conta empresarial
+                </a>
+            </div>
+            <div class="card-subtext">
+                <a href="/login" class="text-dark">
+                    Acesse sua empresa
+                </a>
+            </div>
 
-    <div class="d-flex justify-content-center align-items-center">
-        <div class="avatar d-flex justify-content-center align-items-center me-3">
-            <i class='bx bx-user'></i>
+
         </div>
-        <div class="flex-fill">
-            <div class="text-avatar">Raael Almeida</div>
-            <a href="#" class="text-success perfil">Ver Perfil</a>
+        </div>
+        <div>
+             <ul class="list-group list-group-flush menu mt-3">
+                <li class="list-group-item">
+                  <a href="/logout">
+                        <i class='bx bxs-basket me-3'></i>
+                    Sair
+                  </a>
+                </li>
+             </ul>
         </div>
     </div>
 
-    <ul class="list-group list-group-flush menu mt-3">
-        <li class="list-group-item">
-            <i class='bx bxs-basket me-3'></i>
-            Pedidos</li>
-        <li class="list-group-item">
-            <i class='bx bxs-heart me-3' ></i>
-            Favoritos</li>
-        <li class="list-group-item">
-            <i class='bx bxs-wallet me-3' ></i>
-            Carteira
-        </li>
-        <li class="list-group-item">
-            <i class='bx bxs-buoy me-3'></i>
-            Ajuda
-        </li>
-        <li class="list-group-item">
-            <i class='bx bxs-purchase-tag-alt me-3'></i>
-            Promoções
-        </li>
-    </ul>
+
 </div>
 
 
@@ -186,13 +198,10 @@ https://cdn.jsdelivr.net/npm/inputmask@5.0.8/dist/jquery.inputmask.min.js
         <div class="modal-content">
 
             <div class="modal-body">
-                <div class=" d-flex justify-content-center align-items-center mb-3">
-                    <i style="font-size:1.6rem; " class='bx bx-restaurant me-2'></i>
-                    <span style="font-size:2rem;">
-                        Easy<span style="color:#E18239">Table</span>
-                    </span>
+                <div class="d-flex justify-content-center align-items-center">
+                     <h2>Entrar</h2>
                 </div>
-                <p class="card-address text-center">Faça login para acessar sua conta ou inscreva-se agora
+                  <p class="text-small text-center">Faça login para acessar sua conta ou inscreva-se agora
                     para começar a aproveitar nossos recursos exclusivos.</p>
                 <form id="login_form" class="p-2" action="/login-cliente" method="post">
                     <div class="input-group  mb-3">
@@ -211,8 +220,8 @@ https://cdn.jsdelivr.net/npm/inputmask@5.0.8/dist/jquery.inputmask.min.js
                     </div>
                     <div class="d-grid gap-2 mt-3">
                         <button type="button" onclick="submitLogin()"
-                                class="btn btn-marrom btn-lg d-flex justify-content-center align-items-center ps-5 pe-5 mt-3">
-                            ENTRAR <i style="font-size:2rem" class='bx bx-chevrons-down ms-4'></i>
+                                class="btn btn-dark  d-flex justify-content-center align-items-center ps-5 pe-5 mt-3">
+                            Entrar
                         </button>
                     </div>
                     <!--                    <button type="submit" class="btn btn-primary">Submit</button>-->
@@ -234,13 +243,10 @@ https://cdn.jsdelivr.net/npm/inputmask@5.0.8/dist/jquery.inputmask.min.js
         <div class="modal-content">
 
             <div class="modal-body">
-                <div class=" d-flex justify-content-center align-items-center mb-3 ">
-                    <i style="font-size:1.6rem; " class='bx bx-restaurant me-2'></i>
-                    <span style="font-size:2rem;">
-                        Easy<span style="color:#E18239">Table</span>
-                    </span>
+                <div class=" d-flex justify-content-center align-items-center">
+                   <h2>Cadastre-se</h2>
                 </div>
-                <p class="card-address text-center">Junte-se à nossa comunidade e comece a aproveitar todos
+                <p class="text-small text-center">Junte-se à nossa comunidade e comece a aproveitar todos
                     os recursos exclusivos que temos a oferecer! </p>
                 <form id="register_form" class="p-2" action="/register" method="post">
                     <div class="input-group  mb-3">
@@ -265,8 +271,8 @@ https://cdn.jsdelivr.net/npm/inputmask@5.0.8/dist/jquery.inputmask.min.js
                     </div>
                     <div class="d-grid gap-2 mt-3">
                         <button type="button" onclick="submitRegister()"
-                                class="btn btn-marrom btn-lg d-flex justify-content-center align-items-center ps-5 pe-5 mt-3">
-                            CADASTRAR <i style="font-size:2rem" class='bx bx-chevrons-down'></i>
+                                class="btn btn-dark  ps-5 pe-5 mt-3">
+                            Entrar
                         </button>
                     </div>
                     <!--                    <button type="submit" class="btn btn-primary">Submit</button>-->
@@ -314,7 +320,8 @@ https://cdn.jsdelivr.net/npm/inputmask@5.0.8/dist/jquery.inputmask.min.js
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
         crossorigin="anonymous"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js" integrity="sha384-zYPOMqeu1DAVkHiLqWBUTcbYfZ8osu1Nd6Z89ify25QV9guujx43ITvfi12/QExE" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.min.js" integrity="sha384-Y4oOpwW3duJdCWv5ly8SCFYWqFDsfob/3GkgExXKV4idmbt98QcxXYs9UoXAB7BZ" crossorigin="anonymous"></script>
 <script src="../static/scripts/main.js"></script>
 
 </body>

@@ -8,6 +8,9 @@ socket.on('connect', function() {
  $(document).ready(function() {
     socket.emit('join-room', {'_idComanda': $('#_idComanda').val(), '_idUser':$('#_idUser').val() });
   });
+
+
+
 socket.on('pedido-aceito-confirmacao', function(data) {
   const idPedido = data._idPedido;
   const status = data.status;

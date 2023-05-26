@@ -1,5 +1,9 @@
+import json
+import locale
+import pprint
+
 from flask import session, request, send_from_directory, current_app, Blueprint, jsonify, redirect, \
-    render_template, url_for
+    render_template, url_for, flash
 from werkzeug.utils import secure_filename
 from Models.Cardapio import Cardapio
 from Models.Categoria import Categoria
@@ -13,18 +17,48 @@ from bson.objectid import ObjectId
 import datetime
 
 from Services.CadastroLojista import CadastroLogista
+import re
+
+
+
 
 mod = Blueprint('admin_routes', __name__)
 repository = BaseRepository(MongoConfig().get_connect())
 
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 
+# Define a localidade para o Brasil
+locale.setlocale(locale.LC_ALL, 'pt_BR.utf-8')
+
+metricas = [
+    {
+        "tipo": 'unid',
+        "nome": "Unidade (unid)"
+    },
+    {
+        "tipo": 'cx',
+        "nome": "Caixa(Cx)"
+    },
+    {
+        "tipo": 'kg',
+        "nome": "Kilo(Kg)"
+    },
+    {
+        "tipo": 'ml',
+        "nome": "Mililitro(ml)"
+    },
+]
+
 
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-
+def remove_currency_format(value):
+    # Remove o símbolo de moeda e substitui o separador de milhares e decimal
+    value = re.sub(r'[^\d.,]', '', value)
+    value = value.replace('.', '').replace(',', '.')
+    return value
 @mod.route('/dashboard', methods=['GET', 'POST'])
 @LoginRequired.login_required
 def dashboard():
@@ -41,6 +75,10 @@ def dashboard():
                     lista_clientes = [item for item in repository.find('clientes', {'_idUser': session['_id']})]
                     lista_categorias = [item for item in repository.find('categorias', {'_idUser': session['_id']})]
 
+
+                    count_pedidos_aceito = sum(1 for comanda in lista_comandas if comanda['status'] == 'Aceito')
+                    count_pedidos_checkout = sum(1 for comanda in lista_comandas if comanda['status'] == 'checkout')
+
                     comandas_fechadas = set()
                     for comanda in lista_comandas:
                         if comanda['status'] == 'realizado':
@@ -49,13 +87,18 @@ def dashboard():
                             # print(comandas_fechadas)
                     total_vendas = 0
                     if len(comandas_fechadas) > 0:
+                        print(comandas_fechadas)
                         for pedido in lista_pedidos:
                             if str(pedido['_idComanda']) in comandas_fechadas:
                                 _quantidade = int(pedido["quantidade"])
-                                _valor = repository.find_one("cardapios", {"_id": ObjectId(pedido["_idCardapio"])})["valor"]
+                                _valor = repository.find_one("cardapios", {"_id": ObjectId(pedido["_idCardapio"])})
 
-                                subTotal = int(_quantidade) * float(_valor.replace(',', '.'))
-                                total_vendas = total_vendas + subTotal
+                                if _valor is not None:
+                                    subTotal = int(_quantidade) * float(remove_currency_format(_valor["valor"]))
+                                    total_vendas = total_vendas + subTotal
+                                else:
+                                    total_vendas = 0
+
 
                     return render_template('menu/dashboard.html',
                                            comandas=lista_comandas,
@@ -64,6 +107,8 @@ def dashboard():
                                            cardapios=lista_cardapios,
                                            clientes=lista_clientes,
                                            categorias=lista_categorias,
+                                           count_pedidos_aceito=count_pedidos_aceito,
+                                           count_pedidos_checkout=count_pedidos_checkout,
                                            total_vendas="R$ {:.2f}".format(total_vendas).replace(".", ",")
                                            )
                 else:
@@ -145,30 +190,118 @@ def receive_ajax(data):
         repository.update_one('users', {'_id': ObjectId(session['_id'])}, {'max_mesas': data})
         return jsonify({'success': True})  # Retorna uma resposta em formato JSON
 
+def json_encoder(obj):
+    if isinstance(obj, ObjectId):
+        return str(obj)
+    raise TypeError(f"Object of type {type(obj).__name__} is not JSON serializable")
 
 # GERENCIAR CARDAPIO
+@mod.route('/get-items', methods=['POST', 'GET'])
+@LoginRequired.login_required
+def get_items():
+    if request.method == "GET":
+        lista_cardapios = [item for item in repository.find('cardapios', {'_idUser': session['_id']})]
+        items = []
+        for item in lista_cardapios:
+            print(item)
+            item['_id'] = str(item['_id'])
+            item['categoria'] = str(repository.find_one('categorias', {'_id': ObjectId(item['categoria']), '_idUser': session['_id']})['nome'])
+            # item['valor'] =  "R$ " + locale.currency(float(item['valor'].replace(',','.')), grouping=True, symbol=True)[:-2]
+
+
+
+            # if 'tipo_estoque' in item and item['tipo_estoque'] == 'Sim':
+            #     item['tipo_estoque'] = f'{item["estoque_item"]} {item["estoque_metrica"]}'
+
+            if 'tipo_estoque' in item and item['tipo_estoque'] != 'Sim':
+                item['estoque_item'] = f'-'
+                item['estoque_metrica'] = f'-'
+
+            if 'tipo_estoque' not in item:
+                item['estoque_item'] = f'-'
+                item['estoque_metrica'] = f'-'
+
+
+
+            if 'updated_at' in item:
+                item['updated_at'] = item['updated_at'].strftime("%d-%m-%Y")
+            if 'created_at' in item:
+                item['created_at'] = str(item['created_at'].strftime("%Y-%m-%d"))
+            items.append(item)
+        return json.dumps(items, default=json_encoder)
+    if request.method == "POST":
+
+
+
+
+        return render_template('dashboard/modalItem.html',
+                               metricas=metricas,
+                               item= repository.find_one('cardapios', {"_id": ObjectId(request.form['_id'])}),
+                               categorias = [item for item in repository.find('categorias', {'_idUser': session['_id']})]
+
+                               )
+
+
 @mod.route('/cardapio', methods=['POST', 'GET'])
 @LoginRequired.login_required
 def cardapio():
     if request.method == "GET":
         lista_cardapios = [item for item in repository.find('cardapios', {'_idUser': session['_id']})]
         lista_categorias = [item for item in repository.find('categorias', {'_idUser': session['_id']})]
-        return render_template('user/cardapio.html', cardapios=lista_cardapios, categorias=lista_categorias)
+        return render_template('user/cardapio.html', cardapios=lista_cardapios, categorias=lista_categorias, metricas=metricas)
     if request.method == "POST":
         try:
-            estoque = request.form.get('estoque') if not request.form.get('no-stock') else False
-            categoria = False if request.form['categoria'] == 'Escolha a categoria' else request.form['categoria']
-            filename = 'comum.jpg'
-            file = request.files.get('file')
-            if file and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
+            form_data = request.form.to_dict()
+            if '_id' in request.form:
+                form_data.pop('_id', None)
+                filename = 'comum.jpg'
+                file = request.files.get('file')
+                if file and allowed_file(file.filename):
+                    filename = secure_filename(file.filename)
+                    file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
 
-            new_cardapio = Cardapio(request.form, filename, estoque, categoria, session['_id'])
-            repository.create(new_cardapio)
-            return redirect(url_for('admin_routes.cardapio'))
+                form_data.setdefault('filename', filename)
+                repository.update_one('cardapios',{'_id': ObjectId(request.form['_id'])}, form_data)
+                return jsonify({'msg': 'O Item foi atualizado com sucesso ', 'categoria': 'alert-success'})
+            else:
+
+                if request.form['nome_produto'] == '':
+                    return jsonify({'erro': 'O nome do item precisa ser preenchido obrigatoriamente', 'categoria': 'alert-danger'})
+                if request.form['descricao'] == '':
+                    return jsonify(
+                        {'erro': 'A descrição deve ser preenchida obrigatoriamente', 'categoria': 'alert-danger'})
+                if 'categoria' not in request.form :
+                    return jsonify(
+                        {'erro': 'Uma categoria ser preenchida obrigatoriamente', 'categoria': 'alert-danger'})
+                if request.form['valor'] == '':
+                    return jsonify(
+                        {'erro': 'Insira um valor de venda obrigatoriamente', 'categoria': 'alert-danger'})
+                if 'estoque_item' not in request.form:
+                    form_data['estoque_item'] = 0
+                if 'temperatura' not in request.form:
+                    form_data.setdefault('temperatura', False)
+                if 'nutricional' not in request.form:
+                    form_data.setdefault('nutricional', False)
+                if 'calorias' not in request.form:
+                    form_data.setdefault('calorias', False)
+
+                filename = 'comum.jpg'
+                file = request.files.get('file')
+                if file and allowed_file(file.filename):
+                    filename = secure_filename(file.filename)
+                    file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
+
+
+                form_data.setdefault('filename', filename)
+                form_data.setdefault('_idUser', session['_id'])
+                new_cardapio = Cardapio(form_data)
+                repository.create(new_cardapio)
+                return jsonify({'msg':'OK', 'categoria':'alert-success'})
         except Exception as e:
-            return redirect(url_for('admin_routes.cardapio'))
+            flash('Ocorreu um erro ao processar a requisição. Detalhes: {}'.format(str(e)))
+            return jsonify({'erro':e , 'categoria': 'alert-danger'})
+
+
 
 
 @mod.route('/edit_cardapio', methods=['POST', 'GET'])
@@ -203,21 +336,13 @@ def edit_cardapio():
             return redirect(url_for('admin_routes.cardapio'))
 
 
-@mod.route('/status_cardapio', methods=['POST', 'GET'])
+@mod.route('/delete_cardapio', methods=['POST', 'GET'])
 @LoginRequired.login_required
-def status_cardapio():
+def delete_cardapio():
     if request.method == "POST":
-        cardapios = repository.find_one('cardapios', {"_id": ObjectId(request.form['produto_remove'])})
-        status = True
-        if cardapios is not None:
-            if request.form['no-ativo'] == 'true':
-                status = False
-        repository.update_one('cardapios', {"_id": ObjectId(request.form['produto_remove'])},
-                              {
-                                  'status': status,
-                              }
-                              )
-        return redirect(url_for('admin_routes.cardapio'))
+        repository.delete_one('cardapios', {"_id": ObjectId(request.form['_id'])})
+
+        return jsonify({'msg': f'item excluído com sucesso', 'categoria': 'alert-success'})
 
 
 # GERENCIAR CATEGORIA
@@ -300,11 +425,12 @@ def pedidos():
             if created_at.date() >= today - datetime.timedelta(days=7):
                 valor_total = 0
                 cardapio = repository.find_one('cardapios', {'_id': ObjectId(pedido['_idCardapio'])})
-                valor_total += int(pedido['quantidade']) * float(cardapio['valor'].replace(',', '.'))
+                if cardapio is not None:
+                    valor_total += int(pedido['quantidade']) * float( remove_currency_format (cardapio['valor']))
 
-                date_str = created_at.strftime('%d-%m-%Y')
-                if date_str in vendas_por_dia:
-                    vendas_por_dia[date_str] += valor_total
+                    date_str = created_at.strftime('%d-%m-%Y')
+                    if date_str in vendas_por_dia:
+                        vendas_por_dia[date_str] += valor_total
 
         links = [{'href': '#' + date, 'text': date, 'vendas': "R$ {:.2f}".format(vendas_por_dia[date]),
                   'comandas_abertas': comandas_abertas_por_dia[date]} for date in dates]
@@ -315,9 +441,18 @@ def pedidos():
 @mod.route('/aceitar_pedidos', methods=['POST'])
 @LoginRequired.login_required
 def aceitar_pedidos():
-    _idPedido = request.form['_idPedido']
-    repository.update_one('pedidos', {'_id': ObjectId(_idPedido)}, {'status': 'Aceito'})
-    return jsonify({'success': True})
+    if request.method == "POST":
+        _idComanda = request.form['_idComanda']
+        repository.update_one('comandas', {'_id': ObjectId(_idComanda)}, {'status': 'Aceito'})
+        return redirect(url_for('admin_routes.dashboard'))
+@mod.route('/rejeitar_pedidos', methods=['POST'])
+@LoginRequired.login_required
+def rejeitar_pedidos():
+    if request.method == "POST":
+        _idComanda = request.form['_idComanda']
+        repository.delete_one('comandas', {'_id': ObjectId(_idComanda)})
+
+        return redirect(url_for('admin_routes.dashboard'))
 
 
 @mod.route('/entregar_pedidos', methods=['POST', 'GET'])
@@ -381,7 +516,7 @@ def comanda_info():
 def comanda_admin():
     try:
         if request.method == "POST":
-            print(request.form)
+
             comanda = repository.find_one('comandas',
                                           {'_id': ObjectId(request.form['_idComanda']), 'status': 'aberta'})
 
@@ -536,3 +671,19 @@ def clientes():
         except Exception as e:
             print('erro', e)
             return redirect(url_for('index_routes.index'))
+
+
+
+
+#templates
+@mod.route('/pedido_componente/<_id>', methods=['POST', 'GET'])
+@LoginRequired.login_required
+def pedido_componente(_id):
+    if request.method == "GET":
+
+            return render_template('dashboard/pedido_componente.html', _id=_id)
+
+
+
+
+

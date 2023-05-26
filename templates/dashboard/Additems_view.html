@@ -1,0 +1,625 @@
+
+<form action="/cardapio" method="post" id="criarItem" enctype="multipart/form-data">
+    <div class="head mb-3">
+        <div class="d-flex justify-content-between align-items-center w-100 mb-3">
+            <a class="icon-title text-dark" onclick="$('.lista_items').show();$('.add_items').hide()">
+                <i class='bx bx-left-arrow-alt'></i>
+            </a>
+            <button type="button" class="btn btn-dark" onclick="EnviarFormulario()">
+                Salvar
+            </button>
+
+        </div>
+
+
+    </div>
+    <div class="d-flex justify-content-between align-items-center border-input">
+        <input maxlength="28" style="font-size:2rem!important " type="text" class="form-control no-border w-75"
+               id="nome_produto"
+               name="nome_produto" placeholder="Adicione um nome para o item"
+               autocomplete="off"
+               required>
+        <div class="w-25  text- ps-5">
+            <a class="green" href="#"> <i class='bx bx-notepad me-3'></i> adicionar nota </a>
+        </div>
+    </div>
+    <div class="mt-5 mb-4 ">
+        <div class="subtitle mb-2">Fotos</div>
+        <div class="row">
+            <div class="col-4">
+                <div class="d-flex flex-column justify-content-center align-items-start me-3">
+
+                    <a class="container_photo" onclick="$('#file').click()">
+                        <div class="opacity-25 text- text-center" id="preview-title">
+                            <div><i style="font-size:5rem; opacity:.3" class='bx bx-photo-album'></i></div>
+                            <div> Insira uma Foto</div>
+                        </div>
+                        <img style="display:none" src="./static/img/back-main.jpeg" class="rounded" alt="..."
+                             id="previewImage"
+                             height="300">
+                    </a>
+
+
+                </div>
+            </div>
+            <div class="col-8">
+                <input style="display:none" class="form-control form-control-sm"
+                       type=file
+                       name=file onchange="previewImage2(event)"
+                       id="file">
+
+
+                <div class="subtitle">As fotos ajudam os clientes a decidirem o que pedir e<br> podem aumentar o volume
+                    de
+                    vendas.
+                </div>
+                <div class="text- mt-2">Requisitos do arquivo: JPG, PNG, GIF ou WEBP, até 10 MB. <br>Tamanho mínimo em
+                    pixels: 320 para largura e altura.
+                </div>
+
+                <div class="d-flex justify-content-start align-items-center mt-4 ">
+
+                    <button type="button" style="font-size:.8rem; border-radius:20px;" class="btn btn-dark me-3"
+                            onclick="$('#file').click()">
+                        Escolher foto
+                    </button>
+                    <button type="button" style="font-size:.8rem;border-radius:20px;" class="btn btn-secondary"
+                            onclick="$('#file').click()">
+                        Excluir
+                    </button>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+    <div class="mb-4 section-reduce">
+        <div class="subtitle mb-2">Descrição(obrigatório)</div>
+        <div class="form-floating mb-3">
+                                        <textarea required class="form-control" placeholder="Leave a comment here"
+                                                  maxlength="250" name="descricao"
+                                                  id="descricao" style="min-height: 110px;font-size:.8rem"></textarea>
+            <label for="descricao">Descrição do produto</label>
+        </div>
+    </div>
+
+
+    <!--<div class="mb-4 section-reduce">-->
+    <!--    <div class="subtitle mb-2">Vender o item separadamente?</div>-->
+    <!--    <div class="d-flex justify-content-start align-items-center">-->
+    <!--        <div class="form-check me-3">-->
+    <!--            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" checked>-->
+    <!--            <label class="form-check-label" for="flexRadioDefault1">-->
+    <!--                Sim-->
+    <!--            </label>-->
+    <!--        </div>-->
+    <!--        <div class="form-check">-->
+    <!--            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" >-->
+    <!--            <label class="form-check-label" for="flexRadioDefault2">-->
+    <!--                Não-->
+    <!--            </label>-->
+    <!--        </div>-->
+    <!--    </div>-->
+    <!--</div>-->
+
+
+    <div class="mb-4 section-reduce">
+        <div class="subtitle mb-2">Categorias</div>
+        <select class="form-select" id="categoria"
+                name="categoria" required>
+            <option selected value="" disabled>Escolha uma categoria...
+            </option>
+            {% for categoria in categorias %}
+            <option value="{{categoria._id}}">{{categoria.nome}}</option>
+            {% endfor%}
+        </select>
+        <small class="text-">Atribua este item às categorias existentes</small>
+
+        <div class="text-">Não achou uma categoria?</div>
+        <a style="font-size:.8rem; text-decoration:underline" href="#"
+           data-bs-toggle="modal"
+           data-bs-target="#categoria_modal">
+            Cadastre aqui!
+        </a>
+    </div>
+    <div class="mb-4 section-reduce">
+        <div class="subtitle mb-2">Preço e forma de venda</div>
+    </div>
+
+
+    <div>
+        <div class="mb-4 section-reduce">
+            <div class="subtitle mb-2">Preço por</div>
+            <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                <input type="radio" class="btn-check" name="tipo_preco" id="btnradio1" onclick="$('#item-tab').click()"
+                       autocomplete="off" value="Item" checked>
+                <label class="btn btn-outline-dark" for="btnradio1">Item</label>
+
+                <input type="radio" class="btn-check" name="tipo_preco" id="btnradio2" onclick="$('#peso-tab').click()"
+                       autocomplete="off" disabled value="Peso">
+                <label class="btn btn-outline-dark" for="btnradio2">Peso</label>
+
+
+            </div>
+        </div>
+        <ul class="nav nav-tabs" id="myTab" role="tablist" style="display:none">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="item-tab" data-bs-toggle="tab" data-bs-target="#item-tab-pane"
+                        type="button"
+                        role="tab" aria-controls="item-tab-pane" aria-selected="true">item
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="peso-tab" data-bs-toggle="tab" data-bs-target="#peso-tab-pane"
+                        type="button"
+                        role="tab" aria-controls="peso-tab-pane" aria-selected="false">peso
+                </button>
+            </li>
+
+        </ul>
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="item-tab-pane" role="tabpanel" aria-labelledby="item-tab"
+                 tabindex="0">
+                <div class="mb-4 section-reduce">
+                    <div class="subtitle mb-2">Preço padrão</div>
+                    <div class="input-group mb-1">
+                        <span class="input-group-text">R$</span>
+                        <div class="form-floating ">
+
+                            <input type="text" class="form-control valor" id="valor"
+                                   name="valor"
+                                   placeholder="Username"
+                                   required>
+
+
+                            <label for="valor">Valor de venda</label>
+                        </div>
+                    </div>
+                    <small class="text-">Atribua esse preço em Vendas para entregas, retirar na loja e escolher uma
+                        mesa.</small>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="peso-tab-pane" role="tabpanel" aria-labelledby="peso-tab" tabindex="0">
+                PSEO
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="mb-4 section-reduce">
+        <div class="subtitle mb-2">Item com estoque?</div>
+        <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+            <input type="radio" class="btn-check" name="tipo_estoque" id="simEstoque" value="Sim" onclick="$('#metrica').attr('disabled',false);$('#Stock').attr('readonly',false);$('#Stock').val(0)"
+                   autocomplete="off" checked>
+            <label class="btn btn-outline-dark" for="simEstoque">Sim</label>
+
+            <input type="radio" class="btn-check" name="tipo_estoque" id="naoEsqoue" value="Não" autocomplete="off" onclick="$('#metrica').attr('disabled',true);$('#Stock').attr('readonly',true);$('#Stock').val('')" >
+            <label class="btn btn-outline-dark" for="naoEsqoue">Não</label>
+
+
+        </div>
+        <div class="input-group mb-1">
+            <div class="form-floating mt-2 w-50">
+                <input type="number" class="form-control" min="0"
+                       id="Stock" step="1"
+                       name="estoque_item"
+                       placeholder="Estoque"
+                       value="0">
+                <label for="Stock">Estoque</label>
+            </div>
+            <div style="border:0;padding:0!important;padding: 22px 2.25rem 20px 0.75rem;"
+                  class="input-group-text text- w-50">   <select
+                    class="form-select" id="metrica" name="estoque_metrica">
+                    {% for metrica in metricas %}
+                        <option value="{{metrica.tipo}}">
+                            {{metrica.nome}}
+                        </option>
+                    {% endfor %}
+        </select></div>
+        </div>
+    </div>
+
+
+    <div class="mb-4 section-reduce">
+        <div class="subtitle mb-2">Temperatura</div>
+        <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+            <input type="radio" class="btn-check" name="temperatura" id="quente" value="quente"
+                   autocomplete="off">
+            <label class="btn btn-outline-dark" for="quente">Quente</label>
+
+            <input type="radio" class="btn-check" name="temperatura" id="Ambiente" autocomplete="off" value="ambiente">
+            <label class="btn btn-outline-dark" for="Ambiente">Temperatura ambiente</label>
+
+            <input type="radio" class="btn-check" name="temperatura" id="Frio" autocomplete="off" value="frio">
+            <label class="btn btn-outline-dark" for="Frio">Frio</label>
+
+        </div>
+
+    </div>
+
+    <div class="mb-4 section-reduce">
+        <div class="subtitle mb-2">Atributos nutricionais</div>
+        <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+            <input type="checkbox" class="btn-check" name="nutricional" id="Vegetariana" value="vegetariana"
+                   autocomplete="off">
+            <label class="btn btn-outline-dark" for="Vegetariana">Vegetariana</label>
+
+            <input type="checkbox" class="btn-check" name="nutricional" id="vegana" autocomplete="off" value="vegana">
+            <label class="btn btn-outline-dark" for="vegana">Vegana</label>
+
+            <input type="checkbox" class="btn-check" name="nutricional" id="Gluten" autocomplete="off"
+                   value="sem gluten">
+            <label class="btn btn-outline-dark" for="Gluten">Sem Glúten</label>
+
+
+        </div>
+
+    </div>
+
+
+    <hr>
+
+
+    <div class="mb-4 section-reduce">
+        <div class="subtitle mb-2">Valores energéticos</div>
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label text-">Calorias</label>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" name="calorias" placeholder="" aria-label="calorias"
+                           value=""
+                           aria-describedby="calorias">
+                    <span class="input-group-text text-" id="cal">cal</span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label text-">Quilojoules</label>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" name="quilojoules" placeholder="" value=""
+                           aria-label="quilojoules"
+                           aria-describedby="quilojoules">
+                    <span class="input-group-text text-" id="quilojoules">kJ</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+<!--<div class="d-flex justify-content-between align-items-start mt-5">-->
+<!--    <div style="width:350px;" class="me-3">-->
+
+<!--        <h5 class="opacity-25">Cadastre um produto</h5>-->
+<!--        <form action="/cardapio" method="post" enctype=multipart/form-data>-->
+<!--            <div class="accordion" id="accordionExample" data-bs-parent="#accordionExample">-->
+
+<!--                <div class="accordion-item">-->
+<!--                    <h2 class="accordion-header">-->
+<!--                        <button class="accordion-button collapsed" type="button"-->
+<!--                                data-bs-toggle="collapse"-->
+<!--                                data-bs-target="#collapseOne" aria-expanded="false"-->
+<!--                                aria-controls="collapseOne">-->
+<!--                            1. Descrição do Produto-->
+<!--                        </button>-->
+<!--                    </h2>-->
+<!--                    <div id="collapseOne" class="accordion-collapse collapse"-->
+<!--                         data-bs-parent="#accordionExample">-->
+<!--                        <div class="accordion-body">-->
+
+
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="accordion-item">-->
+<!--                    <h2 class="accordion-header">-->
+<!--                        <button class="accordion-button collapsed" type="button"-->
+<!--                                data-bs-toggle="collapse"-->
+<!--                                data-bs-target="#collapseTwo" aria-expanded="false"-->
+<!--                                aria-controls="collapseTwo">-->
+<!--                            2. Escolha uma Categoria-->
+<!--                        </button>-->
+<!--                    </h2>-->
+<!--                    <div id="collapseTwo" class="accordion-collapse collapse"-->
+<!--                         data-bs-parent="#accordionExample">-->
+<!--                        <div class="accordion-body">-->
+<!--                            <div class="">-->
+
+
+<!--                                &lt;!&ndash;                                        <div class="form-floating mb-2">&ndash;&gt;-->
+<!--                                &lt;!&ndash;                                            <select class="form-select" disabled&ndash;&gt;-->
+<!--                                &lt;!&ndash;                                                    aria-label="" name="subcategoria" required>&ndash;&gt;-->
+<!--                                &lt;!&ndash;                                                <option selected>Escolha uma categoria...</option>&ndash;&gt;-->
+<!--                                &lt;!&ndash;                                                {% for categoria in subcategorias %}&ndash;&gt;-->
+<!--                                &lt;!&ndash;                                                <option value="{{categoria._id}}">{{categoria.nome}}</option>&ndash;&gt;-->
+<!--                                &lt;!&ndash;                                                {% endfor%}&ndash;&gt;-->
+<!--                                &lt;!&ndash;                                            </select>&ndash;&gt;-->
+<!--                                &lt;!&ndash;                                            <label>Sub-Categoria</label>&ndash;&gt;-->
+<!--                                &lt;!&ndash;                                        </div>&ndash;&gt;-->
+
+
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="accordion-item">-->
+<!--                    <h2 class="accordion-header">-->
+<!--                        <button class="accordion-button collapsed" type="button"-->
+<!--                                data-bs-toggle="collapse"-->
+<!--                                data-bs-target="#collapseThree" aria-expanded="false"-->
+<!--                                aria-controls="collapseThree">-->
+<!--                            3. Imagem do Produto-->
+<!--                        </button>-->
+<!--                    </h2>-->
+<!--                    <div id="collapseThree" class="accordion-collapse collapse"-->
+<!--                         data-bs-parent="#accordionExample">-->
+<!--                        <div class="accordion-body">-->
+<!--                            <div class="row g-2 mb-1">-->
+<!--                                <div class="col-md">-->
+
+
+<!--                                </div>-->
+
+<!--                            </div>-->
+
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="accordion-item">-->
+<!--                    <h2 class="accordion-header">-->
+<!--                        <button class="accordion-button collapsed" type="button"-->
+<!--                                data-bs-toggle="collapse"-->
+<!--                                data-bs-target="#estoqueColapse" aria-expanded="false"-->
+<!--                                aria-controls="estoqueColapse">-->
+<!--                            4. Tipo de Estoque-->
+<!--                        </button>-->
+<!--                    </h2>-->
+<!--                    <div id="estoqueColapse" class="accordion-collapse collapse"-->
+<!--                         data-bs-parent="#accordionExample">-->
+<!--                        <div class="accordion-body">-->
+
+<!--                            <ul class="list-group">-->
+
+<!--                                <li class="list-group-item">-->
+<!--                                    <input class="form-check-input me-1" type="radio"-->
+<!--                                           name="listGroupRadio"-->
+<!--                                           value="" id="firstRadio" checked>-->
+<!--                                    <label class="form-check-label" for="firstRadio">Produto sem estoque-->
+<!--                                        (indeterminado)</label>-->
+<!--                                </li>-->
+
+<!--                                <li class="list-group-item">-->
+<!--                                    <input class="form-check-input me-1" type="radio"-->
+<!--                                           name="listGroupRadio"-->
+<!--                                           value="" id="secondRadio">-->
+<!--                                    <label class="form-check-label" for="secondRadio">Produto com-->
+<!--                                        estoque</label>-->
+<!--                                </li>-->
+<!--                                <div class="input-group mb-1 w-75 ms-4">-->
+<!--                                    <div class="form-floating ">-->
+<!--                                        <input type="number" class="form-control " min="0"-->
+<!--                                               id="estoque"-->
+<!--                                               name="estoque"-->
+<!--                                               placeholder="Estoque"-->
+<!--                                               value="0" disabled>-->
+<!--                                        <label for="estoque">Estoque</label>-->
+<!--                                    </div>-->
+<!--                                    <span class="input-group-text text-">Unid.</span>-->
+<!--                                </div>-->
+
+<!--                                &lt;!&ndash;                                        <div class="row g-2">&ndash;&gt;-->
+<!--                                &lt;!&ndash;                                            <div class="col-md">&ndash;&gt;-->
+<!--                                &lt;!&ndash;                                                <div class="mb-1">&ndash;&gt;-->
+<!--                                &lt;!&ndash;                                                  &ndash;&gt;-->
+<!--                                &lt;!&ndash;                                                    &lt;!&ndash;                                                <div class="form-check form-switch">&ndash;&gt;&ndash;&gt;-->
+<!--                                &lt;!&ndash;                                                    &lt;!&ndash;                                                    <input class="form-check-input form-check-input-sm" name="no-stock"&ndash;&gt;&ndash;&gt;-->
+<!--                                &lt;!&ndash;                                                    &lt;!&ndash;                                                           type="checkbox"&ndash;&gt;&ndash;&gt;-->
+<!--                                &lt;!&ndash;                                                    &lt;!&ndash;                                                           role="switch"&ndash;&gt;&ndash;&gt;-->
+<!--                                &lt;!&ndash;                                                    &lt;!&ndash;                                                           id="flexSwitchCheckDefault" onchange=changeEstoque(this)>&ndash;&gt;&ndash;&gt;-->
+<!--                                &lt;!&ndash;                                                    &lt;!&ndash;                                                    <label class="form-check-label" for="flexSwitchCheckDefault"><small>ignorar&ndash;&gt;&ndash;&gt;-->
+<!--                                &lt;!&ndash;                                                    &lt;!&ndash;                                                        estoque</small></label>&ndash;&gt;&ndash;&gt;-->
+<!--                                &lt;!&ndash;                                                    &lt;!&ndash;                                                </div>&ndash;&gt;&ndash;&gt;-->
+<!--                                &lt;!&ndash;                                                </div>&ndash;&gt;-->
+<!--                                &lt;!&ndash;                                            </div>&ndash;&gt;-->
+<!--                                &lt;!&ndash;                                        </div>&ndash;&gt;-->
+
+
+<!--                            </ul>-->
+
+
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="accordion-item">-->
+<!--                    <h2 class="accordion-header">-->
+<!--                        <button class="accordion-button collapsed" type="button"-->
+<!--                                data-bs-toggle="collapse"-->
+<!--                                data-bs-target="#valorColapse" aria-expanded="false"-->
+<!--                                aria-controls="valorColapse">-->
+<!--                            5. Valor de Venda-->
+<!--                        </button>-->
+<!--                    </h2>-->
+<!--                    <div id="valorColapse" class="accordion-collapse collapse"-->
+<!--                         data-bs-parent="#accordionExample">-->
+<!--                        <div class="accordion-body">-->
+
+
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                &lt;!&ndash;                        <div class="accordion-item">&ndash;&gt;-->
+<!--                &lt;!&ndash;                            <h2 class="accordion-header">&ndash;&gt;-->
+<!--                &lt;!&ndash;                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"&ndash;&gt;-->
+<!--                &lt;!&ndash;                                        data-bs-target="#variacaoColapse" aria-expanded="false"&ndash;&gt;-->
+<!--                &lt;!&ndash;                                        aria-controls="variacaoColapse">&ndash;&gt;-->
+<!--                &lt;!&ndash;                                    6. Variações&ndash;&gt;-->
+<!--                &lt;!&ndash;                                </button>&ndash;&gt;-->
+<!--                &lt;!&ndash;                            </h2>&ndash;&gt;-->
+<!--                &lt;!&ndash;                            <div id="variacaoColapse" class="accordion-collapse collapse"&ndash;&gt;-->
+<!--                &lt;!&ndash;                                 data-bs-parent="#accordionExample">&ndash;&gt;-->
+<!--                &lt;!&ndash;                                <div class="accordion-body d-flex flex-wrap g-2">&ndash;&gt;-->
+<!--                &lt;!&ndash;                                    <div class="w-50">&ndash;&gt;-->
+<!--                &lt;!&ndash;                                        <div class="btn-group w-100 me-1" role="group"&ndash;&gt;-->
+<!--                &lt;!&ndash;                                             aria-label="Basic checkbox toggle button group">&ndash;&gt;-->
+<!--                &lt;!&ndash;                                            <input type="checkbox" class="btn-check" id="btncheck1" autocomplete="off">&ndash;&gt;-->
+<!--                &lt;!&ndash;                                            <label class="btn btn-outline-primary" for="btncheck1">Tamanho</label>&ndash;&gt;-->
+<!--                &lt;!&ndash;                                        </div>&ndash;&gt;-->
+
+<!--                &lt;!&ndash;                                    </div>&ndash;&gt;-->
+
+<!--                &lt;!&ndash;                                    <div class="w-50">&ndash;&gt;-->
+<!--                &lt;!&ndash;                                        <div class="btn-group w-100 ms-1" role="group"&ndash;&gt;-->
+<!--                &lt;!&ndash;                                             aria-label="Basic checkbox toggle button group">&ndash;&gt;-->
+<!--                &lt;!&ndash;                                            <input type="checkbox" class="btn-check" id="btncheck2" autocomplete="off">&ndash;&gt;-->
+<!--                &lt;!&ndash;                                            <label class="btn btn-outline-primary" for="btncheck2">Cores</label>&ndash;&gt;-->
+<!--                &lt;!&ndash;                                        </div>&ndash;&gt;-->
+<!--                &lt;!&ndash;                                    </div>&ndash;&gt;-->
+
+
+<!--                &lt;!&ndash;                                    <div>&ndash;&gt;-->
+
+<!--                &lt;!&ndash;                                        <hr>&ndash;&gt;-->
+
+<!--                &lt;!&ndash;                                        <div>Tamanhos</div>&ndash;&gt;-->
+
+<!--                &lt;!&ndash;                                        <div class="d-flex justify-content-center align-items-center text-">&ndash;&gt;-->
+<!--                &lt;!&ndash;                                            <div class="mb-3 me-1">&ndash;&gt;-->
+<!--                &lt;!&ndash;                                                <label class="form-label ">Variação</label>&ndash;&gt;-->
+<!--                &lt;!&ndash;                                                <input type="text" class="form-control edit_tamanho"&ndash;&gt;-->
+<!--                &lt;!&ndash;                                                       placeholder="">&ndash;&gt;-->
+<!--                &lt;!&ndash;                                            </div>&ndash;&gt;-->
+<!--                &lt;!&ndash;                                            <div class="mb-3">&ndash;&gt;-->
+<!--                &lt;!&ndash;                                                <label class="form-label ">Valor (R$)</label>&ndash;&gt;-->
+<!--                &lt;!&ndash;                                                <input type="text" class="form-control edit_tamanho"&ndash;&gt;-->
+<!--                &lt;!&ndash;                                                       placeholder="">&ndash;&gt;-->
+<!--                &lt;!&ndash;                                            </div>&ndash;&gt;-->
+<!--                &lt;!&ndash;                                        </div>&ndash;&gt;-->
+
+<!--                &lt;!&ndash;                                    </div>&ndash;&gt;-->
+
+
+<!--                &lt;!&ndash;                                    &lt;!&ndash;                                       <div class="mb-3">&ndash;&gt;&ndash;&gt;-->
+<!--                &lt;!&ndash;                                    &lt;!&ndash;                                        <div class="btn-group" role="group"&ndash;&gt;&ndash;&gt;-->
+<!--                &lt;!&ndash;                                    &lt;!&ndash;                                             aria-label="Basic checkbox toggle button group">&ndash;&gt;&ndash;&gt;-->
+<!--                &lt;!&ndash;                                    &lt;!&ndash;                                            <input type="checkbox" class="btn-check" id="btncheck3" autocomplete="off">&ndash;&gt;&ndash;&gt;-->
+<!--                &lt;!&ndash;                                    &lt;!&ndash;                                            <label class="btn btn-outline-primary" for="btncheck3">Checkbox 3</label>&ndash;&gt;&ndash;&gt;-->
+<!--                &lt;!&ndash;                                    &lt;!&ndash;                                        </div>&ndash;&gt;&ndash;&gt;-->
+<!--                &lt;!&ndash;                                    &lt;!&ndash;                                    </div>&ndash;&gt;&ndash;&gt;-->
+
+<!--                &lt;!&ndash;                                </div>&ndash;&gt;-->
+<!--                &lt;!&ndash;                            </div>&ndash;&gt;-->
+<!--                &lt;!&ndash;                        </div>&ndash;&gt;-->
+<!--                <div class="accordion-item">-->
+<!--                    <h2 class="accordion-header">-->
+<!--                        <button class="accordion-button collapsed" type="button"-->
+<!--                                data-bs-toggle="collapse"-->
+<!--                                data-bs-target="#ingredientesColapse" aria-expanded="false"-->
+<!--                                aria-controls="ingredientesColapse">-->
+<!--                            7. Ingredientes-->
+<!--                        </button>-->
+<!--                    </h2>-->
+<!--                    <div id="ingredientesColapse" class="accordion-collapse collapse"-->
+<!--                         data-bs-parent="#accordionExample">-->
+<!--                        <div class="accordion-body">-->
+
+<!--                            <input type="text" class="form-control w-100 mb-1" placeholder="Add item"-->
+<!--                                   aria-label="Item">-->
+<!--                            <div class="input-group mb-3">-->
+<!--                                <span class="input-group-text text-">R$</span>-->
+<!--                                <input type="text" class="form-control valor w-25"-->
+<!--                                       placeholder="Cobrar adicional"-->
+<!--                                       aria-label="Adicional" value="0">-->
+<!--                            </div>-->
+
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="accordion-item">-->
+<!--                    <h2 class="accordion-header">-->
+<!--                        <button class="accordion-button collapsed" type="button"-->
+<!--                                data-bs-toggle="collapse"-->
+<!--                                data-bs-target="#tempoColapse" aria-expanded="false"-->
+<!--                                aria-controls="tempoColapse">-->
+<!--                            8. Tempo médio-->
+<!--                        </button>-->
+<!--                    </h2>-->
+<!--                    <div id="tempoColapse" class="accordion-collapse collapse"-->
+<!--                         data-bs-parent="#accordionExample">-->
+<!--                        <div class="accordion-body">-->
+<!--                            <div class="col-md">-->
+<!--                                <div class="input-group ">-->
+<!--                                    <div class="form-floating">-->
+<!--                                        <input type="number" class="form-control" id="tempo"-->
+<!--                                               name="tempo"-->
+<!--                                               placeholder="tempo"-->
+<!--                                               value="15" max='60' min='00' step="5" required>-->
+<!--                                        <label for="tempo">Tempo médio para preparo</label>-->
+<!--                                    </div>-->
+<!--                                    <span class="input-group-text">Min.</span>-->
+<!--                                </div>-->
+<!--                            </div>-->
+
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <hr>-->
+<!--            <div class="d-grid gap-2">-->
+<!--                <button class="btn btn-primary" type="submit">Adicionar produto</button>-->
+<!--            </div>-->
+<!--        </form>-->
+<!--    </div>-->
+<!--    <div class="flex-fill d-flex justify-content-center align-items-start">-->
+
+<!--        <div class="flex-fill">-->
+<!--            <div>-->
+<!--                <div class="d-flex justify-content-end align-items-center">-->
+<!--                    <div id="insert_categoria" class="badge text-bg-dark opacity-25  categoria-produto">-->
+<!--                        Categoria-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="opacity-25 title-produto" id="insert_nome_produto">Insira um título para seu-->
+<!--                    produto-->
+<!--                </div>-->
+<!--                <div class="opacity-25 cal-produto">-->
+<!--                    260 Cal-->
+<!--                </div>-->
+<!--                <div class="opacity-25 text-produto" id="insert_valor">R$ 0,00</div>-->
+
+
+<!--                <div style=" font-size:.8rem!important;" class="description">-->
+<!--                    <div class="opacity-25 text-break " id="insert_descricao">-->
+<!--                        Descrição completa do produto.-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div style="display:none" class="x-card" id="Insert_variacoes">-->
+<!--                    <hr>-->
+
+<!--                    <div id="Insert_variacao_tamanho" style="display:none;">-->
+<!--                        <div class="d-flex justify-content-between align-items-center text-">-->
+<!--                            <div class="topico">Tamanho</div>-->
+<!--                            <div>-->
+<!--                                <span class="badge text-bg-secondary">obrigatório</span>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+
+<!--                    <hr>-->
+<!--                    <div id="Insert_variacao_cores" style="display:none;">-->
+<!--                        <div class="d-flex justify-content-between align-items-center text-">-->
+<!--                            <div class="topico">Cores</div>-->
+<!--                            <div>-->
+<!--                                <span class="badge text-bg-secondary">obrigatório</span>-->
+<!--                            </div>-->
+<!--                        </div>-->
+
+<!--                    </div>-->
+
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+
+<!--    </div>-->
+
+<!--</div>-->

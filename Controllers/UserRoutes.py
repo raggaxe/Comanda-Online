@@ -168,24 +168,30 @@ def carrinho(currentPage):
             comanda_list = list(comanda_found)
             if len(comanda_list) > 0:
                 lista = []
+                lista_comandas = []
+                lista_users =[]
                 for comanda in comanda_list:
-                    print(comanda)
-                    is_active = False
-                    lista_pedidos = []
-                    pedidos_found = repository.find('pedidos', {'_idComanda': str(comanda['_id']), 'status': False})
-                    if currentPage == comanda['_idUser']:
-                        is_active = True
-                    for pd in pedidos_found:
-                        pd['_id'] = str(pd['_id'])
-                        lista_pedidos.append(pd)
-                        if currentPage == pd['_idCardapio']:
+                    if str(comanda['_id']) not in lista_comandas and  str(comanda['_idUser']) not in lista_users:
+                        is_active = False
+                        lista_users.append(str(comanda['_idUser']))
+                        lista_comandas.append(str(comanda['_id']))
+                        lista_pedidos = []
+                        pedidos_found = repository.find('pedidos', {'_idComanda': str(comanda['_id']), 'status': False})
+                        if currentPage == comanda['_idUser']:
                             is_active = True
-                    lista.append({
-                        '_idComanda': str(comanda['_id']),
-                        'pedidos': list(lista_pedidos),
-                        'pedidos_count': len(lista_pedidos),
-                        'is_active': is_active
-                    })
+                        for pd in pedidos_found:
+                            pd['_id'] = str(pd['_id'])
+                            lista_pedidos.append(pd)
+                            if currentPage == pd['_idCardapio']:
+                                is_active = True
+                        lista.append({
+                            '_idComanda': str(comanda['_id']),
+                            '_idUser': str(comanda['_idUser']),
+                            'pedidos': list(lista_pedidos),
+                            'pedidos_count': len(lista_pedidos),
+                            'is_active': is_active
+                        })
+
                 return render_template('shared/carrinho.html', lista=lista)
             else:
                 return render_template('shared/carrinho.html', lista=[])
@@ -218,7 +224,7 @@ def checkout(_idComanda):
             pd['_id'] = str(pd['_id'])
             lista_pedidos.append(pd)
         return render_template('shared/checkout.html', carrinho=comanda_found, pedidos=lista_pedidos)
-    return redirect(url_for('user_routes.index'))
+    return redirect(url_for('user_routes.dashboardCliente'))
 @mod.route('/pedido/<_idCardapio>', methods=['POST', 'GET'])
 @LoginRequired.login_required
 def pedido(_idCardapio):
@@ -252,7 +258,7 @@ def pedido(_idCardapio):
 def get_mesa(_idMesa):
 
     mesa = repository.find_one('mesas', {'_id': ObjectId(_idMesa)})
-    print(f'getMesa {mesa["numero_mesa"] }')
+
 
     return jsonify({'numero_mesa':mesa['numero_mesa']})
 
@@ -276,3 +282,36 @@ def realizar_pagamento():
         except Exception as e:
             print(e)
             return redirect(url_for('user_routes.comanda'))
+
+
+
+@mod.route('/realizar-checkout', methods=['POST'])
+def realizar_checkout():
+    if request.method == "POST":
+        try:
+
+            comanda_found = repository.find_one('comandas', {'_id': ObjectId(request.form['_idComanda']), 'status': 'aberta'})
+            _idMesa = ""
+
+            if comanda_found is not None:
+                if request.form['tipo_atendimento'] == 'mesa':
+                    _idMesa = request.form['mesa']
+
+                repository.update_one('comandas',{'_id': ObjectId(request.form['_idComanda']), 'status': 'aberta'},{
+                    '_idMesa':_idMesa,
+                    'tipo_atendimento' : request.form['tipo_atendimento'],
+                    'tipo_pagamento' : request.form['tipo_pagamento'],
+                    'gorjeta' : request.form['gorjeta'],
+                    'valor':request.form['total_pagamento'],
+                    'tx_entrega':request.form['_tx_entrega'],
+                    'status': 'checkout'
+                })
+                emit("pedido-cliente-solicitado", {
+                    "_idComanda": str(comanda_found['_id']),
+                }, room=comanda_found['_idUser'],namespace='/')
+                return redirect(url_for('user_routes.checkout',_idComanda=str(comanda_found['_id'])))
+
+            return redirect(url_for('user_routes.checkout', _idComanda=str(request.form['_idComanda'])))
+        except Exception as e:
+            print(e)
+            return redirect(url_for('user_routes.checkout',_idComanda=str(request.form['_idComanda'])))

@@ -2,23 +2,23 @@
 {% block content %}
 
 <link rel="stylesheet" href="../static/css/checkout.css">
-<form class="container mt-5 mb-5" method="post" action="/">
+<form class="container mt-5 mb-5" method="post" action="/realizar-checkout">
     <div class="row mt-5">
         <div class="col-8 ">
             <div class="bg-title p-3 pt-4">
                 <div class="d-flex justify-content-between">
                     <h4>Detalhes da compra</h4>
                     <div class="btn-group" role="group" id="tipo_entrega" aria-label="Basic radio toggle button group">
-                        <input type="radio" class="btn-check" name="entrega" id="delivery" autocomplete="off">
+                        <input type="radio" class="btn-check" name="tipo_atendimento" id="delivery" value="delivery" autocomplete="off">
                         <label class="btn btn-table" for="delivery"
                                data-href="#nav-entregas">Entregar</label>
 
-                        <input type="radio" class="btn-check" name="entrega" id="retirar" value="retirar"
+                        <input type="radio" class="btn-check" name="tipo_atendimento" id="retirar" value="retirar"
                                autocomplete="off">
                         <label class="btn btn-table" for="retirar" data-href="#nav-retirar">Retirar na
                             loja</label>
 
-                        <input type="radio" class="btn-check" name="entrega" id="mesaOption" value="mesa"
+                        <input type="radio" class="btn-check" name="tipo_atendimento" id="mesaOption" value="mesa"
                                autocomplete="off" checked>
                         <label class="btn btn-table" for="mesaOption" data-href="#nav-mesa">Mesa</label>
                     </div>
@@ -75,6 +75,7 @@
                                 <i class='bx bx-dish'></i>
                             </div>
                             <div class="flex-fill d-flex justify-content-between align-items-center pb-3 border-bottom">
+
                                 <div class="d-flex flex-column justify-content-start align-items-start">
                                     <div class="detail-title">Escolher mesa:</div>
                                     <a href="#" data-bs-toggle="modal" id="selectMesa" data-bs-target="#mesasModal"
@@ -144,15 +145,15 @@
                     <h4>Pagamento</h4>
                     <div class="btn-group" role="group" id="tipo_pagamento"
                          aria-label="Basic radio toggle button group">
-                        <input type="radio" class="btn-check" name="pagamento" id="pg1" value="Pix" autocomplete="off">
+                        <input type="radio" class="btn-check" name="tipo_pagamento" id="pg1" value="Pix" autocomplete="off">
                         <label class="btn btn-table" for="pg1"
                                data-href="#nav-pix">Pix</label>
 
-                        <input type="radio" class="btn-check" name="pagamento" id="pg2" value="Débito"
+                        <input type="radio" class="btn-check" name="tipo_pagamento" id="pg2" value="Débito"
                                autocomplete="off">
                         <label class="btn btn-table" for="pg2" data-href="#nav-debito">Débito</label>
 
-                        <input type="radio" class="btn-check" name="pagamento" id="pg3" value="Crédito"
+                        <input type="radio" class="btn-check" name="tipo_pagamento" id="pg3" value="Crédito"
                                autocomplete="off" checked>
                         <label class="btn btn-table" for="pg3" data-href="#nav-credito">Crédito</label>
                     </div>
@@ -277,17 +278,17 @@
                     </div>
 
                 </div>
-                <div class="detail d-flex justify-content-between align-items-center ">
-                    <div class="flex-fill d-flex justify-content-between align-items-center ">
-                        <div class="d-flex flex-column justify-content-start align-items-start">
-                            <div class="detail-valor" >Taxas de serviço</div>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center h-100">
-                            <div class="detail-valor" id="tx_servico">{{ MoneyFormatter(1.99) }}</div>
-                        </div>
-                    </div>
+<!--                <div class="detail d-flex justify-content-between align-items-center ">-->
+<!--                    <div class="flex-fill d-flex justify-content-between align-items-center ">-->
+<!--                        <div class="d-flex flex-column justify-content-start align-items-start">-->
+<!--                            <div class="detail-valor" >Taxas de serviço</div>-->
+<!--                        </div>-->
+<!--                        <div class="d-flex justify-content-between align-items-center h-100">-->
+<!--&lt;!&ndash;                            <div class="detail-valor" id="tx_servico">{{ MoneyFormatter(1.99) }}</div>&ndash;&gt;-->
+<!--                        </div>-->
+<!--                    </div>-->
 
-                </div>
+<!--                </div>-->
                 <hr>
                 <div class="detail d-flex flex-column justify-content-between align-items-center ">
                     <div class="d-flex justify-content-between align-items-center w-100">
@@ -306,21 +307,23 @@
                 </div>
 
                 <div class="btn-group w-100 mt-2" role="group" aria-label="Basic radio toggle button group">
-                    <input type="radio" class="btn-check" name="tip" id="tip2" value="3" autocomplete="off" onchange="addGorjeta(this.value)">
+                    <input type="radio" class="btn-check" name="gorjeta" id="tip2" value="3" autocomplete="off" onchange="addGorjeta(this.value)">
                     <label class="btn btn-table" for="tip2">R$3,00</label>
-                    <input type="radio" class="btn-check" name="tip" id="tip3" value="4" autocomplete="off" onchange="addGorjeta(this.value)">
+                    <input type="radio" class="btn-check" name="gorjeta" id="tip3" value="4" autocomplete="off" onchange="addGorjeta(this.value)">
                     <label class="btn btn-table" for="tip3">R$4,00</label>
-                    <input type="radio" class="btn-check" name="tip" id="tip4" value="5" autocomplete="off" onchange="addGorjeta(this.value)">
+                    <input type="radio" class="btn-check" name="gorjeta" id="tip4" value="5" autocomplete="off" onchange="addGorjeta(this.value)">
                     <label class="btn btn-table" for="tip4">R$5,00</label>
-                    <input type="radio" class="btn-check" name="tip" id="outro" value="0" autocomplete="off" checked onchange="addGorjeta(this.value)">
+                    <input type="radio" class="btn-check" name="gorjeta" id="outro" value="0" autocomplete="off" checked onchange="addGorjeta(this.value)">
                     <label class="btn btn-table" for="outro">R$0,00</label>
                 </div>
                 <hr>
 
                 <div class="d-flex justify-content-between">
                     <h5>Total</h5>
-                    <h5 id="TotalCart">R$100,00</h5>
+                    <h5 id="TotalCart"></h5>
                     <input hidden name="total_pagamento" id="total_pagamento" value="">
+                    <input hidden name="_idComanda"  value="{{carrinho._id}}">
+                    <input hidden name="_tx_entrega"  value="0">
                 </div>
 
             </div>
@@ -337,11 +340,30 @@ btns.forEach(btn => {
   btn.addEventListener('click', () => {
     const tabTargetId = btn.getAttribute('data-href');
     const tabTarget = document.querySelector(tabTargetId);
+    const inputId = btn.getAttribute('for');
+    const input = document.getElementById(inputId);
+
 
     const activeTabs = document.querySelectorAll('#nav-tabContent .tab-pane.show');
     activeTabs.forEach(tab => tab.classList.remove('show', 'active'));
 
     tabTarget.classList.add('show', 'active');
+
+
+
+    // Remover a marcação "checked" de todos os outros elementos <input>
+    const otherInputs = document.querySelectorAll('#tipo_entrega .btn-check');
+    otherInputs.forEach(otherInput => {
+      if (otherInput !== input) {
+        otherInput.removeAttribute('checked');
+      }
+    });
+
+
+// Atribuir a marcação "checked" ao elemento <input> correspondente
+    input.setAttribute('checked', true);
+
+
   });
 });
 
@@ -356,6 +378,19 @@ btns2.forEach(btn => {
     activeTabs.forEach(tab => tab.classList.remove('show', 'active'));
 
     tabTarget.classList.add('show', 'active');
+
+
+      // Remover a marcação "checked" de todos os outros botões
+    btns2.forEach(otherBtn => {
+      if (otherBtn !== btn) {
+        otherBtn.previousElementSibling.removeAttribute('checked');
+      }
+    });
+
+
+  // Atribuir a marcação "checked" ao input acima do botão clicado
+    btn.previousElementSibling.setAttribute('checked', true);
+
   });
 });
 
@@ -377,11 +412,14 @@ function addGorjeta(_gorjeta){
 function TotalCart(){
     var _subtotal = $('#subtotal').html();
     var _tx_entrega = $('#tx_entrega').html();
-    var _tx_servico = $('#tx_servico').html();
     var _gorjeta = $('#gorjeta').html();
 
-     $('#TotalCart').html( MoneyFormatter ( MoneyParser(_subtotal ) + MoneyParser(_tx_entrega ) + MoneyParser(_tx_servico ) +  MoneyParser(_gorjeta )))
-     $('#total_pagamento').html(( MoneyParser(_subtotal ) + MoneyParser(_tx_entrega ) + MoneyParser(_tx_servico ) +  MoneyParser(_gorjeta )))
+     $('#TotalCart').html( MoneyFormatter ( MoneyParser(_subtotal ) + MoneyParser(_tx_entrega )  +  MoneyParser(_gorjeta )))
+
+
+     $('#total_pagamento').val( MoneyParser(_subtotal ));
+     $('#_tx_entrega').val(MoneyParser(_tx_entrega ));
+
 }
 
 function MoneyParser(valor) {

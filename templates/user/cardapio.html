@@ -4,12 +4,66 @@
 {% block content %}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
 <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.21.4/dist/bootstrap-table.min.css">
-
+<link rel="stylesheet" href="../static/css/cards.css">
 <!-- MAIN -->
-<ul class="box-info">
-    <li>
-        <i class='bx bxs-calendar-check'></i>
-        <span class="text d-flex  justify-content-center align-items-center">
+
+<div class="table-data m-0">
+
+    <div id="Produtos" style="flex-basis: 100%;" class="order">
+        <ul class="nav nav-underline" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane"
+                   type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Visão Geral
+                </a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane"
+                   type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Menus
+                </a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact-tab-pane"
+                   type="button" role="tab" aria-controls="contact-tab-pane" aria-selected="false">Categorias
+                </a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="disabled-tab" data-bs-toggle="tab" data-bs-target="#disabled-tab-pane"
+                   type="button" role="tab" aria-controls="disabled-tab-pane" aria-selected="false">Items
+                </a>
+            </li>
+
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="grupo-tab" data-bs-toggle="tab" data-bs-target="#grupo-tab-pane"
+                   type="button" role="tab" aria-controls="grupo-tab-pane" aria-selected="false">grupos
+                </a>
+            </li>
+        </ul>
+
+
+        <div class="tab-content mt-5 ps-3" id="myTabContent">
+            <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab"
+                 tabindex="0">
+                <div class="info d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="info-title">Incluir fotos dos itens do cardápio pode aumentar as vendas</div>
+                        <div class="info-texto">As fotos ajudam o cliente a escolher o pedido. Para adicioná-las, acesse
+                            “Itens”
+                            e escolha um item do cardápio.
+                        </div>
+                        <button type="button" class="info-btn">
+                            Adicionar foto
+                        </button>
+
+                    </div>
+                    <div class="az c4 b0 hu hv">
+                        <div class="hw hx gz hy hz i0 ed i1"></div>
+                    </div>
+                </div>
+                <ul class="box-info">
+                    <li>
+                        <i class='bx bxs-calendar-check'></i>
+
+                        <span class="text d-flex  justify-content-center align-items-center">
    {% set countComidas = namespace(value=0) %}
 {% for i in cardapios %}
              {% if getCategoria(i.categoria).nome == "Comidas" %}
@@ -19,10 +73,10 @@
 						<h3 class="m-0 p-0 me-2">{{countComidas.value}}</h3>
 						<p class="m-0 p-0">Produtos em Comidas</p>
 					</span>
-    </li>
-    <li>
-        <i class='bx bxs-calendar-check'></i>
-        <span class="text d-flex  justify-content-center align-items-center">
+                    </li>
+                    <li>
+                        <i class='bx bxs-calendar-check'></i>
+                        <span class="text d-flex  justify-content-center align-items-center">
    {% set countBebidas = namespace(value=0) %}
 {% for i in cardapios %}
 
@@ -36,10 +90,10 @@
 						<h3 class="m-0 p-0 me-2">{{countBebidas.value}}</h3>
 						<p class="m-0 p-0">Produtos em Bebidas</p>
 					</span>
-    </li>
-    <li>
-        <i class='bx bxs-calendar-check'></i>
-        <span class="text d-flex  justify-content-center align-items-center">
+                    </li>
+                    <li>
+                        <i class='bx bxs-calendar-check'></i>
+                        <span class="text d-flex  justify-content-center align-items-center">
    {% set count = namespace(value=0) %}
 {% for i in cardapios %}
              {% if i.status %}
@@ -52,257 +106,79 @@
 						<h3 class="m-0 p-0 me-2">{{count.value}}</h3>
 						<p class="m-0 p-0">Total Produtos</p>
 					</span>
-    </li>
-
-</ul>
-<div class="table-data m-0">
-
-    <div style="flex-basis: 100%;" class="order">
-
-        <div class="head">
-            <h3>Cadastrar Produto</h3>
-        </div>
-        <div class="d-flex">
-            <div class="w-50 me-3">
-
-               <div class="alert alert-info">
-                    <ol class="list-group list-group-numbered">
-                    <li class="list-group-item list-group-item-info"> <small>Nomeie seu produto</small></li>
-                        <li class="list-group-item list-group-item-info"> <small>Selecione ou crie uma categoria</small>
                     </li>
-                        <li class="list-group-item list-group-item-info"> <small>Adicione uma imagem (opcional)</small></li>
-                    <li class="list-group-item list-group-item-info"> <small>Informe o tempo de preparo em minutos</small> </li>
-                    <li class="list-group-item list-group-item-info"> <small>Defina o valor de venda em reais</small> </li>
-                    <li class="list-group-item list-group-item-info"> <small>Especifique o estoque ou selecione "ignorar estoque"</small> </li>
-                    <li class="list-group-item list-group-item-info"> <small> Clique em "Adicionar produto" para concluir.</small></li>
-                </ol>
-               </div>
 
-
-
-
-
-
-            </div>
-            <form action="/cardapio" method="post" enctype=multipart/form-data>
-                <div class="form-floating mb-1">
-                    <input type="text" class="form-control" id="nome_produto" name="nome"
-                           placeholder="Insira um nome para o produto" required>
-                    <label for="nome_produto">Nome do Produto</label>
-                </div>
-                <div class="input-group mb-1">
-                    <div class="form-floating ">
-                        <select class="form-select" id="floatingSelectDisabled"
-                                aria-label="" name="categoria" required>
-                            <option selected>Escolha a categoria</option>
-                            {% for categoria in categorias %}
-                            <option value="{{categoria._id}}">{{categoria.nome}}</option>
-                            {% endfor%}
-                        </select>
-                        <label>Categoria</label>
-                    </div>
-                    <button class="btn btn-primary" type="button" data-bs-toggle="modal"
-                            data-bs-target="#categoria_modal">
-                        Criar nova
-                    </button>
-                </div>
-                <div class="row g-2 mb-1">
-                    <div class="col-md d-flex justify-content-center align-items-center">
-                        <input style="display:none" class="form-control form-control-sm" type=file name=file id="file">
-
-                        <button type="button"
-                                class="btn btn-primary w-100 d-flex justify-content-center align-items-center"
-                                onclick="$('#file').click()">
-                            <span class="me-1">imagem</span><i style="font-size:1.2rem"
-                                                               class='bx bx-image-add'></i>
-                        </button>
-
-                    </div>
-                    <div class="col-md">
-                        <div class="input-group ">
-                            <div class="form-floating">
-                                <input type="number" class="form-control" id="tempo" name="tempo" placeholder="tempo"
-                                       value="15" max='60' min='00' step="5" required>
-                                <label for="tempo">Tempo médio para preparo</label>
-                            </div>
-                            <span class="input-group-text">Min.</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="row g-2">
-                    <div class="col-md">
-                        <div class="input-group mb-1">
-                            <span class="input-group-text">R$</span>
-                            <div class="form-floating ">
-
-                                <input type="text" class="form-control valor" id="valor" name="valor"
-                                       placeholder="Username"
-                                       required>
-
-
-                                <label for="valor">Valor de venda</label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md">
-                        <div class="mb-1">
-                            <div class="input-group mb-1">
-                                <div class="form-floating">
-                                    <input type="number" class="form-control " min="0" id="estoque" name="estoque"
-                                           placeholder="Estoque"
-                                           value="0">
-                                    <label for="estoque">Estoque</label>
-                                </div>
-                                <span class="input-group-text">Unid.</span>
-                            </div>
-                            <div class="form-check form-switch">
-                                <input class="form-check-input form-check-input-sm" name="no-stock" type="checkbox"
-                                       role="switch"
-                                       id="flexSwitchCheckDefault" onchange=changeEstoque(this)>
-                                <label class="form-check-label" for="flexSwitchCheckDefault"><small>ignorar
-                                    estoque</small></label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-
-                <hr>
-                <div class="d-grid gap-2">
-                    <button class="btn btn-primary" type="submit">Adicionar produto</button>
-                </div>
-            </form>
-        </div>
-
-    </div>
-    <div class="order">
-        <div class="head mb-0">
-            <div class="d-flex flex-column justify-content-start align-items-start me-3 w-100">
-                <h3 class="mb-0 mt-0">Meu Cardápio </h3>
-                <ul class="nav nav-tabs flex-column flex-sm-row  w-100 mt-2" role="tablist">
-                    {% for categoria in categorias %}
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link {% if loop.first %}active{% endif %} text-body-secondary "
-                                id="{{categoria._id}}-tab"
-                                data-bs-toggle="tab" data-bs-target="#tab-pane-{{categoria._id}}" type="button"
-                                role="tab"
-                                aria-controls="tab-pane-{{ categoria._id}}" aria-selected="true">{{ categoria.nome }}
-                        </button>
-                    </li>
-                    {% endfor %}
-
-                    <!--                    <li class="nav-item">-->
-                    <!--                        <a class="nav-link" data-toggle="tab"-->
-                    <!--                           href="#sem_categoria">Outros</a>-->
-                    <!--                    </li>-->
                 </ul>
+
+
             </div>
-        </div>
-        <div class="tab-content">
-
-            {% for categoria in categorias %}
-            <div class="tab-pane fade {% if loop.first %}show active{% endif %}" id="tab-pane-{{ categoria._id }}"
-                 role="tabpanel"
-                 aria-labelledby="{{ categoria._id }}-tab" tabindex="0">
-
-                <table
-                        class="table table-bordered table-hover"
-                        data-toggle="table"
-                        data-search="true"
-                        data-click-to-select="false"
-                        data-pagination="false">
-                    <thead>
-                    <tr>
-                        <th data-align="center"></th>
-                        <th data-sortable="true">Nome Produto</th>
-                        <th data-align="center" data-field="minutos" data-sortable="true"><i
-                                class="bi bi-stopwatch me-2"></i>Min.
-                        </th>
-                        <th data-align="center" data-field="estoque" data-sortable="true">Estoque</th>
-                        <th data-align="center" data-field="valor" data-sortable="true">Valor</th>
-
-                        <th data-align="center" data-sortable="true"></th>
-
-                    </tr>
-                    </thead>
-
-                    <tbody>
-
-
-                    {% for cardapio in cardapios if cardapio.categoria| string() == categoria._id| string() %}
-                    <tr>
-                        <td class="" style="display: table-cell;">
-
-                            <div class="preview">
-                                <img src="{{url_for('user_routes.uploaded_file', filename=cardapio.filename)}}"
-                                     align="middle"/>
-                            </div>
-                        </td>
-                        <td class="ps-3 pe-3">
-                            <div class="d-flex flex-column justify-content-start align-items-start">
-
-                                <small class="text-body-secondary">
-                                    {{cardapio.nome_produto}}
-                                </small>
+            <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
+                Menus
+            </div>
+            <div class="tab-pane fade" id="contact-tab-pane" role="tabpanel" aria-labelledby="contact-tab" tabindex="0">
+                {% if categorias %}
+                <h6>Categorias cadastradas:</h6>
+                <div class="section-reduce">
+                    <ol class="list-group list-group-numbered">
+                        {% for categoria in categorias %}
+                        <li class="categoria-item list-group-item" data-id="{{categoria._id}}">
+                            <div class="flex-fill mx-2">
+                                {{categoria.nome}}
                             </div>
 
-                        </td>
-                        <td class="ps-3 pe-3">
-
-                            <small class="text-body-secondary ">
-                                {{cardapio.tempo_estimado}}Min
-
-                            </small>
-                        </td>
-                        <td class="ps-3 pe-3">
-                            {% if cardapio.estoque %}
                             <div>
-                                <i class="bi bi-box"></i>
+                                <form action="/excluir_categoria" method="post">
+                                    <input type="hidden" name="_idCategoria" value="{{categoria._id}}">
+                                    <a href="#" onclick="$('#{{categoria._id}}').click()" class="text-danger"> <i
+                                            class='bx bxs-trash-alt'></i> </a>
+                                    <button id="{{categoria._id}}" style="display:none" type="submit"></button>
+                                </form>
                             </div>
-                            <div class="cardapio-valor">
-                                                        <span>
-                                                            {{ cardapio.estoque }}
-                                                       </span>
-                                unid.
-                            </div>
-                            {% else %}
-                            <i class="bi bi-infinity"></i>
-                            {% endif %}
-                        </td>
-                        <td class="ps-3 pe-3">
-                            <small class="text-body-secondary ">
-                                R$ <span class="valor">{{cardapio.valor}}</span>
-                            </small>
-                        </td>
-                        <td class="ps-3 pe-3">
-                            <a type="button"
-                               class="badge rounded-pill   {% if cardapio.status %}text-bg-dark {%else%}text-bg-danger {% endif %}"
-                               data-bs-toggle="modal"
-                               data-bs-target="#cardapio-modal"
-                               data-bs-cardapio="{{cardapio._id}}"
-                               data-bs-nome="{{cardapio.nome_produto}}"
-                               data-bs-filename="{{cardapio.filename}}"
-                               data-bs-tempo="{{cardapio.tempo_estimado}}"
-                               data-bs-categoria="{{cardapio.categoria}}"
-                               data-bs-valor="{{cardapio.valor}}"
-                               data-bs-estoque="{{cardapio.estoque}}"
-                               data-bs-status="{{cardapio.status}}">Editar</a>
-                        </td>
+                        </li>
+                        {% endfor%}
+                    </ol>
+                </div>
 
 
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
+                {% endif%}
+                <div class="alert alert-secondary mt-4 section-reduce" role="alert">
+                    <h6 class="text-">Criar nova categoria:</h6>
+                    <form action="/categoria" method="POST">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" name="nome" placeholder="Username" required>
+                            <label for="valor">Nome Categoria</label>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-secondary" type="submit">criar categoria</button>
+                        </div>
+                    </form>
+                </div>
             </div>
-            {% endfor %}
+            <div class="tab-pane fade" id="disabled-tab-pane" role="tabpanel" aria-labelledby="disabled-tab"
+                 tabindex="0">
 
+
+                <div class="lista_items">
+                    {% include '/dashboard/items_view.html'%}
+                </div>
+                <div style="display:none" class="add_items">
+                    {% include '/dashboard/Additems_view.html'%}
+                </div>
+
+
+            </div>
+
+            <div class="tab-pane fade" id="grupo-tab-pane" role="tabpanel" aria-labelledby="grupo-tab"
+                 tabindex="0">grupo
+            </div>
         </div>
 
 
     </div>
+
 
 </div>
+
 <!-- MAIN -->
 
 
@@ -400,7 +276,7 @@
                             <input class="form-check-input form-check-input-sm" name="no-stock" type="checkbox"
                                    role="switch"
                                    id="no_stock_edit" onchange=changeEstoque_edit(this)>
-                            <label class="form-check-label" for="flexSwitchCheckDefault"><small style="font-size:.8rem">ignorar
+                            <label class="form-check-label" for="no_stock_edit"><small style="font-size:.8rem">ignorar
                                 estoque</small></label>
                         </div>
                     </div>
@@ -426,7 +302,7 @@
 <!-- Modal -->
 <div class="modal fade" id="categoria_modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
      aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-sm">
         <div class="modal-content ">
             <div class="modal-header">
                 <h1 class="modal-title fs-5" id="staticBackdropLabel">Gerenciar Categoria</h1>
@@ -435,43 +311,15 @@
             <div class="modal-body">
 
 
-                {% if categorias %}
-                <h6>Categorias cadastradas:</h6>
-                {% for categoria in categorias %}
-                <div class="categoria-item mb-2" data-id="{{categoria._id}}">
-                    {{categoria.nome}}
-                    <form action="/excluir_categoria" method="post">
-                        <input type="hidden" name="_idCategoria" value="{{categoria._id}}">
-                        <a href="#" onclick="$('#{{categoria._id}}').click()" class="text-danger"> <i
-                                class='bx bxs-trash-alt'></i> excluir </a>
-                        <button id="{{categoria._id}}" style="display:none" type="submit"></button>
-                    </form>
-                </div>
-                {% endfor%}
-                <hr>
-                <h6>Criar nova categoria:</h6>
-                {% endif%}
-                <form action="/categoria" method="POST">
-                    <div class="form-floating mb-3">
-                        <input type="text" class="form-control" name="nome" placeholder="Username" required>
-                        <label for="valor">Nome Categoria</label>
-                    </div>
-                    <div class="d-grid gap-2">
-                        <button class="btn btn-primary" type="submit">Incluir categoria</button>
-                    </div>
-                </form>
-
             </div>
         </div>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
-        crossorigin="anonymous"></script>
 
 <script src="https://unpkg.com/bootstrap-table@1.21.4/dist/bootstrap-table.min.js"></script>
 
 <script src="../static/js/cardapio.js"></script>
+
 {% endblock %}
