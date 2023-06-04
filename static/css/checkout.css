@@ -29,7 +29,7 @@ font-size:.8rem;
 font-size:.7rem;
     font-weight:400
 }
-.btn-check:checked+.btn, .btn.active, .btn.show, .btn:first-child:active, :not(.btn-check)+.btn:active {
+.btn-check:checked+.btn, .btn-table.active, .btn-table.show, .btn-table:first-child:active, :not(.btn-check)+.btn-table:active {
     color: var(--bs-btn-active-color);
     background-color: #fff;
     border-color: #fff;
@@ -43,3 +43,31 @@ font-size:.7rem;
 }
 .ez-table-icon{
 font-size:1.6rem;}
+
+.item-table{
+    height:150px;
+    padding:15px;
+    border:2px solid #f5f5f5;
+}
+.numero_pedido{
+    font-size: .6rem;
+    opacity:.4;
+    font-weight: 500;
+}
+tbody, td, tfoot, th, thead, tr {
+    border: none;
+}
+.detalhes-pedido{
+    padding:20px;
+    border:2px solid #f5f5f5;
+    margin-left:15px;
+    min-height:100px;
+}
+.VALUE{
+    min-width:90px;
+    text-align:right
+}
+
+#myChart {
+      height: 100px;
+    }

@@ -6,10 +6,10 @@ function createMesaInPanel(numero_maximo_mesas ){
     $('.panel-mesas').html('')
     for (let i = 1; i <= numero_maximo_mesas ; i++) {
         if ( lista.includes(i) === true ){
-             html = '<div class="mesa-item disabled" onclick="preSelecionarMesa('+i+', this)">'+i+'</div>';
+             html = '<div data-numero="'+i+'" class="mesa-item disabled" onclick="preSelecionarMesa('+i+', this)">'+i+'</div>';
         }
         else{
-            html = '<div class="mesa-item" onclick="preSelecionarMesa('+i+', this)">'+i+'</div>';
+            html = '<div data-numero="'+i+'" class="mesa-item" onclick="preSelecionarMesa('+i+', this)">'+i+'</div>';
         }
          $('.panel-mesas').append(html)
     };
@@ -34,11 +34,16 @@ function createMesaInPanel(numero_maximo_mesas ){
 };
 
 function preSelecionarMesa(numero_mesa_selecionada,_this){
-        document.querySelectorAll('.mesa-item').forEach(i=> {
-			i.classList.remove('active');
+     lista_mesas = []
+    if (_this.classList.contains('active')) {
+        _this.classList.remove('active');
+    } else {
+        _this.classList.add('active');
+    }
+     document.querySelectorAll('.mesa-item.active').forEach(i=> {
+			lista_mesas.push(numero_mesa_selecionada)
 		})
-    _this.classList.add('active');
-    $("#numero_mesa").val(numero_mesa_selecionada);
+    $("#numero_mesa").val(lista_mesas);
     $('#add_mesa').prop("disabled", false);
 }
 

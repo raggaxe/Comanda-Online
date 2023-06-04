@@ -83,6 +83,35 @@ const alertaAreaErro = document.querySelector('.alerta-area-register'); // Selec
 
 
 
+
+
+
+
+const menuOff = document.getElementById('logadoOff')
+menuOff.addEventListener('show.bs.offcanvas', event => {
+    $.ajax({
+        url: "/status_pedidos",
+        type: "GET",
+        success: function(response) {
+            // handle successful response here
+            console.log(response)
+            if( response.pedidos != 0){
+                $('#pedido_tag').html(response.pedidos)
+            }
+        },
+        error: function(xhr, status, error) {
+            // handle error response here
+            console.log(xhr.responseText);
+        }
+    });
+
+
+})
+
+
+
+
+
 const myOffcanvas = document.getElementById('cart')
 myOffcanvas.addEventListener('show.bs.offcanvas', event => {
 
@@ -138,6 +167,8 @@ function MoneyFormatter(valor) {
 function MoneyParser(valor) {
   return parseFloat(valor.replace(/[^0-9,-]/g, '').replace(',', '.'));
 }
+
+
 
 function atualizarPedido(pedido_id, nova_quantidade,_idComanda) {
   $.ajax({

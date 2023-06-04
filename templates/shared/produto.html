@@ -1,68 +1,79 @@
 {% extends "shared/base.html" %}
 {% block content %}
 <link rel="stylesheet" href="../static/css/produto.css">
-<div class="container bg-white mt-5 ">
-    <div class="d-flex justify-content-start align-items-start ">
+
+<div class="container ajuste ">
+    <div class="d-flex justify-content-start align-items-start bg-white ">
 
 
-        <section class="main-produto w-50 mt-5 text-center">
+        <section class="main-produto w-50 me-5">
             {% if not produto.filename %}
             <img src="{{ url_for('static', filename='img/back-main.jpeg') }}" alt="Foto da loja">
             {% else %}
             <img src="{{ url_for('user_routes.uploaded_file', filename=produto.filename) }}" alt="Foto da loja">
             {% endif %}
 
-            <div class="position-relative m-2">
-                <h1>{{produto.nome_produto}}</h1>
-            </div>
-            <div class="d-flex justify-content-center align-items-center position-relative w-100">
-                <div class="text-center d-flex   justify-content-center align-items-center me-4">
-                    <i style="font-size:1rem;" class='bx bxs-time-five laranja  me-1'></i>
-                    <div class="card-address">
-                        {{produto.tempo_estimado}}
-                    </div>
-                </div>
-                <div class="text-center d-flex   justify-content-center align-items-center me-4">
-                    <i style="font-size:1rem;" class='bx bxs-star laranja me-1'></i>
-                    <div class="card-address">
-                        3.9
-                    </div>
-                </div>
-                <div class="text-center d-flex  justify-content-center align-items-center ">
-                    <i style="font-size:1rem;" class='bx bx-dollar laranja me-1'></i>
-                    <div class="card-address">
-                        <strong> Moderado</strong>
-                    </div>
-                </div>
-            </div>
 
         </section>
-        <section class="produto-details w-50 mt-5 p-4">
-            <div class="d-flex  justify-content-end align-items-end position-relative w-100">
+        <section class="produto-details w-50 pt-4 pb-4 pe-4">
 
-               {%if session.logged_in %}
-                <a onclick="addItem('{{produto._id}}')"
-                   class="btn btn-marrom btn-lg d-flex justify-content-center align-items-center ps-5 pe-5 mt-3">ADICIONAR ITEM <i style="font-size:2rem" class='bx bx-chevrons-down'></i></a>
-             {%else%}
-                 <a data-bs-toggle="modal"
-                   data-bs-target="#loginModal"
-                   class="btn btn-marrom btn-lg d-flex justify-content-center align-items-center ps-5 pe-5 mt-3">ADICIONAR ITEM <i style="font-size:2rem" class='bx bx-chevrons-down'></i></a>
-                {%endif%}
-                <div class="mt-2 d-flex flex-column justify-content-end align-items-end ms-4">
-                    <h3 class="mb-0">R${{produto.valor}}</h3>
-                    <small>Preço unitário</small>
-                </div>
+            <div class="position-relative text-center">
+                <h1>{{produto.nome_produto}}</h1>
+            </div>
+            <!--            <div class="d-flex justify-content-start align-items-center position-relative w-100">-->
+            <!--                <div class="text-center d-flex   justify-content-center align-items-center me-4">-->
+            <!--                    <i style="font-size:1rem;" class='bx bxs-time-five laranja  me-1'></i>-->
+            <!--                    <div class="card-address">-->
+            <!--                        {{produto.tempo_estimado}}-->
+            <!--                    </div>-->
+            <!--                </div>-->
+            <!--                <div class="text-center d-flex   justify-content-center align-items-center me-4">-->
+            <!--                    <i style="font-size:1rem;" class='bx bxs-star laranja me-1'></i>-->
+            <!--                    <div class="card-address">-->
+            <!--                        3.9-->
+            <!--                    </div>-->
+            <!--                </div>-->
+            <!--                <div class="text-center d-flex  justify-content-center align-items-center ">-->
+            <!--                    <i style="font-size:1rem;" class='bx bx-dollar laranja me-1'></i>-->
+            <!--                    <div class="card-address">-->
+            <!--                        <strong> Moderado</strong>-->
+            <!--                    </div>-->
+            <!--                </div>-->
+            <!--            </div>-->
+            <div class="d-flex  justify-content-center align-items-center position-relative w-100 mt-3">
+
+
+
+                    <div>
+                        <h3 class="mb-0">{{produto.valor}}</h3>
+                    </div>
+                    <div>/{{produto.estoque_metrica}}</div>
+
+
+
 
             </div>
+
             <div class="mt-4 text-left">
-                <h5>
-                    Descrição:
-                </h5>
-
-                <div class="card-address">
-                    {{produto}}
+                <div class="text-small">
+                    {{produto.descricao}}
                 </div>
             </div>
+            <div class="mt-4">
+                 {%if session.logged_in %}
+                <a onclick="addItem('{{produto._id}}')"
+                   class="btn btn-dark btn-lg d-flex justify-content-center align-items-center ps-5 pe-5 ">ADICIONAR
+                    ITEM <i style="font-size:2rem" class='bx bx-chevrons-down'></i></a>
+                {%else%}
+                <a data-bs-toggle="modal"
+                   data-bs-target="#loginModal"
+                   class="btn btn-dark btn-lg d-flex justify-content-center align-items-center ps-5 pe-5  ">ADICIONAR
+                    ITEM <i style="font-size:2rem" class='bx bx-chevrons-down'></i></a>
+                {%endif%}
+            </div>
+
+
+
             <div class=" d-flex  justify-content-start align-items-start card-address mt-3">
                 <div class="w-25 me-4">
 
@@ -76,6 +87,11 @@
 
         </section>
     </div>
+
+
+</div>
+
+<div class="container ajuste bg-white ">
     <div class="w-100 text-center mt-4">
         <h5 class="laranja">nossos produtos</h5>
         <h2 class="mb-0">Mais Popular</h2>
@@ -83,8 +99,8 @@
     <a href="#" class="card-link ver-todos laranja w-100 d-flex justify-content-end align-items-center">
         ver todos <i class='bx bxs-chevrons-right ps-3'></i>
     </a>
-
 </div>
+
 
 <script src="../static/js/produto.js"></script>
 {% endblock %}

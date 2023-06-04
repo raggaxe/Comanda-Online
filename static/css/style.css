@@ -300,3 +300,10 @@ font-size:.8rem;
 .filtros{
     width:20%;
 }
+.ajuste{
+    margin-top:60px
+}
+.btn-menu,.btn-menu:active{
+    font-size: .8rem;
+    padding:0 10px 0 0 ;
+}

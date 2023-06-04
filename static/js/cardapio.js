@@ -352,6 +352,14 @@ function destque(value){
 //
 //
 //
+
+
+
+
+
+
+
+
 function previewImage2(event) {
   const input = event.target;
   const img = document.getElementById('previewImage');

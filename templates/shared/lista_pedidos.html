@@ -1,0 +1,232 @@
+{% extends "shared/base.html" %}
+{% block content %}
+
+<link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.21.4/dist/bootstrap-table.min.css">
+<link rel="stylesheet" href="../static/css/checkout.css">
+<div class="container ajuste w-100">
+    <div class="bg-title p-3 pt-4">
+
+
+        <div class="p-3 mt-1 d-flex justify-content-between align-items-start w-100">
+
+            <div class="w-50 me-5">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4>Resumo pedidos </h4>
+                   <div class="badge bg-secondary">
+
+                        <div  id="mes-atual"></div>
+
+                   </div>
+                </div>
+
+                <div class="detail d-flex justify-content-between align-items-center mb-2 mt-3">
+                    <div class="flex-fill d-flex justify-content-between align-items-center ">
+                        <div class="d-flex flex-column justify-content-start align-items-start">
+                            <div class="detail-valor">Pedidos confirmados</div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center h-100">
+                            <div class=" badge text-bg-success"  >{{ total_pedidos_mes }} </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="detail d-flex justify-content-between align-items-center mb-2">
+                    <div class="flex-fill d-flex justify-content-between align-items-center ">
+                        <div class="d-flex flex-column justify-content-start align-items-start">
+                            <div class="detail-valor">Items comprados</div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center h-100">
+                            <div class="detail-valor"  >{{ total_item_mes }} </div>
+                        </div>
+                    </div>
+
+                </div>
+                 <div class="detail d-flex justify-content-between align-items-center mb-2">
+                    <div class="flex-fill d-flex justify-content-between align-items-center ">
+                        <div class="d-flex flex-column justify-content-start align-items-start">
+                            <div class="detail-valor">Valor em compras</div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center h-100">
+                            <div class="detail-valor"  >{{ MoneyFormatter(total_valor_mes) }}  </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="detail d-flex justify-content-between align-items-center mb-2">
+                    <div class="flex-fill d-flex justify-content-between align-items-center ">
+                        <div class="d-flex flex-column justify-content-start align-items-start">
+                            <div class="detail-valor">Média mensal</div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center h-100">
+                            <div class="detail-valor"  >{{ MoneyFormatter(total_valor_mes /total_item_mes) }} </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="w-50 mx-5">
+                <canvas id="myChart"></canvas>
+            </div>
+
+        </div>
+
+    </div>
+    <div class="bg-title p-3 pt-4 mt-2">
+        <h4>Histórico de pedidos</h4>
+        <div class="d-flex justify-content-between align-items-start">
+            <div class="w-50">
+                <table
+                        id="table_pedidos"
+                        class="table table-bordered table-hover"
+                        data-toggle="table"
+                        data-search="true"
+                        data-click-to-select="false"
+                        data-pagination="true">
+                    <thead>
+                    <th data-field="id">Todos Pedidos</th>
+
+                    <tbody>
+                    {% for comanda in lista %}
+                    <tr id="{{comanda._idComanda}}">
+                        <td class="text-center p-0">
+
+                            <div class="d-flex justify-content-between w-100  item-table">
+                                <div class="d-flex flex-column justify-content-between align-items-start w-50">
+                                    <div class="d-flex flex-column justify-content-start align-items-start">
+
+                                        <div class="numero_pedido">#{{comanda._idComanda}}</div>
+                                        <div class="detail-valor">
+                                            {{getEstabelecimento(comanda._idUser).nome_comercial}}
+                                        </div>
+                                    </div>
+
+
+                                    <div class="d-flex flex-column justify-content-start align-items-start">
+                                        <div class="detail-valor">{{comanda.comanda_info.tipo_atendimento}}</div>
+                                        <div class="numero_pedido">Itens: {{comanda.pedidos_count}}</div>
+                                    </div>
+
+                                </div>
+
+
+                                <div class="d-flex flex-column justify-content-between align-items-end w-50">
+                                    <div class="d-flex flex-column justify-content-end align-items-end">
+                                        {% if comanda.comanda_info.status %}
+                                        <span class="badge text-bg-warning">Em Espera</span>
+                                        {% endif %}
+                                        <div class="numero_pedido mt-1">{{ comanda.comanda_info.updated_at }}</div>
+                                    </div>
+
+                                    <div class="d-flex flex-column justify-content-end align-items-end">
+                                        <div class="text-success detail-valor">{{getTotalComanda(comanda._idComanda)}}
+                                        </div>
+                                        <div class="numero_pedido">{{comanda.comanda_info.tipo_pagamento}}</div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="w-50 position-relative">
+                <div class="detalhes-pedido">
+                    <div class="d-flex justify-content-between">
+                        <h4>Descrição dos items</h4>
+                    </div>
+                    <ul class="list-group list-group-flush mt-2" id="descricao_items">
+                        <div class="detail-valor">
+                            Clique no pedido para ver os items
+                        </div>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://unpkg.com/bootstrap-table@1.21.4/dist/bootstrap-table.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+// Obtém a data atual
+  var dataAtual = new Date();
+
+  // Obtém o número do mês atual (de 0 a 11, onde 0 representa janeiro)
+  var mesAtual = dataAtual.getMonth();
+
+  // Array com os nomes dos meses
+  var meses = [
+    "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+    "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+  ];
+
+  // Atualiza o conteúdo do elemento span com o mês atual
+  document.getElementById("mes-atual").textContent = meses[mesAtual];
+
+
+
+
+  const ctx = document.getElementById('myChart');
+  new Chart(ctx, {
+    type: 'line',
+   data: {
+  labels: {{ graficos_data | tojson }},
+  datasets: [{
+    label: '# Pedidos no mês',
+    data: {{ graficos_quantidade | tojson }},
+    borderWidth: 2
+  }]
+},
+
+    options: {
+      plugins:{
+        legend:{
+            display:false
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+
+
+
+
+</script>
+
+
+<script>
+console.log($('#table_pedidos'))
+    $('#table_pedidos').bootstrapTable({
+      onClickRow: function (row) {
+        console.log(row)
+        $.ajax({
+          url: '/descricao_items/' + row._id, // Adicionamos o ID à URL da API
+          method: 'POST',
+          success: function(data) {
+            $('#descricao_items').html(data);
+          },
+          error: function(xhr, status, error) {
+          }
+        });
+      }
+    })
+
+
+
+
+</script>
+{% endblock %}

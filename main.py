@@ -1,3 +1,5 @@
+import re
+
 from bson import ObjectId
 from flask import Flask, render_template, request, session, stream_with_context, Response, redirect, url_for, jsonify
 from flask_socketio import *
@@ -158,7 +160,7 @@ def handle_pedido_entregue(data):
     pedido = repository.find_one('pedidos', {'_id': ObjectId(data['_idPedido'])})
     emit('pedido-aceito-confirmacao',
          {
-             'tempo': str(pedido['updated_at']),
+             # 'tempo': str(pedido['updated_at']),
              'status': pedido['status'],
              '_idPedido': str(pedido['_id'])
          }, room=pedido['_idComanda']
@@ -239,8 +241,8 @@ def my_utility_processor():
         segs = date_time_obj.second
 
         # Criar uma representação legível da data/hora
-        data_datetime = "{:02d}/{:02d}/{:04d}".format(day, month, year)
-        time_datetime = "{:02d}:{:02d}:{:02d}".format(hours, minutes,segs)
+        data_datetime = "{:02d}/{:02d}".format(day, month, year)
+        time_datetime = "{:02d}:{:02d}".format(hours, minutes,segs)
 
         return data_datetime,time_datetime
     def timerDisplay(secs):
@@ -252,6 +254,52 @@ def my_utility_processor():
         cardapio = repository.find_one('cardapios', {'_id': ObjectId(_idCardapio)})
         return cardapio
 
+    import locale
+
+    import re
+    from decimal import Decimal
+
+    def getSubTotalComanda(_idComanda):
+        valor_total = 0
+        pedidos = repository.find('pedidos', {'_idComanda': _idComanda})
+        for item in pedidos:
+            valor_pedido = getValordoPedidoRaw(item['_id'])
+            valor_total = valor_total + valor_pedido
+
+        return "R$ " + locale.currency(valor_total, grouping=True, symbol=True)[:-2]
+    def getTotalComanda(_idComanda):
+        valor_total = 0
+        gorjeta = 0
+        pedidos = repository.find('pedidos', {'_idComanda': _idComanda})
+
+        for item in pedidos:
+            valor_pedido = getValordoPedidoRaw(item['_id'])
+            valor_total = valor_total + valor_pedido
+            comanda = getComanda(item['_idComanda'])
+            if 'gorjeta' in comanda:
+                gorjeta = getComanda(item['_idComanda'])['gorjeta']
+
+        valor_total = valor_total+float(gorjeta)
+        return "R$ " + locale.currency(valor_total, grouping=True, symbol=True)[:-2]
+    def getValordoPedido(_idPedido):
+        pedidos = repository.find_one('pedidos', {'_id': ObjectId(_idPedido)})
+
+        if pedidos is not None:
+            quantidade_item = int(pedidos['quantidade'])
+            cardapio_item = repository.find_one('cardapios', {'_id': ObjectId(pedidos['_idCardapio'])})
+            valor_item_str = float(cardapio_item['valor'].replace('R$ ', '').replace('.', '').replace(',','.'))
+            valor_total = valor_item_str * quantidade_item
+            return "R$ " + locale.currency(valor_total, grouping=True, symbol=True)[:-2]
+
+    def getValordoPedidoRaw(_idPedido):
+        pedidos = repository.find_one('pedidos', {'_id': ObjectId(_idPedido)})
+
+        if pedidos is not None:
+            quantidade_item = int(pedidos['quantidade'])
+            cardapio_item = repository.find_one('cardapios', {'_id': ObjectId(pedidos['_idCardapio'])})
+            valor_item_str = float(cardapio_item['valor'].replace('R$ ', '').replace('.', '').replace(',', '.'))
+            valor_total = valor_item_str * quantidade_item
+            return valor_total
     def getMesa(_idMesa):
         if _idMesa != '':
             Mesa = repository.find_one('mesas', {'_id': ObjectId(_idMesa)})
@@ -308,7 +356,10 @@ def my_utility_processor():
                 getCategoria=getCategoria,
                 MoneyFormatter=MoneyFormatter,
                 getEstabelecimento=getEstabelecimento,
-                getPedidosInfo=getPedidosInfo
+                getPedidosInfo=getPedidosInfo,getTotalComanda=getTotalComanda,
+                getSubTotalComanda=getSubTotalComanda,
+                getValordoPedido=getValordoPedido,getValordoPedidoRaw=getValordoPedidoRaw
+
                 )
 
     # def format_datetime2(value, format='medium'):

@@ -80,21 +80,26 @@ def registrar_user():
     if request.method == "POST":
         user_found = repository.find_one('users', {'email': request.form['email']})
         if user_found is None:
+            print('resre')
             if request.form['email'] != "":
                 user = Usuario(request.form)
                 if user.check_re_password(request.form):
                     new_user = repository.create(user)
-                    token = user.token
-                    tagEmail = render_template('bodyEmail.html',
-                                               body=f'BEM-VINDO! VOCE FEZ UMA SOLICITAÇÃO DE TOKEN! TOKEN:{token}')
-
-                    enviar_email(request.form['email'], 'Pedido de TOKEN', tagEmail)
+                    # token = user.token
+                    # tagEmail = render_template('bodyEmail.html',
+                    #                            body=f'BEM-VINDO! VOCE FEZ UMA SOLICITAÇÃO DE TOKEN! TOKEN:{token}')
+                    #
+                    # enviar_email(request.form['email'], 'Pedido de TOKEN', tagEmail)
                     Session.set_session(new_user)
-                    print(f"BEM-VINDO! VOCE FEZ UMA SOLICITAÇÃO DE TOKEN! TOKEN:{token}")
-                    return jsonify({'resp': new_user['status']})
+                    print(f"BEM-VINDO! VOCE FEZ UMA SOLICITAÇÃO DE TOKEN! TOKEN:{ ''}")
+
+                    return jsonify({'resp':'cadasrada'})
+
                 else:
+                    flash('Usuário/Senha não está correto, tente novamente.')
                     return jsonify({'erro': 'Usuário/Senha não está correto, tente novamente.'})
         else:
+            flash('Usuário já cadastrado.')
             return jsonify({'erro': 'Usuário já cadastrado.'})
 
 
@@ -107,6 +112,17 @@ def cadastro_user():
 
         else:
             return render_template('user/cadastro_user.html')
+
+
+
+
+
+
+
+
+
+
+
 
 @mod.route('/login', methods=['POST','GET'])
 def login():

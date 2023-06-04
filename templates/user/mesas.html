@@ -42,38 +42,32 @@
 <div class="table-data m-0">
     <div class="order">
 
-        <div class="head">
+        <div class="head justify-content-between align-items-center">
             <h3>Cadastrar Nova Mesa</h3>
+            <form action="/mesas" method="post">
+                <input type="hidden" name="numero_mesa" id="numero_mesa">
+                <input type="hidden" name="max_mesas" id="max_limit_mesas">
+                <button class="btn btn-dark" id="add_mesa" type="submit" disabled>Adicionar +</button>
+            </form>
+
+        </div>
+        <div class="d-flex justify-content-start align-items-center mb-3 panel-mesas flex-wrap">
+
+            <div data-mesa="1" class="mesa-item">1</div>
+        </div>
+
+    </div>
+
+    {% if mesas %}
+    <div class="todo-mesas">
+        <div class="head d-flex ">
+            <h3>Mesas</h3>
             <div class="form-floating mb-3">
                 <input style="width:120px ; text-align:right;padding-right:10px" type="number"
                        class="form-control form-control-sm " onchange="createMesaInPanel(this.value)" id="max_mesas"
                        placeholder="máximo" value="{{max_mesas}}">
                 <label for="max_mesas">Máx. Mesas</label>
             </div>
-        </div>
-        <div class="d-flex justify-content-start align-items-center mb-3 panel-mesas flex-wrap">
-
-            <div class="mesa-item">1</div>
-        </div>
-        <form action="/mesas" method="post">
-            <div class="mb-3">
-                <input type="hidden" name="numero_mesa" id="numero_mesa">
-                <input type="hidden" name="max_mesas" id="max_limit_mesas">
-            </div>
-            <div class="d-grid gap-2">
-                <button class="btn btn-primary" id="add_mesa" type="submit" disabled>Adicionar mesa</button>
-            </div>
-        </form>
-    </div>
-
-    {% if mesas %}
-    <div class="todo">
-        <div class="head">
-            <h3>Mesas Cadastradas</h3>
-
-
-            <!--            <i class='bx bx-plus'></i>-->
-            <!--            <i class='bx bx-filter'></i>-->
         </div>
         <ul class="todo-list">
             {% for mesa in mesas %}
@@ -85,9 +79,12 @@
                    data-bs-id="{{mesa._id}}"
                    data-bs-status="{{mesa.status}}"
                 >
-                    <div class="flex-grow-1 ">MESA <span class="nr_mesa">{{mesa.numero_mesa}}</span></div>
-                    <div style="color: {{ 'var(--orange)' if mesa.status else 'var(--dark-grey)' }}"
-                         class="me-4 status_mesa">{{ "Ocupada" if mesa.status else "Livre" }}
+                    <div class="flex-grow-1 ">
+                        <div class="nr_mesa">{{mesa.numero_mesa}}
+                        </div>
+                    </div>
+                    <div style="color: {{ 'var(--orange)' if mesa.status else 'var(--dark-grey)' }};font-size:.7rem;"
+                         class="me-4">{% if mesa.status%}Ocupada{%else%}Mesa Livre{%endif%}
                     </div>
                     <i class='bx bx-dots-vertical-rounded'></i>
                 </a>
@@ -181,7 +178,7 @@
                                                 <h5 id="total-subtotal" class="text-success">$399.99 USD</h5>
                                             </div>
                                         </div>
-                                        <form id="comanda_admin"  action="/comanda_admin" method="POST">
+                                        <form id="comanda_admin" action="/comanda_admin" method="POST">
                                             <input type="hidden" name="_idComanda" id="_idComanda_view">
                                             <input type="hidden" name="_idMesa" id="_idMesa_view">
                                             <div class="d-grid gap-2 p-3">

@@ -1,0 +1,393 @@
+{% extends "shared/base_dashboard.html" %}
+{% block mainContent %} {{ url_for(request.endpoint, **request.view_args) }} {%endblock%}
+{% block class_settings %}active{% endblock %}
+{% block content %}
+
+<!-- MAIN -->
+<link rel="stylesheet" href="../static/css/cards.css">
+<form method="post" action="/cadastro-edit" class="table-data" enctype="multipart/form-data">
+    <div class="order">
+        <div class="head">
+            <h3>Minha Empresa</h3>
+            <i class='bx bx-search'></i>
+            <i class='bx bx-filter'></i>
+        </div>
+        <div id="Produtos" class="setup ">
+            <ul class="nav nav-underline" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link active" id="dados-tab" data-bs-toggle="tab" data-bs-target="#dados-tab-pane"
+                       type="button" role="tab" aria-controls="dados-tab-pane" aria-selected="true">Dados Empresa
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="local-tab" data-bs-toggle="tab" data-bs-target="#local-tab-pane"
+                       type="button" role="tab" aria-controls="local-tab-pane" aria-selected="false">Localicação
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="banco-tab" data-bs-toggle="tab" data-bs-target="#banco-tab-pane"
+                       type="button" role="tab" aria-controls="banco-tab-pane" aria-selected="false">Bancário
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="plano-tab" data-bs-toggle="tab" data-bs-target="#plano-tab-pane"
+                       type="button" role="tab" aria-controls="plano-tab-pane" aria-selected="false">Plano
+                    </a>
+                </li>
+
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="grupo-tab" data-bs-toggle="tab" data-bs-target="#grupo-tab-pane"
+                       type="button" role="tab" aria-controls="grupo-tab-pane" aria-selected="false">Foto
+                    </a>
+                </li>
+            </ul>
+
+        </div>
+        <div class="tab-content mt-5 ps-3" id="setupContent">
+            <div class="tab-pane fade show active" id="dados-tab-pane" role="tabpanel" aria-labelledby="dados-tab"
+                 tabindex="0">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-start align-items-center ">
+                            <div class="text-small w-25 me-2 ">CNPJ</div>
+                            <div class="text-small w-75 CNPJ">
+                                {{empresa.CNPJ}}
+
+                            </div>
+                        </div>
+
+                    </li>
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-start align-items-center ">
+                            <div class="text-small w-25 me-2 ">Tipo Empresa</div>
+                            <div class="text-small w-75">{{empresa.tipo_empresa}}</div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-start align-items-center ">
+                            <div class="text-small w-25 me-2 ">Razão Social</div>
+                            <div class="text-small w-75">{{empresa.razao_social}}</div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-start align-items-center ">
+                            <div class="text-small w-25 me-2 ">Nome Comercial</div>
+                            <div id="row_nome"
+                                 class="text-small w-75 d-flex justify-content-between align-items-start ">
+                                <div class="w-100">
+                                    <div class="edit_texto" id="nomeComercial1">{{empresa.nome_comercial}}</div>
+                                    <div class="edit_input" id="editNomeComercial1" style="display:none">
+                                        <div class="d-flex flex-column justify-content-start align-items-start">
+                                            <input type="text" name="nome_comercial" class="form-control w-75 me-2"
+                                                   value="{{empresa.nome_comercial}}"
+                                                   aria-describedby="save">
+                                            <button class="btn btn-outline-dark text-small mt-3" type="submit">
+                                                Salvar
+                                            </button>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                                <div>
+                                    <a onclick="toggleEditArea('nomeComercial1', 'editNomeComercial1', 'iconeToggle1','row_nome')">
+
+                                        <i class='bx bx-edit-alt iconeToggle' id="iconeToggle1"></i>
+                                    </a>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-start align-items-center ">
+                            <div class="text-small w-25 me-2 ">Modelo de Negócio</div>
+                            <div class="text-small w-75">{{empresa.modelo_negocio}}</div>
+                        </div>
+                    </li>
+
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-start align-items-center ">
+                            <div class="text-small w-25 me-2 ">Telefone</div>
+                            <div id="row_telefone"
+                                 class="text-small w-75 d-flex justify-content-between align-items-start ">
+                                <div class="w-100">
+                                    <div class="edit_texto" id="telefone_">+55 {{empresa.telefone_comercial}}</div>
+                                    <div class="edit_input" id="telefone_input" style="display:none">
+                                        <div class="d-flex flex-column justify-content-start align-items-start">
+                                            <input type="text" name="telefone_comercial" class="form-control w-75 me-2"
+                                                   value="+55 {{empresa.telefone_comercial}}"
+                                                   aria-describedby="save">
+                                            <button class="btn btn-outline-dark text-small mt-3" type="submit">
+                                                Salvar
+                                            </button>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                                <div>
+                                    <a onclick="toggleEditArea('telefone_', 'telefone_input', 'iconeTelefone','row_telefone')">
+
+                                        <i class='bx bx-edit-alt iconeToggle' id="iconeTelefone"></i>
+                                    </a>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </li>
+
+
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-start align-items-center ">
+                            <div class="text-small w-25 me-2 ">Descrição</div>
+                            <div id="row_descricao"
+                                 class="text-small w-75 d-flex justify-content-between align-items-start ">
+                                <div class="w-100">
+                                    <div class="edit_texto" id="detalhes_comercial">{{empresa.detalhes_comercial}}</div>
+                                    <div class="edit_input" id="detalhes_comercial_input" style="display:none">
+                                        <div class="d-flex flex-column justify-content-start align-items-start">
+                                            <input type="text" name="detalhes_comercial" class="form-control w-75 me-2"
+                                                   value="{{empresa.detalhes_comercial}}"
+                                                   aria-describedby="save">
+                                            <button class="btn btn-outline-dark text-small mt-3" type="submit">
+                                                Salvar
+                                            </button>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                                <div>
+                                    <a onclick="toggleEditArea('detalhes_comercial', 'detalhes_comercial_input', 'iconedetalhes_comercial','row_descricao')">
+
+                                        <i class='bx bx-edit-alt iconeToggle' id="iconedetalhes_comercial"></i>
+                                    </a>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </li>
+
+                </ul>
+            </div>
+            <div class="tab-pane fade" id="local-tab-pane" role="tabpanel" aria-labelledby="local-tab" tabindex="0">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-start align-items-center ">
+                            <div class="text-small w-25 me-2 ">CEP</div>
+                            <div class="text-small w-75 CNPJ">{{empresa.CEP}}</div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-start align-items-center ">
+                            <div class="text-small w-25 me-2 ">Endereço</div>
+                            <div class="text-small w-75 CNPJ">{{empresa.endereco}}</div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-start align-items-center ">
+                            <div class="text-small w-25 me-2 ">Número</div>
+                            <div class="text-small w-75 CNPJ">{{empresa.numero}}</div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-start align-items-center ">
+                            <div class="text-small w-25 me-2 ">bairro</div>
+                            <div class="text-small w-75 CNPJ">{{empresa.cidade}}</div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-start align-items-center ">
+                            <div class="text-small w-25 me-2 ">Cidade</div>
+                            <div class="text-small w-75 CNPJ">{{empresa.cidade}}</div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-start align-items-center ">
+                            <div class="text-small w-25 me-2 ">Estado</div>
+                            <div class="text-small w-75 CNPJ">{{empresa.estado}}</div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-start align-items-center ">
+                            <div class="text-small w-25 me-2 ">Complemento</div>
+                            <div class="text-small w-75 CNPJ">{{empresa.complemento}}</div>
+                        </div>
+                    </li>
+                </ul>
+
+            </div>
+            <div class="tab-pane fade" id="banco-tab-pane" role="tabpanel" aria-labelledby="banco-tab" tabindex="0">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-start align-items-center ">
+                            <div class="text-small w-25 me-2 ">Nome</div>
+                            <div class="text-small w-75 CNPJ">{{empresa.nome_responsavel}}</div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-start align-items-center ">
+                            <div class="text-small w-25 me-2 ">CPF</div>
+                            <div class="text-small w-75 CNPJ">{{empresa.cpf_responsavel}}</div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-start align-items-center ">
+                            <div class="text-small w-25 me-2 ">Email</div>
+                            <div class="text-small w-75 CNPJ">{{empresa.email_responsavel}}</div>
+                        </div>
+                    </li>
+
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-start align-items-center ">
+                            <div class="text-small w-25 me-2 ">Tipo Banco</div>
+                            <div class="text-small w-75 CNPJ">{{empresa.tipo_banco}}</div>
+                        </div>
+                    </li>
+
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-start align-items-center ">
+                            <div class="text-small w-25 me-2 ">Banco</div>
+                            <div class="text-small w-75 CNPJ">{{empresa.banco}}</div>
+                        </div>
+                    </li>
+
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-start align-items-center ">
+                            <div class="text-small w-25 me-2 ">Agência</div>
+                            <div class="text-small w-75 CNPJ">{{empresa.agencia}}</div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-start align-items-center ">
+                            <div class="text-small w-25 me-2 ">Conta</div>
+                            <div class="text-small w-75 CNPJ">{{empresa.conta}} - {{empresa.digito}}</div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-start align-items-center ">
+                            <div class="text-small w-25 me-2 ">Tipo Conta</div>
+                            <div class="text-small w-75 CNPJ">{{empresa.tipo_conta}}</div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="tab-pane fade" id="plano-tab-pane" role="tabpanel" aria-labelledby="plano-tab"
+                 tabindex="0">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-start align-items-center ">
+                            <div class="text-small w-25 me-2 ">Plano</div>
+                            <div class="text-small w-75 CNPJ">{{empresa.plano}}</div>
+                        </div>
+                    </li>
+                </ul>
+
+            </div>
+
+            <div class="tab-pane fade" id="grupo-tab-pane" role="tabpanel" aria-labelledby="grupo-tab"
+                 tabindex="0">
+
+
+                <div class="subtitle mb-2">Fotos</div>
+                <div class="row">
+                    <div class="col-4">
+                        <div class="d-flex flex-column justify-content-center align-items-start me-3">
+
+                            <a class="container_photo" onclick="$('#file').click()">
+
+                                {% if empresa.filename %}
+
+                                  <img  src="./static/uploads/{{empresa.filename}}" class="rounded" alt="..."
+                                     id="previewImage"
+                                     height="300">
+
+
+                                {%else%}
+                                 <div class="opacity-25 text- text-center" id="preview-title">
+                                    <div><i style="font-size:5rem; opacity:.3" class='bx bx-photo-album'></i></div>
+                                    <div> Insira uma Foto</div>
+                                </div>
+                                  <img style="display:none" src="./static/img/back-main.jpeg" class="rounded" alt="..."
+                                     id="previewImage"
+                                     height="300">
+                                {% endif%}
+
+                            </a>
+
+
+                        </div>
+                    </div>
+                    <div class="col-8">
+                        <input style="display:none" class="form-control form-control-sm"
+                               type=file
+                               name=file onchange="previewImage2(event)"
+                               id="file">
+
+
+                        <div class="subtitle">As fotos ajudam os clientes a decidirem o que pedir e<br> podem aumentar o
+                            volume
+                            de
+                            vendas.
+                        </div>
+                        <div class="text- mt-2">Requisitos do arquivo: JPG, PNG, GIF ou WEBP, até 10 MB. <br>Tamanho
+                            mínimo em
+                            pixels: 320 para largura e altura.
+                        </div>
+
+                        <div class="d-flex justify-content-start align-items-center mt-4 ">
+
+                            <button type="button" style="font-size:.8rem; border-radius:20px;" class="btn btn-secondary me-3"
+                                    onclick="$('#file').click()">
+                                Escolher foto
+                            </button>
+                             <button type="submit" style="font-size:.8rem;border-radius:20px;" class="btn btn-dark"
+                                    >
+                                Salvar foto
+                            </button>
+                        </div>
+
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!--        <div class="head">-->
+    <!--            <h3>Estoque</h3>-->
+    <!--            <i class='bx bx-plus'></i>-->
+    <!--            <i class='bx bx-filter'></i>-->
+    <!--        </div>-->
+    <!--        <ul class="todo-list">-->
+    <!--            <li class="completed">-->
+    <!--                <p>Todo List</p>-->
+    <!--                <i class='bx bx-dots-vertical-rounded'></i>-->
+    <!--            </li>-->
+    <!--            <li class="completed">-->
+    <!--                <p>Todo List</p>-->
+    <!--                <i class='bx bx-dots-vertical-rounded'></i>-->
+    <!--            </li>-->
+    <!--            <li class="not-completed">-->
+    <!--                <p>Todo List</p>-->
+    <!--                <i class='bx bx-dots-vertical-rounded'></i>-->
+    <!--            </li>-->
+    <!--            <li class="completed">-->
+    <!--                <p>Todo List</p>-->
+    <!--                <i class='bx bx-dots-vertical-rounded'></i>-->
+    <!--            </li>-->
+    <!--            <li class="not-completed">-->
+    <!--                <p>Todo List</p>-->
+    <!--                <i class='bx bx-dots-vertical-rounded'></i>-->
+    <!--            </li>-->
+    <!--        </ul>-->
+    <!--    </div>-->
+</form>
+
+<script src="../static/js/setting.js"></script>
+{% endblock %}

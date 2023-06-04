@@ -84,10 +84,8 @@ def dashboard():
                         if comanda['status'] == 'realizado':
                             comandas_fechadas.add(str(comanda['_id']))
 
-                            # print(comandas_fechadas)
                     total_vendas = 0
                     if len(comandas_fechadas) > 0:
-                        print(comandas_fechadas)
                         for pedido in lista_pedidos:
                             if str(pedido['_idComanda']) in comandas_fechadas:
                                 _quantidade = int(pedido["quantidade"])
@@ -123,6 +121,16 @@ def dashboard():
 def novo_fornecedor():
     return render_template('menu/primeiro_acesso.html')
 
+@mod.route('/cadastro-lojista', methods=['POST','GET'])
+@LoginRequired.login_required
+def cadastro_lojista():
+    if request.method == "POST":
+        user_found = repository.find_one('users', {'_id':ObjectId(session['_id'])})
+        if user_found is not None:
+            form_data = request.form.to_dict()
+            repository.update_one('users', {'_id':ObjectId(session['_id'])}, form_data)
+        return redirect(url_for('admin_routes.dashboard'))
+
 
 
 
@@ -133,6 +141,10 @@ def novo_fornecedor():
 @LoginRequired.login_required
 def mesas():
     if request.method == "GET":
+        # # //repository.update_one('mesas',{'_id','647c01e2d5d6a53470724c2d'},{'numero_mesa':19})
+        # mesas_ordenadas = repository.find('mesas',{'_idUser': session['_id']})
+        # for item in mesas_ordenadas:
+        #     print(item)
         mesas_ordenadas = sorted(repository.find('mesas', {'_idUser': session['_id']}),
                                  key=lambda x: int(x['numero_mesa']))
         user_found = repository.find_one('users', {'_id': ObjectId(session['_id'])})
@@ -140,11 +152,12 @@ def mesas():
                                max_mesas=10 if not 'max_mesas' in user_found else user_found['max_mesas'])
 
     if request.method == "POST":
+        print(request.form)
         mesa_found = repository.find_one('mesas',
                                          {'_idUser': session['_id'], 'numero_mesa': request.form['numero_mesa']})
         if mesa_found is None:
             new_Mesa = Mesa(request.form, session['_id'])
-            repository.create(new_Mesa)
+            # repository.create(new_Mesa)
         else:
             print('mesa ja criada')
         return redirect(url_for('admin_routes.mesas'))
@@ -203,7 +216,6 @@ def get_items():
         lista_cardapios = [item for item in repository.find('cardapios', {'_idUser': session['_id']})]
         items = []
         for item in lista_cardapios:
-            print(item)
             item['_id'] = str(item['_id'])
             item['categoria'] = str(repository.find_one('categorias', {'_id': ObjectId(item['categoria']), '_idUser': session['_id']})['nome'])
             # item['valor'] =  "R$ " + locale.currency(float(item['valor'].replace(',','.')), grouping=True, symbol=True)[:-2]
@@ -444,22 +456,21 @@ def aceitar_pedidos():
     if request.method == "POST":
         _idComanda = request.form['_idComanda']
         repository.update_one('comandas', {'_id': ObjectId(_idComanda)}, {'status': 'Aceito'})
-        return redirect(url_for('admin_routes.dashboard'))
+        return jsonify({'success':'OK'})
 @mod.route('/rejeitar_pedidos', methods=['POST'])
 @LoginRequired.login_required
 def rejeitar_pedidos():
     if request.method == "POST":
         _idComanda = request.form['_idComanda']
-        repository.delete_one('comandas', {'_id': ObjectId(_idComanda)})
-
-        return redirect(url_for('admin_routes.dashboard'))
+        repository.update_one('comandas', {'_id': ObjectId(_idComanda)}, {'status': 'Rejeitado'})
+        return jsonify({'success': 'OK'})
 
 
 @mod.route('/entregar_pedidos', methods=['POST', 'GET'])
 @LoginRequired.login_required
 def entregar_pedidos():
     if request.method == "POST":
-        repository.update_one('pedidos', {'_id': ObjectId(request.form['_idPedido'])}, {'status': 'Entregue'})
+        repository.update_one('comandas', {'_id': ObjectId(request.form['_idComanda'])}, {'status': 'Entregue'})
         return jsonify({'success': True})
 
 

@@ -1,10 +1,15 @@
+.editPage{
+    margin-top:50px;
+}
 .main-loja{
     position:relative;
     overflow:hidden;
-    height:60vh;
+    height:20vh;
      background:#462B18;
      color:#fff;
+
 }
+
 .main-loja h1{
      text-shadow: 2px 2px 4px #462B18;
 
@@ -14,8 +19,8 @@
     top:0;
     bottom:0;
     left:0;
-    opacity:.4;
-    width:100vw;
+    opacity:.9;
+
 }
 .loja-details{
    padding: 20px 0;
@@ -63,7 +68,15 @@ a{
     height:90px;
 
 }
+.card-produtos{
+    width:20%;
 
+}
+.card-inner{
+    border:1px solid #dee2e6;
+    overflow:hidden;
+    border-radius:5px;
+}
 .card-link{
    font-size:.7rem;
    font-weight:600;
@@ -76,17 +89,16 @@ a{
 }
 
 .card-price{
-    border-top:1px solid rgba(70, 43, 24,.4);
-    padding:8px;
-    font-size:1.4rem;
-   font-weight:600;
+    font-size:.8rem;
+   font-weight:400;
     color:#462B18;
+    font-style: italic;
 }
 .img-card{
     position:relative;
     overflow:hidden;
-    height:150px;
-    width:200px;
+    min-height:150px;
+
       text-align:center;
 }
 .click{
@@ -96,7 +108,4 @@ a{
      height:150px;
      margin:0 auto;
      text-align:center;
-}
-.listView{
-    overflow:hidden;
 }

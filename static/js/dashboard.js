@@ -18,16 +18,16 @@ $('.order-id-pagamento').each(function(i,e){
    setPagamento(tempocook,_idcook)
 })
 
-function entregarPedido(_idPedido) {
+function entregarPedido(_idComanda) {
 console.log('etregar')
     $.ajax({
         type: "POST",
         url: "/entregar_pedidos",
-        data: { _idPedido: _idPedido },
+        data: { _idComanda: _idComanda },
         success: function(response) {
            if (response.success) {
             // emitir evento de socket
-            socket.emit('pedido-entregue',{_idPedido: _idPedido});
+            //socket.emit('pedido-entregue',{_idPedido: _idPedido});
             // atualizar a página
             location.reload();
           }
@@ -45,7 +45,8 @@ function aceitarPedido(_idComanda) {
         success: function(response) {
            if (response.success) {
             // emitir evento de socket
-            socket.emit('pedido-aceito',{_idComanda: _idComanda});
+//            socket.emit('pedido-aceito',{_idComanda: _idComanda});
+            console.log('atualizar page')
             // atualizar a página
             location.reload();
           }

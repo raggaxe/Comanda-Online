@@ -1,11 +1,10 @@
-<div class="offcanvas-header pb-0">
+<div class="offcanvas-header p-4 pb-0">
     <h5 class="offcanvas-title" id="cartLabel">Carrinho</h5>
-    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    <button type="button" class="btn-close" id="close_carrinho" data-bs-dismiss="offcanvas" aria-label="Close"></button>
 </div>
 <div class="offcanvas-body ">
-{% if lista|length > 0 %}
-
     <hr>
+    {% if lista|length > 1 %}
     <div class="d-flex justify-content-center align-items-center card-subtext position-relative">
         <div class="w-50">
 
@@ -13,7 +12,7 @@
         </div>
         <div class="w-50 d-flex justify-content-end">
             <div id="dropdown" class="dropdown ">
-                <button class="btn btn-switch dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown"
                         aria-expanded="false">
                     <i class='bx bx-cart-alt'></i>
                 </button>
@@ -34,23 +33,35 @@
         </div>
     </div>
     <hr>
+    {% endif %}
+
+    {% if lista%}
+    {% for item in lista %}
+
+    {% if item.is_active %}
+
+    {% if item %}
+
+
     <div class="tab-content " id="nav-tabContent">
-        {% for carrinho in lista %}
-        <div class="tab-pane v-100 fade{% if carrinho.is_active %} show active{% endif %}"
-             id="carrinho-{{ carrinho['_idComanda'] }}"
+
+        <div class="tab-pane v-100 fade{% if item.is_active %} show active{% endif %}"
+             id="carrinho-{{ item['_idComanda'] }}"
              role="tabpanel"
-             aria-labelledby="tab-{{ carrinho['_idComanda'] }}">
+             aria-labelledby="tab-{{ item['_idComanda'] }}">
 
             <div class="alert alert-secondary carrinho-alert" role="alert">
-                <div>{{getEstabelecimento( carrinho['pedidos'][0]['_idUser'])['nome_comercial'] }}</div>
+                <div>{{getEstabelecimento( item['pedidos'][0]['_idUser'])['nome_comercial'] }}</div>
 
             </div>
+
+
             <ul class="list-group list-group-flush">
-                {% for pedido in carrinho['pedidos'] %}
+                {% for pedido in item['pedidos'] %}
                 <li class="list-group-item d-flex justify-content-start align-items-center">
                     <div style="width:65px">
                         <select id="quantidade-select-{{pedido['_id']}}" class="form-select form-select-sm"
-                                onchange="atualizarPedido('{{pedido['_id']}}', this.value, '{{carrinho['_idComanda']}}')"
+                                onchange="atualizarPedido('{{pedido['_id']}}', this.value, '{{item['_idComanda']}}')"
                                 aria-label=".form-select-sm example">
 
                             {% for quantity in range(1, 1000) %}
@@ -64,13 +75,15 @@
 
                     </div>
                     <div class="card-subtext ms-3 flex-fill">
-                        {{getCardapio ( pedido['_idCardapio']).nome_produto }}
+                        {{getCardapio(pedido['_idCardapio']).nome_produto }}
                     </div>
                     <input type="hidden" id="valor_pedido{{pedido['_id']}}"
                            value="{{getCardapio(pedido['_idCardapio']).valor|float}}">
-                    <div class="card-subtext ms-3 subtotal{{carrinho['_idComanda']}}"
+                    <div class="card-subtext ms-3 subtotal{{item['_idComanda']}}"
                          id="pedido_item_valor{{pedido['_id']}}">
-                        {{ MoneyFormatter(getCardapio(pedido['_idCardapio']).valor|float * pedido['quantidade']|int) }}
+
+                        {{getValordoPedido(pedido['_id'])}}
+
                     </div>
 
                 </li>
@@ -80,28 +93,62 @@
                 <div>
                     <hr>
                     <div class="d-flex justify-content-end align-items-center card-subtext mt-2 mb-2">
-                        Total a pagar: <span class="ms-4" id="totalCart{{carrinho['_idComanda']}}">
-                      <script>
-                           $( document ).ready(function() {
-                           countCart('{{carrinho['_idComanda']}}')
-                        });
-                      </script>
+                        Total a pagar: <span class="ms-4" id="totalCart{{item['_idComanda']}}">
+                                          <script>
+                                               $( document ).ready(function() {
+                                               countCart('{{item['_idComanda']}}')
+                                            });
+                                          </script>
 
-                   </span>
+                                       </span>
                     </div>
                 </div>
-                <button class="btn btn-marrom" type="button"
-                        onclick="window.location.href='/checkout/{{carrinho['_idComanda']}}' ">Finalizar Pedido
+                <button class="btn btn-dark" type="button"
+                        onclick="window.location.href='/checkout/{{item['_idComanda']}}' ">Finalizar Pedido
                 </button>
-                <button class="btn btn-primary" type="button">Cancelar</button>
+                <button class="btn btn-secondary" type="button">Cancelar</button>
             </div>
+
+
         </div>
 
-        {% endfor %}
+
     </div>
+
+
+    {%endif%}
+
     {%else%}
 
-     {%endif%}
+
+    <div class="h-75 d-flex justify-content-center align-items-center">
+        <div class="text-center ">
+            <i style="font-size:4rem" class="bi bi-cart-x opacity-50"></i>
+            <div class="opacity-50"> Você ainda não tem <br>nenhum item adicionado</div>
+            <div class="mt-3">
+                <a onclick="$('#close_carrinho').click()" class="btn btn-secondary">Continuar comprando</a>
+            </div>
+        </div>
+    </div>
+
+    {%endif%}
+    {% endfor%}
+
+    {%else%}
+
+
+    <div class="h-75 d-flex justify-content-center align-items-center">
+        <div class="text-center ">
+            <i style="font-size:4rem" class="bi bi-cart-x opacity-50"></i>
+            <div class="opacity-50"> Você ainda não tem <br>nenhum item adicionado</div>
+            <div class="d-grid gap-1 mt-4">
+                <a onclick="$('#close_carrinho').click()" class="btn btn-secondary">Continuar comprando</a>
+                <a onclick="/pedidos/{{session._id}}" class="btn btn-dark mt-2">Ver pedidos</a>
+            </div>
+        </div>
+    </div>
+    {% endif%}
+
 </div>
 
 
@@ -112,6 +159,12 @@ $('.dropdown-item').on('click', function(e) {
   $('.tab-pane').removeClass('show active');
   $(target).addClass('show active');
 });
+
+
+
+
+
+
 
 
 

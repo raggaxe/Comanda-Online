@@ -7,6 +7,7 @@ class Usuario:
     def __init__(self, form):
         self.collection_name = 'users'
         self.email = form['email']
+        self.filename = ''
         self.senha = sha256_crypt.hash(str(form['password']))
         self.token = generateOTP()
         self.max_mesas = 20

@@ -1,5 +1,7 @@
 .main-produto img{
-    position:relative;
+    width: 100%;
+    min-height: 400px;
+    border-radius: 0%;
+    object-fit: cover;
 
-    height:300px;
 }

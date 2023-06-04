@@ -85,16 +85,17 @@ function InserirUser() {
       repeatPassword.classList.add('is-valid');
     }
 
-    var formData = new FormData(form);
+    var formData = $('#cadastrar-user').serialize();
+
 
     $.ajax({
-      url: form.action,
-      type: form.method,
+      url: '/registrar-user',
+      type: 'POST',
       data: formData,
       success: function(response) {
-        console.log(response);
+      console.log(response)
         if(!response.erro){
-            window.location.replace('/home');
+            window.location.replace('/dashboard');
         }
         else{
             $('#password-feedback').text(response.erro);

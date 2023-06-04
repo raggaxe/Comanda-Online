@@ -233,14 +233,15 @@
                 <ul class="list-group list-group-flush mt-2">
                     <li class="list-group-item"><span id="total_items">X</span> items</li>
                     {% for pedido in pedidos %}
-                    {% set subtotal = getCardapio(pedido['_idCardapio']).valor|float * pedido['quantidade']|int %}
+
+                    {% set subtotal = getValordoPedido(pedido['_id']) %}
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         <span class="badge bg-secondary me-3 qnt">{{pedido['quantidade']}}</span>
                         <div class="flex-fill">
                             {{getCardapio ( pedido['_idCardapio']).nome_produto }}
                         </div>
                         <div>
-                            {{ MoneyFormatter(subtotal) }}
+                            {{ subtotal }}
                         </div>
                     </li>
                     {% endfor %}
@@ -252,7 +253,7 @@
         </div>
         <div class="col-4">
             <div class="d-grid gap-2 mb-2">
-                <button type="submit" class="btn btn-success btn-lg">Realizar Pedido</button>
+                <button type="submit" class="btn btn-success btn-lg">Finalizar Pedido</button>
             </div>
             <div class="bg-title p-3 mt-1">
                 <h4>Total do pedido</h4>
@@ -336,8 +337,8 @@
     const btns = document.querySelectorAll('#tipo_entrega .btn-table');
     const btns2 = document.querySelectorAll('#tipo_pagamento .btn-table');
 
-btns.forEach(btn => {
-  btn.addEventListener('click', () => {
+    btns.forEach(btn => {
+    btn.addEventListener('click', () => {
     const tabTargetId = btn.getAttribute('data-href');
     const tabTarget = document.querySelector(tabTargetId);
     const inputId = btn.getAttribute('for');
@@ -444,9 +445,11 @@ $(document).ready(function() {
   $('#total_items').text(soma);
 
    var total = 0;
+
   {% for pedido in pedidos %}
-    total += {{getCardapio(pedido['_idCardapio']).valor|float * pedido['quantidade']|int}};
+    total += {{getValordoPedidoRaw(pedido['_id'])}};
   {% endfor %}
+
   document.getElementById('subtotal').textContent = MoneyFormatter(total);
 
     TotalCart();
