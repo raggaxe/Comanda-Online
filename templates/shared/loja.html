@@ -21,7 +21,7 @@
                     <div id="map" class="flex-end" style="height: 120px;width:120px"></div>
                 </div>
             </div>
-            <div class="col-md-10 pe-5">
+            <div class="pe-5 flex-fill">
                 <div class="pe-5">
 
                     <div class=" d-flex flex-column justify-content-start align-items-start card-address ">
@@ -65,6 +65,21 @@
 
             </div>
 
+            {% if not check %}
+            <form id="form_fav" method="post" action="/favoritos/{{loja._id}}">
+                <input type="checkbox" name="favorito" id="input_favorito"/>
+                <button class="btn" onclick="toggleHeartIcon(event)">
+                    <i id="favorito" class='bx bx-heart'></i>
+                </button>
+            </form>
+            {% else %}
+            <form id="form_fav" method="post" action="/favoritos/{{loja._id}} ">
+                <input type="checkbox" name="favorito" id="input_favorito" checked/>
+                <button class="btn" onclick="toggleHeartIcon(event)">
+                    <i id="favorito" class='bx bxs-heart'></i>
+                </button>
+            </form>
+            {% endif %}
         </div>
         <div class="mb-2 mt-4">
             <div class="w-100  ">
@@ -136,7 +151,7 @@
 
             {% for item in cardapios[:5] %}
 
-   {% if item.categoria|string == categoria._id|string %}
+            {% if item.categoria|string == categoria._id|string %}
             <a href="/produto/{{item._id}}" class="card-produtos p-1">
                 <div class="card-inner">
                     <div class="img-card">
@@ -208,6 +223,45 @@
               });
         }
 initMap()
+
+
+const favorito = $('#input_favorito');
+var form = document.getElementById('form_fav');
+
+function toggleHeartIcon(event) {
+    event.preventDefault(); // Evita o comportamento padrão do link
+
+    var heartIcon = document.getElementById('favorito');
+    if (heartIcon.classList.contains('bx-heart')) {
+        heartIcon.classList.remove('bx-heart');
+        heartIcon.classList.add('bxs-heart');
+        favorito.prop('checked',true)
+    } else {
+        heartIcon.classList.remove('bxs-heart');
+        heartIcon.classList.add('bx-heart');
+         favorito.prop('checked',false)
+    }
+
+    var url = form.action;
+
+    $.ajax({
+        type: 'POST',
+        url: url,
+        data: $(form).serialize(),
+        success: function(response) {
+            // Lógica a ser executada em caso de sucesso
+            console.log('Formulário enviado com sucesso!');
+        },
+        error: function(error) {
+            // Lógica a ser executada em caso de erro
+            console.log('Erro ao enviar o formulário: ' + error);
+        }
+    });
+
+
+}
+
+
 
 
 

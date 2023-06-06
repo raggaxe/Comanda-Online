@@ -40,12 +40,28 @@ body{
 .laranja{
  color:#E18239
 }
+.loja-details .bx-heart{
+    color:#000
+}
+.loja-details .bxs-heart{
+ color:#E18239
+}
 
 .card-subtext{
    font-size:.7rem;
    font-weight:500;
    text-style:italic;
 }
+
+.btn-check:checked+.btn, .btn.active, .btn.show, .btn:first-child:active, :not(.btn-check)+.btn:active {
+    color: var(--bs-btn-active-color);
+    background-color: var(--bs-btn-active-bg);
+    border-color: transparent;
+}
+#input_favorito{
+    display:none;
+}
+
 .carrinho-alert{
  font-size:.7rem;
    font-weight:500;

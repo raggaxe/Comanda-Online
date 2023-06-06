@@ -6,6 +6,7 @@ from flask_socketio import emit
 
 from Models.Cliente import Cliente
 from Models.Comanda import Comanda
+from Models.Favorito import Favorito
 from Models.Pedido import Pedido
 
 from Services import LoginRequired, Session
@@ -302,7 +303,7 @@ def comandas_cliente(_idCliente):
     lista = []
     graficos_data = []
     graficos_quantidade = []
-    valor_mes= 0
+    valor_mes = 0
     if len(comanda_list) > 0:
         mes_atual = datetime.now().month
         for comanda in comanda_list:
@@ -321,9 +322,7 @@ def comandas_cliente(_idCliente):
                     qnt = repository.find_one('pedidos', {'_idComanda': str(comanda['_id'])})['quantidade']
                     graficos_quantidade.append(qnt)
                     if 'valor' in comanda and comanda['valor'] != '':
-
-                        valor_mes = valor_mes + (float(comanda['valor'] )+ float(comanda['gorjeta']))
-
+                        valor_mes = valor_mes + (float(comanda['valor']) + float(comanda['gorjeta']))
 
                 if 'valor' in comanda and comanda['valor'] != '':
                     comanda['valor'] = "R$ " + locale.currency(float(comanda['valor']), grouping=True, symbol=True)[:-2]
@@ -334,7 +333,7 @@ def comandas_cliente(_idCliente):
 
                 lista.append({
                     '_idComanda': str(comanda['_id']),
-                    'comanda_info':comanda,
+                    'comanda_info': comanda,
                     '_idUser': str(comanda['_idUser']),
                     'pedidos': list(lista_pedidos),
                     'pedidos_count': len(lista_pedidos),
@@ -345,21 +344,42 @@ def comandas_cliente(_idCliente):
                            graficos_data=graficos_data[-10:],
                            graficos_quantidade=graficos_quantidade[-10:],
                            total_item_mes=sum(graficos_quantidade),
-                            total_pedidos_mes=len(graficos_data),
+                           total_pedidos_mes=len(graficos_data),
                            total_valor_mes=valor_mes,
                            )
-
-
 
 
 @mod.route('/descricao_items/<_idComanda>', methods=['POST', 'GET'])
 @LoginRequired.login_required
 def descricao_items(_idComanda):
     pedido_found = repository.find('pedidos', {'_idComanda': str(_idComanda)})
-    return render_template('shared/descricao.html',pedidos=pedido_found)
+    return render_template('shared/descricao.html', pedidos=pedido_found)
 
 
+@mod.route('/favoritos/<string:_idUser>', methods=['GET', 'POST'])
+@LoginRequired.login_required
+def favoritos(_idUser):
+    if request.method == "POST":
+        check = repository.find_one('favoritos', {'_idUser': _idUser, '_idCliente': session['_id']})
+        if check is None:
+            form = {
+                '_idUser': _idUser,
+                '_idCliente': session['_id']
+            }
+            new_fav = Favorito(form)
+            repository.create(new_fav)
+        else:
+            repository.delete_one('favoritos', {'_idUser': _idUser, '_idCliente': session['_id']})
+        return jsonify({})
 
+@mod.route('/favoritos', methods=['GET', 'POST'])
+@LoginRequired.login_required
+def lista_favoritos():
+    if request.method == "GET":
+        check = repository.find_one('favoritos', {'_idCliente': session['_id']})
+        if check is not None:
+            print(check)
+        return render_template('user/favoritos.html',check=check)
 
 @mod.route('/get_mesa/<string:_idMesa>', methods=['GET'])
 def get_mesa(_idMesa):

@@ -1,15 +1,15 @@
 {% extends "shared/base.html" %}
 {% block content %}
-
+<!-- My CSS -->
+<link rel="stylesheet" href="../static/css/index.css">
 <div class="container mb-4 init">
-    <!-- My CSS -->
-    <link rel="stylesheet" href="../static/css/index.css">
+    {% include 'user/componentes/menu_main.html' %}
 
     {% include 'user/carrousel/index.html' %}
     <div class="d-flex justify-content-start align-items-start mt-5">
 
         <div class="flex-fill">
-             <div class="subtitle mb-2">Fotos</div>
+            <div class="subtitle mb-2">Fotos</div>
             <!--    <div class="mt-4 mb-4">-->
             <!--        <div class="d-flex justify-content-between align-items-center">-->
             <!--            <h2>-->

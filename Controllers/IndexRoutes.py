@@ -33,6 +33,7 @@ def loja(_id):
     cardapios = []
     cardapio_found = repository.find('cardapios',{'_idUser': _id})
     categorias= repository.find('categorias',{'_idUser': _id})
+    check = repository.find_one('favoritos', {'_idUser': _id , '_idCliente': session['_id']})
     for card in cardapio_found:
         card['_id'] = str(card['_id'])  # Converte o ObjectId em uma string
         cardapios.append(card)
@@ -40,7 +41,7 @@ def loja(_id):
     for item in loja_found:
         item['_id'] = str(item['_id'])  # Converte o ObjectId em uma string
         estabelecimento.append(item)
-    return render_template('shared/loja.html', estabelecimento=estabelecimento,cardapios=cardapios,categorias=categorias)
+    return render_template('shared/loja.html', estabelecimento=estabelecimento,cardapios=cardapios,categorias=categorias,check=check)
 
 @mod.route('/produto/<_id>')
 def produto(_id):

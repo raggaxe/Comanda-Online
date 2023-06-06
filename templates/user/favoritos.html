@@ -1,0 +1,96 @@
+{% extends "shared/base.html" %}
+{% block content %}
+
+<link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.21.4/dist/bootstrap-table.min.css">
+<link rel="stylesheet" href="../static/css/checkout.css">
+<div class="container ajuste w-100">
+    <div class="bg-title p-3 pt-4">
+
+
+        <div class="p-3 mt-1 d-flex justify-content-between align-items-start w-100">
+
+            <div class="w-50 me-5">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4>Favoritos</h4>
+                </div>
+
+
+            </div>
+
+            <div class="w-50 mx-5">
+
+            </div>
+
+        </div>
+
+    </div>
+    <div class="bg-title p-3 pt-4 mt-2">
+        <h4>Histórico de pedidos</h4>
+        <div class="d-flex justify-content-between align-items-start">
+            <div class="w-50">
+                <table
+                        id="table_pedidos"
+                        class="table table-bordered table-hover"
+                        data-toggle="table"
+                        data-search="true"
+                        data-click-to-select="false"
+                        data-pagination="true">
+                    <thead>
+                    <th data-field="id">Todos Pedidos</th>
+
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="w-50 position-relative">
+                <div class="detalhes-pedido">
+                    <div class="d-flex justify-content-between">
+                        <h4>Descrição dos items</h4>
+                    </div>
+                    <ul class="list-group list-group-flush mt-2" id="descricao_items">
+                        <div class="detail-valor">
+                            Clique no pedido para ver os items
+                        </div>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://unpkg.com/bootstrap-table@1.21.4/dist/bootstrap-table.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+
+
+</script>
+
+
+<script>
+console.log($('#table_pedidos'))
+    $('#table_pedidos').bootstrapTable({
+      onClickRow: function (row) {
+        console.log(row)
+        $.ajax({
+          url: '/descricao_items/' + row._id, // Adicionamos o ID à URL da API
+          method: 'POST',
+          success: function(data) {
+            $('#descricao_items').html(data);
+          },
+          error: function(xhr, status, error) {
+          }
+        });
+      }
+    })
+
+
+
+
+</script>
+{% endblock %}

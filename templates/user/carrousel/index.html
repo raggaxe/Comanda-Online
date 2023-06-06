@@ -1,55 +1,108 @@
 <!-- My CSS -->
 <link rel="stylesheet" href="../static/css/cards.css">
 
-<div id="perto_mim" class="d-flex justify-content-start align-items-center  position-relative">
-    <div class="m-3">
-        <a class="control" href="#">
-            <div class="d-flex justify-content-center align-items-center ">
-                <i class='bx bx-left-arrow-alt'></i>
-            </div>
-        </a>
-    </div>
-    <div class="d-flex justify-content-start align-items-center  position-relative carrousel">
-        {% for item in estabelecimentos%}
-        <a onclick="window.location.href='{{ url_for('index_routes.loja', _id=item._id) }}'"
+<!--<div id="perto_mim" class="d-flex justify-content-start align-items-center  position-relative">-->
+<!--    <div class="m-3">-->
+<!--        <a class="control" href="#">-->
+<!--            <div class="d-flex justify-content-center align-items-center ">-->
+<!--                <i class='bx bx-left-arrow-alt'></i>-->
+<!--            </div>-->
+<!--        </a>-->
+<!--    </div>-->
+<!--    <div class="d-flex justify-content-start align-items-center  position-relative carrousel">-->
+<!--        {% for item in estabelecimentos%}-->
+<!--        <a onclick="window.location.href='{{ url_for('index_routes.loja', _id=item._id) }}'"-->
 
-           class="d-flex flex-column justify-content-start align-items-center position-relative  m-1 card-border">
-            <div class="item-estabelecimento">
-                <div class="img_box d-flex flex-column justify-content-center align-items-center position-relative">
-                    {% if item.filename %}
-                    <img src="./static/uploads/{{item.filename}}">
-                    {%else%}
-                    <img src="./static/img/back-main.jpeg">
-                    {% endif%}
-                </div>
-            </div>
+<!--           class="d-flex flex-column justify-content-start align-items-center position-relative  m-1 card-border">-->
+<!--            <div class="item-estabelecimento">-->
+<!--                <div class="img_box d-flex flex-column justify-content-center align-items-center position-relative">-->
+<!--                    {% if item.filename %}-->
+<!--                    <img src="./static/uploads/{{item.filename}}">-->
+<!--                    {%else%}-->
+<!--                    <img src="./static/img/back-main.jpeg">-->
+<!--                    {% endif%}-->
+<!--                </div>-->
+<!--            </div>-->
 
-            <div class="sub-item text-break ">
-                <div class="card-title text-break">
-                    <div class="p-3">
-                        {{item.nome_comercial}}
+<!--            <div class="sub-item text-break ">-->
+<!--                <div class="card-title text-break">-->
+<!--                    <div class="p-3">-->
+<!--                        {{item.nome_comercial}}-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="card-sub  text-break">-->
+<!--                    <div class="p-3">-->
+<!--                        {{item.detalhes_comercial}}-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <button class="btn card-link">-->
+<!--                    Peça agora <i class='bx bxs-chevrons-right'></i>-->
+<!--                </button>-->
+<!--            </div>-->
+<!--        </a>-->
+<!--        {% endfor %}-->
+<!--    </div>-->
+
+
+<!--    <div class="m-3">-->
+
+<!--        <a class="control" href="#">-->
+<!--            <div class="d-flex justify-content-center align-items-center ">-->
+<!--                <i class='bx bx-right-arrow-alt'></i>-->
+<!--            </div>-->
+<!--        </a>-->
+<!--    </div>-->
+<!--</div>-->
+
+
+<div id="carouselExample" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner">
+        {% for item in estabelecimentos %}
+        {% if loop.index % 3 == 1 %}
+        <div class="carousel-item{% if loop.index == 1 %} active{% endif %}" data-bs-interval="20000">
+            <div class="d-flex justify-content-center align-items-center w-100">
+                {% endif %}
+                <a class="w-33 m-1" onclick="window.location.href='{{ url_for('index_routes.loja', _id=item._id) }}'">
+                    <div class="card h-100 position-relative">
+                        <div class="img_box d-flex flex-column justify-content-center align-items-center position-relative">
+                            {% if item.filename %}
+                            <img src="./static/uploads/{{item.filename}}">
+                            {%else%}
+                            <img src="./static/img/back-main.jpeg">
+                            {% endif%}
+                        </div>
+
+                        <div class="card-absolute flex-column d-flex justify-content-between align-items-start p-3">
+                            <h6 class="card-titulo text-break text-white">{{item.nome_comercial}}</h6>
+<!--                            <div class="card-sub  text-break">-->
+
+<!--                                {{item.detalhes_comercial}}-->
+
+<!--                            </div>-->
+                            <div class="d-flex justify-content-end align-items-center">
+                                <button class="btn btn-light d-flex justify-content-center align-items-center">
+                                    Peça agora <i class='bx bxs-chevrons-right mx-1'></i>
+                                </button>
+                            </div>
+
+
+                        </div>
+
                     </div>
-                </div>
-                <div class="card-sub  text-break">
-                    <div class="p-3">
-                        {{item.detalhes_comercial}}
-                    </div>
-                </div>
-                <button class="btn card-link">
-                    Peça agora <i class='bx bxs-chevrons-right'></i>
-                </button>
+                </a>
+                {% if loop.index % 3 == 0 or loop.last %}
             </div>
-        </a>
+        </div>
+        {% endif %}
         {% endfor %}
     </div>
 
-
-    <div class="m-3">
-
-        <a class="control" href="#">
-            <div class="d-flex justify-content-center align-items-center ">
-                <i class='bx bx-right-arrow-alt'></i>
-            </div>
-        </a>
-    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Anterior</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Próximo</span>
+    </button>
 </div>
