@@ -28,7 +28,7 @@ from kivymd.uix.screenmanager import MDScreenManager
 #
 # Test().run()
 
-from app.kivy_teste.Main_screen.MainScreen import MainScreenView
+from mobile.kivy_teste.Main_screen.MainScreen import MainScreenView
 
 class MainApp(MDApp):
     def __int__(self, **kwargs):

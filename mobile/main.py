@@ -11,12 +11,12 @@ from kivy.metrics import dp
 from kivy.uix.screenmanager import Screen, ScreenManager
 from kivymd.app import MDApp
 
-from app.HomeView.HomeView import HomeView
-from app.MainWindow import MainWindowView
+from mobile.HomeView.HomeView import HomeView
+from mobile.MainWindow import MainWindowView
 from kivy.uix.label import Label
 from kivy.core.text import LabelBase
 
-from app.PertoMimView.PertoMimView import PertoMimView
+from mobile.PertoMimView.PertoMimView import PertoMimView
 
 LabelBase.register(name='Montserrat',
                    fn_regular='assets/fonts/Montserrat/Montserrat-Regular.ttf',

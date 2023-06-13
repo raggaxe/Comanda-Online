@@ -23,7 +23,7 @@ repository = BaseRepository(MongoConfig().get_connect())
 load_dotenv()
 app = Flask(__name__)
 
-# app settings
+# mobile settings
 UPLOAD_FOLDER = './static/uploads/'
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 

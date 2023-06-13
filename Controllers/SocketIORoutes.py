@@ -1,9 +1,9 @@
 #
 # from flask_socketio import SocketIO, emit
 # from flask import Blueprint
-# from main import app
+# from main import mobile
 #
-# socketio = SocketIO(app, async_mode='gevent')
+# socketio = SocketIO(mobile, async_mode='gevent')
 #
 # mod = Blueprint('socketio_routes', __name__)
 #
