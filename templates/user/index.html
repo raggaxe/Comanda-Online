@@ -4,8 +4,9 @@
 <link rel="stylesheet" href="../static/css/index.css">
 <div class="container mb-4 init">
     {% include 'user/componentes/menu_main.html' %}
+    {% set lista_estabelecimentos = estabelecimentos %}
+    {% include 'user/carrousel/index.html'  %}
 
-    {% include 'user/carrousel/index.html' %}
     <div class="d-flex justify-content-start align-items-start mt-5">
 
         <div class="flex-fill">

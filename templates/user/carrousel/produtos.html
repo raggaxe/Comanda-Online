@@ -1,10 +1,10 @@
 <!-- My CSS -->
 <link rel="stylesheet" href="../static/css/cards.css">
 
-<div id="carouselExample" class="carousel slide" data-bs-ride="carousel">
-    <div class="carousel-inner">
+<div id="carouselExample" class="carousel slide w-100 mb-4" data-bs-ride="carousel">
+    <div class="carousel-inner ">
 
-        {% for item in estabelecimentos %}
+        {% for item in lista_produtos %}
         {% if loop.index % 3 == 1 %}
         <div class="carousel-item{% if loop.index == 1 %} active{% endif %}" data-bs-interval="20000">
             <div class="d-flex justify-content-center align-items-center w-100">
@@ -12,20 +12,22 @@
                 <a class="w-33 m-1" onclick="window.location.href='{{ url_for('index_routes.loja', _id=item._id) }}'">
                     <div class="card h-100 position-relative">
                         <div class="img_box d-flex flex-column justify-content-center align-items-center position-relative">
+                            {{ item.filename }}
                             {% if item.filename %}
-                            <img src="./static/uploads/{{item.filename}}">
-                            {%else%}
-                            <img src="./static/img/back-main.jpeg">
-                            {% endif%}
+                            <img src="{{ url_for('user_routes.uploaded_file', filename=item.filename) }}">
+                            {% else %}
+                              <img src="{{ url_for('user_routes.uploaded_file', filename='comum.jpg') }}">
+                            {% endif %}
+
                         </div>
 
                         <div class="card-absolute flex-column d-flex justify-content-between align-items-start p-3">
-                            <h6 class="card-titulo text-break text-white">{{item.nome_comercial}}</h6>
-<!--                            <div class="card-sub  text-break">-->
+                            <h6 class="card-titulo text-break text-white">{{item.nome_produto}}</h6>
+                            <!--                            <div class="card-sub  text-break">-->
 
-<!--                                {{item.detalhes_comercial}}-->
+                            <!--                                {{item.detalhes_comercial}}-->
 
-<!--                            </div>-->
+                            <!--                            </div>-->
                             <div class="d-flex justify-content-end align-items-center">
                                 <button class="btn btn-light d-flex justify-content-center align-items-center">
                                     Peça agora <i class='bx bxs-chevrons-right mx-1'></i>

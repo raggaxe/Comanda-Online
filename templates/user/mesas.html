@@ -8,34 +8,34 @@
 <ul class="box-info">
     <li>
         <i class='bx bxs-calendar-check'></i>
-        <span class="text d-flex  justify-content-center align-items-center">
-   {% set count = namespace(value=0) %}
-{% for i in mesas %}
-             {% if i.status %}
-  {% set count.value = count.value + 1 %}
-    {% endif %}
+        <div class="text d-flex  justify-content-center align-items-center">
+            {% set count = namespace(value=0) %}
+            {% for i in mesas %}
+            {% if i.status %}
+            {% set count.value = count.value + 1 %}
+            {% endif %}
 
-{% endfor %}
+            {% endfor %}
 
 
-						<h3 id="total_mesas_abertas" class="m-0 p-0 me-2">{{count.value}}</h3>
-						<p class="m-0 p-0">Mesas Abertas</p>
-					</span>
+            <h3 id="total_mesas_abertas" class="m-0 p-0 me-2">{{count.value}}</h3>
+            <p class="m-0 p-0">Mesas Abertas</p>
+        </div>
     </li>
     <li>
         <i class='bx bxs-calendar-check'></i>
-        <span class="text d-flex  justify-content-center align-items-center">
-   {% set countTotal = namespace(value=0) %}
-{% for i in mesas %}
+        <div class="text d-flex  justify-content-center align-items-center">
+            {% set countTotal = namespace(value=0) %}
+            {% for i in mesas %}
 
-  {% set countTotal.value = countTotal.value + 1 %}
+            {% set countTotal.value = countTotal.value + 1 %}
 
 
-{% endfor %}
+            {% endfor %}
 
-						<h3 class="m-0 p-0 me-2">{{countTotal.value}}</h3>
-						<p class="m-0 p-0">Total de Mesas</p>
-					</span>
+            <h3 class="m-0 p-0 me-2">{{countTotal.value}}</h3>
+            <p class="m-0 p-0">Total de Mesas</p>
+        </div>
     </li>
 
 </ul>
@@ -43,31 +43,35 @@
     <div class="order">
 
         <div class="head justify-content-between align-items-center">
-            <h3>Cadastrar Nova Mesa</h3>
+            <div class="d-flex  justify-content-between align-items-center">
+                <h3>Cadastrar Nova Mesa </h3>
+                <div class="form-floating  ms-3">
+                    <input style="width:120px ; text-align:right;padding-right:10px" type="number"
+                           class="form-control form-control-sm " onchange="createMesaInPanel(this.value)" id="max_mesas"
+                           placeholder="máximo" value="{% if max_mesas %}{{max_mesas}}{% else %}1{%endif%}">
+                    <label for="max_mesas">Máx. Mesas</label>
+                </div>
+            </div>
             <form action="/mesas" method="post">
                 <input type="hidden" name="numero_mesa" id="numero_mesa">
                 <input type="hidden" name="max_mesas" id="max_limit_mesas">
                 <button class="btn btn-dark" id="add_mesa" type="submit" disabled>Adicionar +</button>
             </form>
 
+
         </div>
         <div class="d-flex justify-content-start align-items-center mb-3 panel-mesas flex-wrap">
 
-            <div data-mesa="1" class="mesa-item">1</div>
         </div>
 
     </div>
 
     {% if mesas %}
+
     <div class="todo-mesas">
         <div class="head d-flex ">
             <h3>Mesas</h3>
-            <div class="form-floating mb-3">
-                <input style="width:120px ; text-align:right;padding-right:10px" type="number"
-                       class="form-control form-control-sm " onchange="createMesaInPanel(this.value)" id="max_mesas"
-                       placeholder="máximo" value="{{max_mesas}}">
-                <label for="max_mesas">Máx. Mesas</label>
-            </div>
+
         </div>
         <ul class="todo-list">
             {% for mesa in mesas %}

@@ -9,9 +9,8 @@ class Cliente:
         self.collection_name = 'clientes'
         self.CPF =''
         self.nome =''
-        self.senha = sha256_crypt.hash(str(form['senha']))
-        self.email = form['email']
-        # self._idUser=form['estabelecimento']
+        self.senha = sha256_crypt.hash(str(form.password.data))
+        self.email = form.email.data
         self.token = generateOTP()
         self.status = True
         self.created_at = datetime.now()
@@ -20,4 +19,4 @@ class Cliente:
         return self.__dict__
 
     def check_re_password(self, form):
-        return form['senha'] == form['Rsenha']
+        return form.password.data == form.confirm_password.data

@@ -90,7 +90,7 @@ https://cdn.jsdelivr.net/npm/inputmask@5.0.8/dist/jquery.inputmask.min.js
 
 <!-- Modal -->
 
-<div style="width:250px" class="offcanvas offcanvas-start p-3 " data-bs-backdrop="static" tabindex="-1" id="loginOff"
+<div style="width:250px" class="offcanvas offcanvas-end p-3 " data-bs-backdrop="static" tabindex="-1" id="loginOff"
      aria-labelledby="cartLabel">
     <div class="offcanvas-header">
         <h5 class="offcanvas-title" id="staticBackdropLabel"></h5>
@@ -98,15 +98,11 @@ https://cdn.jsdelivr.net/npm/inputmask@5.0.8/dist/jquery.inputmask.min.js
     </div>
 
     <div class="d-grid gap-2">
-        <a href="#" class="btn btn-dark"
-           data-bs-toggle="modal"
-           data-bs-target="#cadastro"
-        >
+        <a href="/register" class="btn btn-dark">
             Cadastre-se
         </a>
-        <a href="#" class="btn btn-secondary"
-           data-bs-toggle="modal"
-           data-bs-target="#loginModal"
+        <a href="/login-cliente" class="btn btn-secondary"
+
         >
             Entrar
         </a>
@@ -140,7 +136,7 @@ https://cdn.jsdelivr.net/npm/inputmask@5.0.8/dist/jquery.inputmask.min.js
                     <i class='bx bx-user'></i>
                 </div>
                 <div class="flex-fill">
-                    <div class="text-avatar">Raael Almeida</div>
+                    <div class="text-avatar">{{getCliente(session._id).email}}</div>
                     <a href="#" class="text-success perfil">Ver Perfil</a>
                 </div>
             </div>
@@ -148,7 +144,7 @@ https://cdn.jsdelivr.net/npm/inputmask@5.0.8/dist/jquery.inputmask.min.js
                 <li class="list-group-item">
                     <a href="/home" class="d-flex justify-content-start align-items-center">
                         <i class='bx bxs-home me-3'></i>
-                        <div  class="position-relative"> Página Inicial
+                        <div class="position-relative"> Página Inicial
 
                         </div>
                     </a>
@@ -156,15 +152,15 @@ https://cdn.jsdelivr.net/npm/inputmask@5.0.8/dist/jquery.inputmask.min.js
                 <li class="list-group-item">
                     <a href="/pedidos/{{session._id}}" class="d-flex justify-content-start align-items-center">
                         <i class='bx bxs-basket me-3'></i>
-                        <div  class="position-relative"> Pedidos
+                        <div class="position-relative"> Pedidos
                             <span class="badge text-bg-danger ms-2" id="pedido_tag"></span>
                         </div>
                     </a>
                 </li>
                 <li class="list-group-item">
-                     <a href="/favoritos" class="d-flex justify-content-start align-items-center">
-                      <i class='bx bxs-heart me-3'></i>
-                        <div  class="position-relative">  Favoritos
+                    <a href="/favoritos" class="d-flex justify-content-start align-items-center">
+                        <i class='bx bxs-heart me-3'></i>
+                        <div class="position-relative"> Favoritos
                         </div>
                     </a>
                 </li>
@@ -213,102 +209,8 @@ https://cdn.jsdelivr.net/npm/inputmask@5.0.8/dist/jquery.inputmask.min.js
 </div>
 
 
-<div class="modal fade" id="loginModal" tabindex="-1"
-     aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-sm">
-        <div class="modal-content">
-
-            <div class="modal-body">
-                <div class="d-flex justify-content-center align-items-center">
-                    <h2>Entrar</h2>
-                </div>
-                <p class="text-small text-center">Faça login para acessar sua conta ou inscreva-se agora
-                    para começar a aproveitar nossos recursos exclusivos.</p>
-                <form id="login_form" class="p-2" action="/login-cliente" method="post">
-                    <div class="input-group  mb-3">
-                        <span class="input-group-text" id="login"><i class='bx bxs-user-circle'></i></span>
-                        <input type="text" class="form-control" placeholder="Email" name="email" aria-label="Username"
-                               aria-describedby="login">
-                    </div>
-                    <div class="input-group  mb-3">
-                        <span class="input-group-text" id="password"><i class='bx bxs-key'></i></span>
-                        <input type="password" class="form-control" placeholder="Senha" name="senha"
-                               aria-label="password"
-                               aria-describedby="password">
-                    </div>
-                    <div class="alerta-area">
-
-                    </div>
-                    <div class="d-grid gap-2 mt-3">
-                        <button type="button" onclick="submitLogin()"
-                                class="btn btn-dark  d-flex justify-content-center align-items-center ps-5 pe-5 mt-3">
-                            Entrar
-                        </button>
-                    </div>
-                    <!--                    <button type="submit" class="btn btn-primary">Submit</button>-->
-                </form>
-                <div class="cadastro text-center mb-4">
-                    Ainda não tem acesso? Cadastre-se <a data-bs-target="#cadastro" data-bs-toggle="modal"
-                                                         class="laranja">aqui ></a>
-                </div>
 
 
-            </div>
-
-        </div>
-    </div>
-</div>
-<div class="modal fade" id="cadastro" tabindex="-1"
-     aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-sm">
-        <div class="modal-content">
-
-            <div class="modal-body">
-                <div class=" d-flex justify-content-center align-items-center">
-                    <h2>Cadastre-se</h2>
-                </div>
-                <p class="text-small text-center">Junte-se à nossa comunidade e comece a aproveitar todos
-                    os recursos exclusivos que temos a oferecer! </p>
-                <form id="register_form" class="p-2" action="/register" method="post">
-                    <div class="input-group  mb-3">
-                        <span class="input-group-text"><i class='bx bxs-user-circle'></i></span>
-                        <input type="text" class="form-control" placeholder="Email" name="email" aria-label="Username"
-                               aria-describedby="login">
-                    </div>
-                    <div class="input-group  mb-3">
-                        <span class="input-group-text"><i class='bx bxs-key'></i></span>
-                        <input type="password" class="form-control" placeholder="Senha" name="senha"
-                               aria-label="password"
-                               aria-describedby="password">
-                    </div>
-                    <div class="input-group  mb-3">
-                        <span class="input-group-text"><i class='bx bxs-key'></i></span>
-                        <input type="password" class="form-control" placeholder="Confime Senha" name="Rsenha"
-                               aria-label="password"
-                               aria-describedby="password">
-                    </div>
-                    <div class="alerta-area-register">
-
-                    </div>
-                    <div class="d-grid gap-2 mt-3">
-                        <button type="button" onclick="submitRegister()"
-                                class="btn btn-dark  ps-5 pe-5 mt-3">
-                            Entrar
-                        </button>
-                    </div>
-                    <!--                    <button type="submit" class="btn btn-primary">Submit</button>-->
-                </form>
-                <div class="cadastro text-center mb-4">
-                    Já tem acesso? Entre <a data-bs-target="#loginModal" data-bs-toggle="modal" class="laranja">aqui
-                    ></a>
-                </div>
-
-
-            </div>
-
-        </div>
-    </div>
-</div>
 
 
 <div class="offcanvas offcanvas-end" id="cart" data-bs-backdrop="static" tabindex="-1" aria-labelledby="cartLabel">

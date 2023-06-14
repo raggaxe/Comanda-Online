@@ -101,7 +101,6 @@ def dashboardCliente():
     for item in estabelecimentos:
         item['_id'] = str(item['_id'])  # Converte o ObjectId em uma string
         lista_estabelecimentos.append(item)
-
     return render_template('user/index.html', estabelecimentos=lista_estabelecimentos)
 
 

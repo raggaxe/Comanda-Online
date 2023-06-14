@@ -4,51 +4,61 @@ function createMesaInPanel(numero_maximo_mesas ){
 			lista.push(parseInt($(i).html()))
 		})
     $('.panel-mesas').html('')
-    for (let i = 1; i <= numero_maximo_mesas ; i++) {
+
+
+    if(parseInt(numero_maximo_mesas) != 0 ){
+         for (let i = 1; i <= parseInt(numero_maximo_mesas) ; i++) {
         if ( lista.includes(i) === true ){
              html = '<div data-numero="'+i+'" class="mesa-item disabled" onclick="preSelecionarMesa('+i+', this)">'+i+'</div>';
         }
         else{
             html = '<div data-numero="'+i+'" class="mesa-item" onclick="preSelecionarMesa('+i+', this)">'+i+'</div>';
         }
-         $('.panel-mesas').append(html)
-    };
+        $('.panel-mesas').append(html)
 
-    $.ajax({
+    };
+      $.ajax({
       url: '/max_mesas/' + numero_maximo_mesas, // Adicionamos o ID à URL da API
       method: 'POST',
       dataType: 'json',
       success: function(data) {
-        // O código a seguir é executado se a requisição for bem-sucedida
-        console.log('Dados recebidos:');
-        console.log(data);
       },
       error: function(xhr, status, error) {
-        // O código a seguir é executado se a requisição falhar
-        console.log('Erro ao fazer a requisição:');
-        console.log(error);
       }
     });
+    }
+    else{
+    html = '<div data-numero="1" class="mesa-item" onclick="preSelecionarMesa(1, this)">1</div>';
+    $('.panel-mesas').append(html)
+    }
+
+
 
 
 };
 
 function preSelecionarMesa(numero_mesa_selecionada,_this){
      lista_mesas = []
-    if (_this.classList.contains('active')) {
+     if (_this.classList.contains('active')) {
         _this.classList.remove('active');
-    } else {
+     } else {
         _this.classList.add('active');
-    }
+     }
      document.querySelectorAll('.mesa-item.active').forEach(i=> {
-			lista_mesas.push(numero_mesa_selecionada)
-		})
+		lista_mesas.push($(i).attr('data-numero'))
+	})
     $("#numero_mesa").val(lista_mesas);
     $('#add_mesa').prop("disabled", false);
 }
 
 $(document).ready(function() {
-    createMesaInPanel($("#max_mesas").val())
+    if($("#max_mesas").val()){
+     createMesaInPanel($("#max_mesas").val())
+    }
+    else{
+     createMesaInPanel(0)
+     }
+
 });
 
 

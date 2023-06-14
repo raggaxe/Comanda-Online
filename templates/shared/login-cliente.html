@@ -1,0 +1,64 @@
+{% extends "shared/base.html" %}
+{% block content %}
+<link href="../static/css/user.css" rel="stylesheet">
+
+<style>
+.nav-i, .nav-text{
+    color:#000;
+}
+.bg-light{
+    width:450px
+}
+label{
+    font-size:.8rem
+}
+
+
+
+
+</style>
+
+<link href="../static/css/user.css" rel="stylesheet">
+<div class="container d-flex text-center flex-column justify-content-center align-items-center vh-100">
+    <div style="" class="step-1">
+        <div class="bg-light  p-5 d-flex justify-content-center ">
+
+            <div class="w-100  d-flex flex-column justify-content-start align-items-start">
+
+                 <div class="w-100 text-center">
+                   <h1>Entrar</h1>
+                </div>
+                <p class="text-small text-center">Junte-se à nossa comunidade e comece a aproveitar todos
+                    os recursos exclusivos que temos a oferecer! </p>
+                <form id="register_form" class="p-2 w-100" action="/login-cliente" method="post">
+                    {{ form.csrf_token }}
+                     <div class="input-group mb-2">
+                        <span class="input-group-text"><i class='bx bxs-user-circle'></i></span>
+                        {{ form.email(class="form-control", placeholder="Email", aria_describedby="login") }}
+                    </div>
+
+                   <div class="input-group mb-2">
+                        <span class="input-group-text"><i class='bx bxs-key'></i></span>
+                        {{ form.password(class="form-control", placeholder="Senha", aria_describedby="password") }}
+                    </div>
+
+                    <div class="d-grid gap-2 mt-2">
+                        <button type="submit"
+                                class="btn btn-dark  ps-5 pe-5 mt-3">
+                            Entrar
+                        </button>
+                    </div>
+                </form>
+                <div class="cadastro text-center w-100 text-center">
+                   Ainda não tem acesso? Cadastre-se <a href="/register" class="laranja">aqui
+                    ></a>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

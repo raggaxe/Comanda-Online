@@ -58,7 +58,11 @@
                             <div class="detail-valor">Média mensal</div>
                         </div>
                         <div class="d-flex justify-content-between align-items-center h-100">
-                            <div class="detail-valor"  >{{ MoneyFormatter(total_valor_mes /total_item_mes) }} </div>
+                            <div class="detail-valor"  >
+                                {% if total_item_mes != 0 %}
+                                {{ MoneyFormatter(total_valor_mes /total_item_mes) }}
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
 

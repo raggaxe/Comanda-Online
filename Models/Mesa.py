@@ -1,7 +1,7 @@
 class Mesa:
-    def __init__(self, form, _id):
+    def __init__(self, item, _id):
         self.collection_name = 'mesas'
-        self.numero_mesa =form['numero_mesa']
+        self.numero_mesa =item
         self._idUser = _id
         self.status = False
 

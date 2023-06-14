@@ -16,11 +16,11 @@
                    type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Visão Geral
                 </a>
             </li>
-            <li class="nav-item" role="presentation">
-                <a class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane"
-                   type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Menus
-                </a>
-            </li>
+            <!--            <li class="nav-item" role="presentation">-->
+            <!--                <a class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane"-->
+            <!--                   type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Menus-->
+            <!--                </a>-->
+            <!--            </li>-->
             <li class="nav-item" role="presentation">
                 <a class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact-tab-pane"
                    type="button" role="tab" aria-controls="contact-tab-pane" aria-selected="false">Categorias
@@ -32,11 +32,11 @@
                 </a>
             </li>
 
-            <li class="nav-item" role="presentation">
-                <a class="nav-link" id="grupo-tab" data-bs-toggle="tab" data-bs-target="#grupo-tab-pane"
-                   type="button" role="tab" aria-controls="grupo-tab-pane" aria-selected="false">grupos
-                </a>
-            </li>
+            <!--            <li class="nav-item" role="presentation">-->
+            <!--                <a class="nav-link" id="grupo-tab" data-bs-toggle="tab" data-bs-target="#grupo-tab-pane"-->
+            <!--                   type="button" role="tab" aria-controls="grupo-tab-pane" aria-selected="false">grupos-->
+            <!--                </a>-->
+            <!--            </li>-->
         </ul>
 
 
@@ -116,43 +116,52 @@
                 Menus
             </div>
             <div class="tab-pane fade" id="contact-tab-pane" role="tabpanel" aria-labelledby="contact-tab" tabindex="0">
-                {% if categorias %}
-                <h6>Categorias cadastradas:</h6>
-                <div class="section-reduce">
-                    <ol class="list-group list-group-numbered">
-                        {% for categoria in categorias %}
-                        <li class="categoria-item list-group-item" data-id="{{categoria._id}}">
-                            <div class="flex-fill mx-2">
-                                {{categoria.nome}}
-                            </div>
+<div class="head mb-3">
+    <div class="d-flex justify-content-between align-items-center w-100 mb-3">
+        <h3> Categorias </h3>
 
-                            <div>
-                                <form action="/excluir_categoria" method="post">
-                                    <input type="hidden" name="_idCategoria" value="{{categoria._id}}">
-                                    <a href="#" onclick="$('#{{categoria._id}}').click()" class="text-danger"> <i
-                                            class='bx bxs-trash-alt'></i> </a>
-                                    <button id="{{categoria._id}}" style="display:none" type="submit"></button>
-                                </form>
+    </div>
+</div>
+
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="w-50 me-5">
+                        <div class="section-reduce">
+                            <ol class="list-group list-group-numbered">
+                                {% for categoria in categorias %}
+                                <li class="categoria-item d-flex list-group-item" data-id="{{categoria._id}}">
+                                    <div class="flex-fill mx-2">
+                                        {{categoria.nome}}
+                                    </div>
+
+                                    <div>
+                                        <form action="/excluir_categoria" method="post">
+                                            <input type="hidden" name="_idCategoria" value="{{categoria._id}}">
+                                            <a href="#" onclick="$('#{{categoria._id}}').click()" class="text-danger">
+                                                <i
+                                                        class='bx bxs-trash-alt'></i> </a>
+                                            <button id="{{categoria._id}}" style="display:none" type="submit"></button>
+                                        </form>
+                                    </div>
+                                </li>
+                                {% endfor%}
+                            </ol>
+                        </div>
+                    </div>
+                    <div class="alert alert-secondary section-reduce w-50 ms-5" role="alert">
+                        <h6 class="text-">Criar nova categoria:</h6>
+                        <form action="/categoria" method="POST">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" name="nome" placeholder="Username" required>
+                                <label for="valor">Nome Categoria</label>
                             </div>
-                        </li>
-                        {% endfor%}
-                    </ol>
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-dark "  type="submit">Addicionar nova categoria</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
 
 
-                {% endif%}
-                <div class="alert alert-secondary mt-4 section-reduce" role="alert">
-                    <h6 class="text-">Criar nova categoria:</h6>
-                    <form action="/categoria" method="POST">
-                        <div class="form-floating mb-3">
-                            <input type="text" class="form-control" name="nome" placeholder="Username" required>
-                            <label for="valor">Nome Categoria</label>
-                        </div>
-                        <div class="d-grid gap-2">
-                            <button class="btn btn-secondary" type="submit">criar categoria</button>
-                        </div>
-                    </form>
-                </div>
             </div>
             <div class="tab-pane fade" id="disabled-tab-pane" role="tabpanel" aria-labelledby="disabled-tab"
                  tabindex="0">

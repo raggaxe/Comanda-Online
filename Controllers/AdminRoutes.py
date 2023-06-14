@@ -141,25 +141,26 @@ def cadastro_lojista():
 @LoginRequired.login_required
 def mesas():
     if request.method == "GET":
-        # # //repository.update_one('mesas',{'_id','647c01e2d5d6a53470724c2d'},{'numero_mesa':19})
         # mesas_ordenadas = repository.find('mesas',{'_idUser': session['_id']})
         # for item in mesas_ordenadas:
-        #     print(item)
+        #     repository.update_one('mesas', {'_id': ObjectId(item['_id'])}, {'numero_mesa': 19})
+
+
         mesas_ordenadas = sorted(repository.find('mesas', {'_idUser': session['_id']}),
                                  key=lambda x: int(x['numero_mesa']))
         user_found = repository.find_one('users', {'_id': ObjectId(session['_id'])})
         return render_template('user/mesas.html', mesas=mesas_ordenadas,
                                max_mesas=10 if not 'max_mesas' in user_found else user_found['max_mesas'])
-
     if request.method == "POST":
-        print(request.form)
-        mesa_found = repository.find_one('mesas',
-                                         {'_idUser': session['_id'], 'numero_mesa': request.form['numero_mesa']})
-        if mesa_found is None:
-            new_Mesa = Mesa(request.form, session['_id'])
-            # repository.create(new_Mesa)
-        else:
-            print('mesa ja criada')
+        lista_mesas = request.form['numero_mesa'].split(',')
+        for item in lista_mesas:
+            mesa_found = repository.find_one('mesas',
+                                             {'_idUser': session['_id'], 'numero_mesa': item})
+            if mesa_found is None:
+                new_Mesa = Mesa(item, session['_id'])
+                repository.create(new_Mesa)
+            else:
+                print('mesa ja criada')
         return redirect(url_for('admin_routes.mesas'))
 
 

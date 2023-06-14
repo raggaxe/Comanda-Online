@@ -1,6 +1,7 @@
 from flask import Flask, session, Markup, Response, flash, url_for
 from flask import Blueprint, render_template, request, redirect, send_file, make_response, jsonify
 from passlib.hash import sha256_crypt
+from wtforms import Form, StringField, PasswordField, validators
 
 from Models.Cliente import Cliente
 from Services import EnviarEmail, GerarOTP, LoginRequired, MaskEmail, Session, Google
@@ -11,7 +12,6 @@ from flask_dance.contrib.facebook import facebook
 from bson.objectid import ObjectId
 from Models.User import Usuario
 from Services.GerarOTP import generateOTP
-
 
 mod = Blueprint('auth_routes', __name__)
 repository = BaseRepository(MongoConfig().get_connect())
@@ -24,57 +24,69 @@ def check_email():
         if email_found is not None:
             return jsonify({'error': 'usuário já cadastrado com esse email'})
         else:
-            return jsonify({'status':'OK'})
+            return jsonify({'status': 'OK'})
 
 
-
-@mod.route('/signup', methods=['POST','GET'])
+@mod.route('/signup', methods=['POST', 'GET'])
 def signUpUser():
     if request.method == "GET":
         return render_template('user/signup.html')
 
 
-@mod.route('/login-cliente', methods=['POST','GET'])
+@mod.route('/login-cliente', methods=['POST', 'GET'])
 def login_clientes():
-    if request.method == "POST":
-
-        user_found = repository.find_one('clientes', {'email': request.form['email']})
-        if user_found is not None:
-            if sha256_crypt.verify(request.form['senha'], user_found['senha']):
-                if not "token" in user_found:
-                    user_found['token'] = generateOTP()
-                Session.set_session(user_found)
-                return make_response(jsonify({'resp': user_found['status']}), 200)
+    form = LoginForm(request.form)
+    if request.method == "POST" and form.validate():
+        try:
+            user_found = repository.find_one('clientes', {'email': form.email.data})
+            if user_found is not None:
+                if sha256_crypt.verify(form.password.data, user_found['senha']):
+                    if 'token' not in user_found:
+                        user_found['token'] = generateOTP()
+                    Session.set_session(user_found)
+                    return redirect(url_for('user_routes.dashboardCliente'))
+                else:
+                    flash('Usuário/Senha não corresponde! Tente novamente')
             else:
-                return make_response(jsonify({'erro': 'Usuário/Senha não está correto, tente novamente.'}), 200)
-        if user_found is None:
-            return make_response(jsonify({'erro': 'Usuário/Senha não está correto, tente novamente.'}), 200)
+                flash('Usuário/Senha não corresponde! Tente novamente')
+        except Exception as e:
+            flash('Algo deu errado, tente novamente')
+    return render_template('shared/login-cliente.html', form=form)
+
+
+class RegistrationForm(Form):
+    email = StringField('Email', validators=[validators.DataRequired(), validators.Email()])
+    password = PasswordField('Senha', validators=[validators.DataRequired()])
+    confirm_password = PasswordField('Confirmar Senha', validators=[validators.DataRequired(),
+                                                                    validators.EqualTo('password',
+                                                                                       message='As senhas devem ser iguais')])
+
+class LoginForm(Form):
+    email = StringField('Email', validators=[validators.DataRequired(), validators.Email()])
+    password = PasswordField('Senha', validators=[validators.DataRequired()])
+
 
 
 @mod.route('/register', methods=['GET', 'POST'])
 def register():
-    if request.method == "POST":
-        user_found = repository.find_one('clientes', {'email': request.form['email']})
-        print(user_found)
-        if user_found is None:
-            if request.form['email'] != "":
-                user = Cliente(request.form)
-                if user.check_re_password(request.form):
-                    new_user = repository.create(user)
-                    print('criou')
-                    # token = user.token
-                    # tagEmail = render_template('bodyEmail.html',
-                    #                            body=f'BEM-VINDO! VOCE FEZ UMA SOLICITAÇÃO DE TOKEN! TOKEN:{token}')
-                    #
-                    # enviar_email(request.form['email'], 'Pedido de TOKEN', tagEmail)
+    form = RegistrationForm(request.form)
+    if request.method == "POST" and form.validate():
+        email = form.email.data
+        user_found = repository.find_one('clientes', {'email': email})
+        if user_found is None and email != "":
+            user = Cliente(form)
+            if user.check_re_password(form):
+                new_user = repository.create(user)
+                print('criou')
+                # token = user.token
+                # tagEmail = render_template('bodyEmail.html',
+                #                            body=f'BEM-VINDO! VOCE FEZ UMA SOLICITAÇÃO DE TOKEN! TOKEN:{token}')
+                # enviar_email(request.form['email'], 'Pedido de TOKEN', tagEmail)
+                Session.set_session(new_user)
+        return redirect(url_for('user_routes.dashboardCliente'))
+    return render_template('shared/register.html', form=form)
 
-                    Session.set_session(new_user)
-                    return make_response(jsonify({'resp': new_user['status']}), 200)
 
-                else:
-                    return make_response(jsonify({'erro': 'Usuário/Senha não está correto, tente novamente.'}), 200)
-        else:
-            return make_response(jsonify({'erro': 'Usuário já cadastrado.'}), 200)
 @mod.route('/registrar-user', methods=['GET', 'POST'])
 def registrar_user():
     if request.method == "POST":
@@ -91,9 +103,9 @@ def registrar_user():
                     #
                     # enviar_email(request.form['email'], 'Pedido de TOKEN', tagEmail)
                     Session.set_session(new_user)
-                    print(f"BEM-VINDO! VOCE FEZ UMA SOLICITAÇÃO DE TOKEN! TOKEN:{ ''}")
+                    print(f"BEM-VINDO! VOCE FEZ UMA SOLICITAÇÃO DE TOKEN! TOKEN:{''}")
 
-                    return jsonify({'resp':'cadasrada'})
+                    return jsonify({'resp': 'cadasrada'})
 
                 else:
                     flash('Usuário/Senha não está correto, tente novamente.')
@@ -103,8 +115,7 @@ def registrar_user():
             return jsonify({'erro': 'Usuário já cadastrado.'})
 
 
-
-@mod.route('/cadastrar-user', methods=['POST','GET'])
+@mod.route('/cadastrar-user', methods=['POST', 'GET'])
 def cadastro_user():
     if request.method == "GET":
         if 'token' in session:
@@ -114,17 +125,7 @@ def cadastro_user():
             return render_template('user/cadastro_user.html')
 
 
-
-
-
-
-
-
-
-
-
-
-@mod.route('/login', methods=['POST','GET'])
+@mod.route('/login', methods=['POST', 'GET'])
 def login():
     if request.method == "GET":
         return render_template('user/login.html')
@@ -142,6 +143,7 @@ def login():
             flash('Usuario não cadastrado')
             return redirect(url_for('auth_routes.login'))
 
+
 @mod.route('/logout')
 @LoginRequired.login_required
 def logout():
@@ -149,15 +151,14 @@ def logout():
     return redirect(url_for('index_routes.index'))
 
 
-@mod.route('/esqueci-senha',methods=['POST','GET'])
+@mod.route('/esqueci-senha', methods=['POST', 'GET'])
 def esqueci_senha():
-
     if request.method == "GET":
         session.clear()
 
         return render_template('user/esqueci_senha.html')
     if request.method == "POST":
-        userFound = repository.find_one('users',{'email':request.form['email']})
+        userFound = repository.find_one('users', {'email': request.form['email']})
         tagEmail = render_template('senhaEmail.html',
                                    token=f'{userFound["token"]}')
 
@@ -172,38 +173,39 @@ def nova_senha(token):
     if request.method == "GET":
         return render_template('user/nova_senha.html', token=token)
     if request.method == "POST":
-        userFound = repository.find_one('users', {'token': token })
+        userFound = repository.find_one('users', {'token': token})
         if userFound is not None:
-            repository.update_one('users', {'token': userFound['token']},{'senha':  sha256_crypt.hash(str(request.form['password'])) })
+            repository.update_one('users', {'token': userFound['token']},
+                                  {'senha': sha256_crypt.hash(str(request.form['password']))})
             return redirect(url_for('auth_routes.login'))
+
 
 ######## GERAR TOKEN #######
 
 @mod.route('/ativar', methods=['POST'])
 def getToken():
     if request.method == "POST":
-     try:
-         user_found = repository.find_one('users', {'email': request.form['email']})
+        try:
+            user_found = repository.find_one('users', {'email': request.form['email']})
 
-         session['email'] = request.form['email']
-         if user_found is not None:
-             token = generateOTP()
-             repository.update_one('users', {'email': request.form['email']}, {'token': token})
+            session['email'] = request.form['email']
+            if user_found is not None:
+                token = generateOTP()
+                repository.update_one('users', {'email': request.form['email']}, {'token': token})
 
-         else:
-             user = Usuario(request.form)
-             repository.create(user)
-             token = user.token
-         tagEmail = render_template('user/email.html',
-                                    token=f'{token}')
-         enviar_email(request.form['email'], 'Pedido de TOKEN', tagEmail)
-         print(f"BEM-VINDO! VOCE FEZ UMA SOLICITAÇÃO DE TOKEN! TOKEN:{token}")
-         return render_template('user/token.html', email=request.form['email'])
-         # return  render_template('user/token.html',email=request.form['email'])
-     except Exception as e:
-         print(e)
-         return redirect(url_for('auth_routes.login'))
-
+            else:
+                user = Usuario(request.form)
+                repository.create(user)
+                token = user.token
+            tagEmail = render_template('user/email.html',
+                                       token=f'{token}')
+            enviar_email(request.form['email'], 'Pedido de TOKEN', tagEmail)
+            print(f"BEM-VINDO! VOCE FEZ UMA SOLICITAÇÃO DE TOKEN! TOKEN:{token}")
+            return render_template('user/token.html', email=request.form['email'])
+            # return  render_template('user/token.html',email=request.form['email'])
+        except Exception as e:
+            print(e)
+            return redirect(url_for('auth_routes.login'))
 
 
 @mod.route('/validar', methods=['POST'])
@@ -216,7 +218,7 @@ def validarToken():
                 if 'is_new_user' not in user_found:
                     return redirect(url_for('admin_routes.novo_fornecedor'))
                 else:
-                # do something with the image, nome and detalhes
+                    # do something with the image, nome and detalhes
                     return redirect(url_for('admin_routes.dashboard'))
 
 
@@ -226,6 +228,7 @@ def validarToken():
             return redirect(url_for('auth_routes.login'))
 
     return redirect(url_for('index_routes.index'))
+
 
 @mod.route('/resetarToken', methods=['GET', 'POST'])
 def resetarToken():
@@ -237,4 +240,3 @@ def resetarToken():
         enviar_email(user['email'], 'NOVO TOKEN', tagEmail)
 
         return render_template('gestao_user/sucessoToken.html', email=MaskEmail.maskEmail(user['email']))
-

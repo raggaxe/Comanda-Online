@@ -16,6 +16,7 @@ locale.setlocale(locale.LC_ALL, 'pt_BR.utf-8')
 
 @mod.route('/', methods=['GET', 'POST'])
 def index():
+
     # estabelecimentos = repository.find('users',{})
     # lista_estabelecimentos = []
     # for item in  estabelecimentos:
@@ -45,11 +46,12 @@ def loja(_id):
 
 @mod.route('/produto/<_id>')
 def produto(_id):
-    cardapio = []
+
     cardapio_found = repository.find_one('cardapios',{'_id':ObjectId(_id)})
+    cardapios = repository.find('cardapios', {'_idUser': cardapio_found['_idUser']})
     cardapio_found['_id'] = str(cardapio_found['_id'])  # Converte o ObjectId em uma string
     # cardapio_found['valor'] =  locale.currency(float(cardapio_found['valor']), grouping=True, symbol=None)
-    return render_template('shared/produto.html', produto=cardapio_found)
+    return render_template('shared/produto.html', produto=cardapio_found,cardapios=cardapios)
 
 
 

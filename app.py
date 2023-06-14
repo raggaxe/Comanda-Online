@@ -308,8 +308,9 @@ def my_utility_processor():
             return _idMesa
 
     def getCliente(_idCliente):
-        cliente = repository.find_one('clientes', {'_id': ObjectId(_idCliente)})
-        return cliente
+        if '_id' in session:
+            cliente = repository.find_one('clientes', {'_id': ObjectId(_idCliente)})
+            return cliente
 
     def getCategoria(_idCategoria):
         categoria = repository.find_one('categorias', {'_id': ObjectId(_idCategoria)})
@@ -371,4 +372,6 @@ def my_utility_processor():
 
 
 if __name__ == '__main__':
-    socketio.run(app)
+    socketio.run(app,
+                 debug=True
+                 )
