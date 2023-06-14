@@ -5,26 +5,38 @@
 <div class="container mb-4 init">
     {% include 'user/componentes/menu_main.html' %}
     {% set lista_estabelecimentos = estabelecimentos %}
-    {% include 'user/carrousel/index.html'  %}
-
-    <div class="d-flex justify-content-start align-items-start mt-5">
-
-        <div class="flex-fill">
-            <div class="subtitle mb-2">Fotos</div>
-            <!--    <div class="mt-4 mb-4">-->
-            <!--        <div class="d-flex justify-content-between align-items-center">-->
-            <!--            <h2>-->
-            <!--                Perto de Mim <i class='bx bx-pin laranja'></i>-->
-            <!--            </h2>-->
+    {% include 'user/carrousel/index.html' %}
 
 
-            <!--            <div class="click">-->
-            <!--                Brasília <i style="" class='bx bx-chevron-down'></i>-->
-            <!--            </div>-->
-            <!--        </div>-->
+    <div class="w-100 text-center mt-3">
+        <div class="laranja">Mais Populares</div>
+    </div>
 
-            <!--    </div>-->
-        </div>
+    <div class="d-flex flex-wrap justify-content-start align-items-start mt-3">
+
+        {% for item in estabelecimentos %}
+        <a class="w-25  img_section d-flex justify-content-start align-items-start position-relative" onclick="window.location.href='{{ url_for('index_routes.loja', _id=item._id) }}'">
+            <div class="m-2 position-relative border-card">
+                <div class="card-imagem">
+                    {% if item.filename %}
+                    <img src="./static/uploads/{{item.filename}}">
+                    {%else%}
+                    <img src="./static/img/back-main.jpeg">
+                    {% endif%}
+                </div>
+
+                <div class="flex-column d-flex justify-content-between align-items-start p-3">
+                    <h6 class="text-break mb-3">{{item.nome_comercial}}</h6>
+                    <div class="d-flex w-100s justify-content-end align-items-center">
+                        <button style="font-size:.7rem"
+                                class="btn btn-secondary opacity-50 d-flex justify-content-center align-items-center">
+                            Peça agora <i class='bx bxs-chevrons-right mx-1'></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
 
     </div>
 

@@ -1,0 +1,24 @@
+.img_section{
+     border-radius:5px;
+     cursor:pointer;
+
+}
+
+.img_section img{
+    width:100%;
+    min-height:120px;
+    background:transparent;
+
+}
+
+.card-imagem{
+    overflow:hidden;
+    max-height:130px;
+     border-radius:5px;
+     cursor:pointer;
+}
+
+.border-card{
+     border:2px solid rgba(0,0,0,.05);
+     border-radius:5px;
+     }
